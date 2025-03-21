@@ -1,6 +1,6 @@
 const ordersController = {};
 
-import ordersModel from "../models/orders.js"; 
+import ordersModel from "../models/orders.js";
 //Create (Post)
 ordersController.postOrders = async (req, res) => {
     const {customerId, items, total, status} = req.body;

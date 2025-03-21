@@ -1,5 +1,4 @@
-/*
-Se verá algo así, ya que incluye ambas tablas de Artículos y Piezas de Arte
+/* Se verá algo así, ya que incluye ambas tablas de Artículos y Piezas de Arte
 "Orders": [
     {
   "customerId": "5f5b7b3b4f3b1b2b3c4f5d6e",

@@ -32,7 +32,7 @@ const orderItemSchema = new Schema({
     itemType: { type: String, required: true, enum: ['Article', 'ArtPiece'] },
     itemId: { type: Schema.Types.ObjectId, required: true, refPath: 'itemType'},
     quantity: { type: Number, required: true, min: 1 },
-    subtotal: { type: Number, required: true, min: 0 }
+    subtotal: { type: Number, required: true, min: 0 }        
 });
 const ordersSchema = new Schema({
     customerId: { type: Schema.Types.ObjectId, required: true,ref: "Customer" },
@@ -41,8 +41,8 @@ const ordersSchema = new Schema({
     status: { type: String, required: true, enum: ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'], default: 'Pending'}
     },
     {  
-      timestamps: true,
-      strict: false
+        timestamps: true,
+        strict: false
     }
-  );
-export default model("Order", ordersSchema, "Order");
+);
+export default model("Order", ordersSchema, "Order");    

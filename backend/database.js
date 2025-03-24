@@ -14,6 +14,6 @@ connection.on("disconnected", () =>{
     console.log("DB is disconnected");
 })
 
-ConnectionCheckedInEvent.on("error", () =>{
+connection.on("error", () =>{
     console.log("Error en la conexión")
 })

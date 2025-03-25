@@ -1,5 +1,6 @@
-import { Schema, SchemaType, SchemaTypes } from "mongoose";
-const customersSchema = new Schema(
+import { Schema, model } from "mongoose";
+
+const categoriesSchema = new Schema(
     {
         names: {
             type: String,
@@ -10,17 +11,10 @@ const customersSchema = new Schema(
             type: String,
             require: true,
         },
-
-        id_: {
-            type: Schema.Types.ObjectId,
-            ref: "categories",
-            require: true,
-        }
     },
     {
         timestamps: true,
         strict: false,
       }
-)
-
-export default model ("categories", customersSchema)
+);
+export default model ("Category", categoriesSchema, "Category");

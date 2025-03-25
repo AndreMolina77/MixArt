@@ -1,13 +1,12 @@
-const supppliersController = require('./suppliersController');
-
-import { Suppliers } from '../models/Suppliers';
 const suppliersController = {};
+
+import suppliersModel from '../models/Suppliers';
 
 //POST
 suppliersController.postSuppliers = async (req, res) => {
     const {supplierName, email, phoneNumber, address} = req.body;
 
-    const newSuppliers = new Suppliers({supplierName, email, phoneNumber, address})
+    const newSuppliers = new suppliersModel({supplierName, email, phoneNumber, address})
 
     await newSuppliers.save()
     res.json({message: "Proveedor guardado"})
@@ -15,14 +14,14 @@ suppliersController.postSuppliers = async (req, res) => {
 
 //GET
 suppliersController.getSuppliers = async (req, res) => {
-    const suppliers = await Suppliers.find()
+    const suppliers = await suppliersModel.find()
     res.json(suppliers)
 }
 
 //PUT
 suppliersController.putSuppliers = async (req, res) => {
     const {supplierName, email, phoneNumber, address} = req.body;
-    const updateSupplier = await Suppliers.findByIdAndUpdate(req.params.id,
+    const updateSupplier = await suppliersModel.findByIdAndUpdate(req.params.id,
     {supplierName, email, phoneNumber, address},
     {new:true}
     )
@@ -33,14 +32,13 @@ suppliersController.putSuppliers = async (req, res) => {
 
 //DELETE
 suppliersController.deleteSuppliers = async (req,res) => {
-    const deleteSuppliers = await Suppliers.findByIdAndDelete(req.params.id)
+    const deleteSuppliers = await suppliersModel.findByIdAndDelete(req.params.id)
     res.json({message: "Proveedor eliminado"})
 }
 
 //GET POR ID
 suppliersController.getSupplier = async (req, res) => {
-    const supplier = await Suppliers.findById(req.params.id)
+    const supplier = await suppliersModel.findById(req.params.id)
     res.json(supplier)
 }
-
 export default suppliersController;

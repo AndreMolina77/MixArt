@@ -22,7 +22,6 @@ const customersSchema = new Schema ({
     profilePic:{
         type: String,
         require: false
-    }
-})
-
-export default model ("Customers", customersSchema)
+    },
+});
+export default model ("Customer", customersSchema, "Customer");

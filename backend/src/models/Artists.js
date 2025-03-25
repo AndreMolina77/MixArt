@@ -1,42 +1,33 @@
-import { Schema } from "mongoose";
+import { Schema, model } from "mongoose";
 
-const customersSchema = new Schema(
+const artistsSchema = new Schema(
     {
         username: {
             type: string,
             require: true,
         },
-
         email: {
             type: string,
             require: true,
         },
-        
         password: {
-        type: string,
-        require: true,
-        min: 8,
+            type: string,
+            require: true,
+            min: 8,
         },
         phoneNumber: {
             type: string,
             require: Unique,
-        },
-
-        ProfilePic: {
-         type: String,
-         require: true,
-        },
-
-        _id: {
-            type: Schema.Types.ObjectId,
-            ref: "artist",
             require: true,
-        }
+        },
+        profilePic: {
+            type: String,
+            require: true,
+        },
     },
     {
         timestamps: true,
         strict: false,
       }
 )
-
-export default model ("artist", customersSchema)
+export default model ("Artist", artistsSchema, "Artist");

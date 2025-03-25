@@ -2,11 +2,11 @@ import express from "express";
 
 const router = express.Router();
 
-import artistController from "../controllers/artistsController";
+import artistController from "../controllers/artistsController.js";
 router
 router
   .route("/")
-  .get(artistController.getartist)
+  .get(artistController.getartists)
   .post(artistController.postartist);
 router
   .route("/:id")

@@ -1,6 +1,6 @@
-import { Schema } from "mongoose";
+import { Schema, model } from "mongoose";
 
-const customersSchema = new Schema(
+const reviewsSchema = new Schema(
     {
         rating: {
             type: Number,
@@ -12,30 +12,27 @@ const customersSchema = new Schema(
             type: String,
             require: true,
         },
-
-        _Id: {
-          type:  Schema.Types.ObjectId,
-          ref: "reviews",
-          require: true,
+        
+        itemType: {
+            type: String,
+            required: true,
+            enum: ['Article', 'ArtPiece']
+        },
+        itemId: {
+            type: Schema.Types.ObjectId,
+            required: true,
+            refPath: 'contentType'
         },
 
-        articlesid: {
+        customerId: {
             type: Schema.Types.ObjectId,
-            ref: "articles",
-            require: true,
-        },
-
-        customerid: {
-            type: Schema.Types.ObjectId,
-            ref: "customers",
+            ref: "Customer",
             require: true,
         }
-
     },
     {
         timestamps: true,
         strict: false,
     }
-)
-
-export default model ("reviews", customersSchema)
+);
+export default model ("Review", reviewsSchema, "Review");

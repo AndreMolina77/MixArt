@@ -1,9 +1,9 @@
 import {Schema, model} from "mongoose";
  const salesSchema = new Schema({
-    idOrden:{
+    orderId:{
         type: Schema.Types.ObjectId,
         require: true,
-        ref: "Orders",
+        ref: "Order",
         unique: true
     },
     paymentMethod:{
@@ -16,6 +16,8 @@ import {Schema, model} from "mongoose";
     },
     status: {
         type: String,
-        require: true
+        require: true,
+        enum: ['Sold', 'Pending sale'], default: 'Pending sale',
     }
- })
+ });
+export default model ("Sale", salesSchema, "Sale");

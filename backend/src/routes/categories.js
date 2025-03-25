@@ -1,8 +1,8 @@
-import expres from "express";
+import express from "express";
 
 const router = express.Router();
 
-import categoriesController from "../controllers/categoriesController";
+import categoriesController from "../controllers/categoriesController.js";
 router
 router
   .route("/")
@@ -10,7 +10,7 @@ router
   .post(categoriesController.postcategories);
 router
   .route("/:id")
-  .get(categoriesController.getcategories)
-  .put(categoriesController.putacategories)
+  .get(categoriesController.getcategory)
+  .put(categoriesController.putcategories)
   .delete(categoriesController.deletecategories);
 export default router;

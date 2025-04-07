@@ -1,8 +1,7 @@
 import mongoose from "mongoose"  
+import { config } from "./src/utils/config.js"
 
-const URI= "mongodb+srv://dsvidsvnfoo456:j4j1yIPs511YagQK@cluster1a.hfx0r.mongodb.net/MixArt?retryWrites=true&w=majority&appName=Cluster1A"
-
-mongoose.connect(URI)
+mongoose.connect(config.db.URI)
 
 const connection = mongoose.connection;
 
@@ -15,5 +14,5 @@ connection.on("disconnected", () =>{
 })
 
 connection.on("error", () =>{
-    console.log("Error en la conexión")
+    console.log("Error connecting to DB")
 })

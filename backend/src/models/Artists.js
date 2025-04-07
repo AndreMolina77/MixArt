@@ -3,21 +3,21 @@ import { Schema, model } from "mongoose";
 const artistsSchema = new Schema(
     {
         username: {
-            type: string,
+            type: String,
             require: true,
         },
         email: {
-            type: string,
+            type: String,
             require: true,
         },
         password: {
-            type: string,
+            type: String,
             require: true,
             min: 8,
         },
         phoneNumber: {
-            type: string,
-            require: Unique,
+            type: String,
+            unique: true,
             require: true,
         },
         profilePic: {

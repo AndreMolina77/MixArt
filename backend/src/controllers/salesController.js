@@ -1,9 +1,9 @@
-const ordersController = {};
+const salesController = {};
 
-import ordersModel from "../models/ordersModel.js";
+import salesModel from "../models/Sales.js";
 
 //POST
-ordersController.postOrders = async (req, res) => {
+salesController.postSales = async (req, res) => {
     const {customerId, items, total, status} = req.body;
     //Validacion para que los items (productos) contengan los campos necesarios
     try {
@@ -11,7 +11,7 @@ ordersController.postOrders = async (req, res) => {
             return res.status(400).json({ message: "El arreglo de los productos es necesario y no puede ser vacio." });
         }
     
-    const newOrder = new ordersModel({customerId, items, total, status});
+    const newOrder = new salesModel({customerId, items, total, status});
 
     await newOrder.save();
     res.status(201).json({ message: "Orden creada exitosamente." });
@@ -21,7 +21,7 @@ ordersController.postOrders = async (req, res) => {
 }
 
 //GET
-ordersController.getOrders = async (req, res) => {
+salesController.getSales = async (req, res) => {
     try {
         const orders = await ordersModel.find()
         .populate("customersId", "username email") 
@@ -33,7 +33,7 @@ ordersController.getOrders = async (req, res) => {
 }
 
 //PUT
-ordersController.putOrders = async (req, res) => {
+salesController.putSales = async (req, res) => {
     const {customerId, items, total, status} = req.body;
     try {
         const updates = {customerId, items, total, status};
@@ -51,7 +51,7 @@ ordersController.putOrders = async (req, res) => {
 }
 
 //DELETE
-ordersController.deleteOrders = async (req, res) => {
+salesController.deleteSales = async (req, res) => {
     try {
       const deletedOrder = await ordersModel.findByIdAndDelete(req.params.id);
   
@@ -66,7 +66,7 @@ ordersController.deleteOrders = async (req, res) => {
 }
 
 //GET POR ID
-ordersController.getOrder = async (req, res) => {
+salesController.getSale = async (req, res) => {
     try {
         const order = await ordersModel.find(req.params.id)
         .populate("customersId", "username email") 
@@ -78,4 +78,4 @@ ordersController.getOrder = async (req, res) => {
 }
 
 
-export default ordersController;
+export default salesController;

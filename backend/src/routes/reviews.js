@@ -2,7 +2,7 @@ import express from "express";
 
 const router = express.Router();
 
-import reviewsController from "../controllers/reviewsControllers.js";
+import reviewsController from "../controllers/reviewsController.js";
 router
 router
   .route("/")

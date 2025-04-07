@@ -11,6 +11,7 @@ import suppliersRoutes from "./src/routes/suppliers.js"
 import wishlistRoutes from "./src/routes/wishlist.js"
 
 const app = express();
+app.use(express.json())
 app.use("/api/articles", articlesRoutes)
 app.use("/api/artists", artistsRoutes)
 app.use("/api/artpieces", artpiecesRoutes)
@@ -21,6 +22,5 @@ app.use("/api/reviews", reviewsRoutes)
 app.use("/api/sales", salesRoutes)
 app.use("/api/suppliers", suppliersRoutes)
 app.use("/api/wishlist", wishlistRoutes)
-app.use(express.json())
 
 export default app;

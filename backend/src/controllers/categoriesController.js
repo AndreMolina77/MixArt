@@ -1,5 +1,6 @@
 const categoriesController = {};
-import categoriesModel from "../models/Categories.js";
+
+import categoriesModel from "../models/categories.js";
  
 
 //Create (Post)

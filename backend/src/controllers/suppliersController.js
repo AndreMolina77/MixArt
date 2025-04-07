@@ -1,6 +1,6 @@
 const suppliersController = {};
 
-import suppliersModel from '../models/Suppliers';
+import suppliersModel from '../models/Suppliers.js';
 
 //POST
 suppliersController.postSuppliers = async (req, res) => {

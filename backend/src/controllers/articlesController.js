@@ -4,7 +4,7 @@ import articlesModel from "../models/Articles.js";
 //Create (Post)
 articlesController.postArticles = async (req, res) => {
     const { articleName, price, description, image, stock, categoryId, supplierId, discount } = req.body;
-    const newArticle = new articlesModel({ articleName, price, description, image, stock: stock || 0,  categoryId, supplierId, discount: discount || 0 })
+    const newArticle = new articlesModel({ articleName, price, description, image, stock,  categoryId, supplierId, discount})
 
     await newArticle.save();
     res.status(201).json({ message: "Artículo creado con éxito"});

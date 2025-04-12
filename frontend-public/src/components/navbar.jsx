@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { FaHeart, FaShoppingCart, FaUser, FaSearch } from 'react-icons/fa'
 import { useLocation } from 'react-router-dom'
+
 
 const Navbar = () => {
     const location = useLocation()
@@ -16,7 +17,7 @@ const Navbar = () => {
       setActive(pathToPage[location.pathname] || 'Inicio')
     }, [location.pathname])
   
-    const navItems = ['Inicio', 'Contáctanos', 'Sobre nosotros', 'Iniciar sesión']
+    const navItems = ['Inicio', 'Contáctanos', 'Sobre nosotros', 'Iniciar sesión/Registrarse']
     return (
         <nav className="w-full bg-[#F4F1DE] px-6 py-4 flex items-center justify-between font-[Alexandria] text-[#7A6E6E]">
         <div className="text-2xl font-normal" style={{ fontFamily: '"Love Ya Like A Sister"' }}>MixArt</div>

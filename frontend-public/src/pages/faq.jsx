@@ -1,4 +1,5 @@
 import React from 'react'
+import Breadcrumbs from '../components/breadcrumbs.jsx'
 
 const FAQ = () => {
   const faqs = [
@@ -85,7 +86,10 @@ const FAQ = () => {
   ]
   return (
     <div className="min-h-screen flex items-center justify-center">
-      <div className="max-w-5xl mx-auto p-6 font-[Alexandria] text-[#7A6E6E]">
+      <div className="max-w-6xl mx-auto p-6 font-[Alexandria] text-[#7A6E6E]">
+        <div className="mb-8">
+          <Breadcrumbs/>
+        </div>
         <h1 className="text-4xl font-bold mb-4">Preguntas frecuentes</h1>
         <p className="text-customGray mb-8">
         ¿Tiene alguna pregunta que no esté resuelta aquí?

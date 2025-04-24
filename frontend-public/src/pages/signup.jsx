@@ -3,6 +3,7 @@ import TextInput from '../components/input.jsx'
 import PasswordInput from '../components/passwordinput.jsx'
 import GoogleButton from '../components/googlebutton.jsx'
 import cartImage from '../assets/cart-image.jpeg'
+import Button from '../components/button.jsx'
 
 const Signup = () => {
   return (
@@ -17,9 +18,7 @@ const Signup = () => {
           <TextInput text="Nombre completo" />
           <TextInput text="Correo electrónico o número de teléfono" />
           <PasswordInput text="Contraseña" />
-          <button className="w-full bg-[#E07A5F] text-white py-2 rounded-md font-semibold hover:bg-[#d26d55] transition">
-            Crear cuenta
-          </button>
+          <Button Text={"Crear cuenta"}/>
           <GoogleButton />
           <p className="text-sm text-center">
             ¿Ya tienes una cuenta?{" "}<a href="/login" className="underline text-[#7A6E6E] hover:text-[#E07A5F] transition">Inicia sesión</a>

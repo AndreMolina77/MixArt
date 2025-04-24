@@ -1,0 +1,7 @@
+input:checked ~ div .checkmark {
+  display: block;
+}
+
+input:checked ~ div {
+  background-color: #E07A5F;
+}

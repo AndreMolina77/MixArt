@@ -1,9 +1,13 @@
 import React from 'react'
+import Breadcrumbs from '../components/breadcrumbs.jsx'
 
 const PrivacyPolicy = () => {
   return (
     <div className="min-h-screen flex items-center justify-center">
-      <div className="max-w-4xl mx-auto p-6 font-[Alexandria] text-[#7A6E6E]">
+      <div className="max-w-7xl mx-auto p-6 font-[Alexandria] text-[#7A6E6E]">
+        <div className="mb-8">
+          <Breadcrumbs/>
+        </div>
         <h1 className="text-4xl font-bold mb-4">Política de Privacidad de MixArt</h1>
         <p className="text-customGray mb-8">Última actualización: 22/03/2025</p>
         <div className="space-y-8">

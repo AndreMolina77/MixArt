@@ -1,5 +1,7 @@
 import React from 'react'
 import '@fortawesome/fontawesome-free/css/all.min.css'
+import { FaPaperPlane } from 'react-icons/fa'
+import { NavLink } from 'react-router-dom'
 
 const Footer = () => {
   return (
@@ -14,8 +16,8 @@ const Footer = () => {
             </p>
             <div className="flex items-center border border-white rounded-md overflow-hidden">
               <input type="email" placeholder="Ingresa tu correo" className="bg-transparent placeholder-white/40 px-4 py-2 flex-grow focus:outline-none text-white w-full min-w-0 font-['Alexandria'] placeholder:font-['Alexandria']"/>
-              <button className="h-full px-4 flex items-center justify-center flex-shrink-0 group">
-                <span className="text-xl leading-none group-hover:scale-110 transition-transform">➤</span>
+              <button className="h-full px-4 flex items-center justify-center flex-shrink-0 group cursor-pointer">
+                <FaPaperPlane className="text-xl leading-none group-hover:scale-110 transition-transform" />
               </button>
             </div>
           </div>
@@ -30,20 +32,21 @@ const Footer = () => {
           <div>
             <h2 className="text-xl font-['Alexandria'] font-medium mb-4">Cuenta</h2>
             <ul className="space-y-2 text-sm font-['Alexandria'] font-regular">
-              <li><a href="/mi-cuenta" className="hover:text-[#d1d1d1] transition-colors">Mi cuenta</a></li>
-              <li><a href="/login" className="hover:text-[#d1d1d1] transition-colors">Iniciar sesión / Registrarse</a></li>
-              <li><a href="/carrito" className="hover:text-[#d1d1d1] transition-colors">Carrito</a></li>
-              <li><a href="/lista-deseos" className="hover:text-[#d1d1d1] transition-colors">Lista de deseos</a></li>
-              <li><a href="/tienda" className="hover:text-[#d1d1d1] transition-colors">Tienda</a></li>
+              <li><NavLink to="/mi-cuenta" className="hover:text-[#d1d1d1] transition-colors">Mi cuenta</NavLink></li>
+              <li><NavLink to="/login" className="hover:text-[#d1d1d1] transition-colors">Iniciar sesión</NavLink></li>
+              <li><NavLink to="/register" className="hover:text-[#d1d1d1] transition-colors">Registrarse</NavLink></li>
+              <li><NavLink to="/carrito" className="hover:text-[#d1d1d1] transition-colors">Carrito</NavLink></li>
+              <li><NavLink to="/lista-deseos" className="hover:text-[#d1d1d1] transition-colors">Lista de deseos</NavLink></li>
+              <li><NavLink to="/tienda" className="hover:text-[#d1d1d1] transition-colors">Tienda</NavLink></li>
             </ul>
           </div>
           <div>
             <h2 className="text-xl font-['Alexandria'] font-medium mb-4">Enlaces rápidos</h2>
             <ul className="space-y-2 text-sm font-['Alexandria'] font-regular">
-              <li><a href="/politica-privacidad" className="hover:text-[#d1d1d1] transition-colors">Política de privacidad</a></li>
-              <li><a href="/terminos" className="hover:text-[#d1d1d1] transition-colors">Términos y condiciones</a></li>
-              <li><a href="/faq" className="hover:text-[#d1d1d1] transition-colors">Preguntas frecuentes</a></li>
-              <li><a href="/contacto" className="hover:text-[#d1d1d1] transition-colors">Contáctanos</a></li>
+              <li><NavLink to="/politica-de-privacidad" className="hover:text-[#d1d1d1] transition-colors">Política de privacidad</NavLink></li>
+              <li><NavLink to="/terminos-y-condiciones" className="hover:text-[#d1d1d1] transition-colors">Términos y condiciones</NavLink></li>
+              <li><NavLink to="/faq" className="hover:text-[#d1d1d1] transition-colors">Preguntas frecuentes</NavLink></li>
+              <li><NavLink to="/contactanos" className="hover:text-[#d1d1d1] transition-colors">Contáctanos</NavLink></li>
             </ul>
           </div>
           <div>

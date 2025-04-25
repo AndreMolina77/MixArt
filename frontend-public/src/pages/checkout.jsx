@@ -12,7 +12,7 @@ import '../css/checkout.css'
 
 const Checkout = () => {
     return (
-        <div className="bg-[#FFFBEF] min-h-screen px-4 sm:px-10 py-8 font-[Alexandria]">
+        <div className="bg-[#F4F1DE] min-h-screen px-4 sm:px-10 py-8 font-[Alexandria]">
             <div className="max-w-7xl mx-auto">
                 <Breadcrumbs/>
                 <h2 className="text-2xl sm:text-3xl text-[#7A6E6E] font-semibold mb-10">Detalles de facturación</h2>

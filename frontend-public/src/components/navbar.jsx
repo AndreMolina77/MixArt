@@ -30,10 +30,10 @@ const Navbar = () => {
     { label: 'Iniciar sesión', path: '/login' }
   ]
   const userMenu = [
-    { icon: <FaUser/>, label: 'Administrar cuenta', path: '/mi-cuenta' },
-    { icon: <FaShoppingCart/>, label: 'Mis pedidos', path: '/orders' },
-    { icon: <FaTimes/>, label: 'Cancelaciones', path: '/cancellations' },
-    { icon: <FaStar/>, label: 'Reseñas', path: '/reviews' },
+    { icon: <FaUser/>, label: 'Administrar cuenta', path: '/mi-cuenta#perfil' },
+    { icon: <FaShoppingCart/>, label: 'Mis pedidos', path: '/mi-cuenta#compras' },
+    { icon: <FaTimes/>, label: 'Cancelaciones', path: '/mi-cuenta#cancelaciones' },
+    { icon: <FaStar/>, label: 'Reseñas', path: '/mi-cuenta#reseñas' },
     { icon: <FaSignOutAlt/>, label: 'Cerrar sesión', path: '/logout' }
   ]
   const toggleDropdown = (menu) => {

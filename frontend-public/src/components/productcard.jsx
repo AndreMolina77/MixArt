@@ -1,6 +1,7 @@
 import React from 'react'
 import { FiTrash2, FiShoppingCart, FiHeart, FiEye } from 'react-icons/fi'
 import { FaStar } from 'react-icons/fa'
+import { NavLink } from 'react-router-dom'
 
 const ProductCard = ({Discount, ImageSrc, ProductName, Price, FormerPrice, Rating, ReviewCount, IsNew, ShowWishlist, ShowView, ShowTrash }) => {
   const filledStars = Rating ? Math.floor(Rating) : 0
@@ -9,12 +10,14 @@ const ProductCard = ({Discount, ImageSrc, ProductName, Price, FormerPrice, Ratin
   return (
     <div className="w-[270px] font-[Alexandria] rounded-lg">
       <div className="relative">
-        {Discount && (
-          <span className="absolute top-2.5 left-2 bg-[#E07A5F] text-white text-sm px-2 py-1 rounded font-normal">{Discount}</span>
-        )}
-        {IsNew && (
-          <span className="absolute top-2.5 left-[72px] bg-[#81B29A] text-white text-sm px-2 py-1 rounded font-normal">Nuevo</span>
-        )}
+        <div className="absolute top-2.5 left-2 flex flex-col gap-2 items-start">
+          {Discount && (
+            <span className="bg-[#E07A5F] text-white text-sm px-2 py-1 rounded font-normal">{Discount}</span>
+          )}
+          {IsNew && (
+            <span className="bg-[#81B29A] text-white text-sm px-2 py-1 rounded font-normal">Nuevo</span>
+          )}
+        </div>
         <div className="absolute top-2 right-2 flex flex-col gap-2">
           {ShowTrash && (
             <div className="bg-white rounded-full p-2 shadow cursor-pointer">
@@ -28,11 +31,13 @@ const ProductCard = ({Discount, ImageSrc, ProductName, Price, FormerPrice, Ratin
           )}
           {ShowView && (
             <div className="bg-white rounded-full p-2 shadow cursor-pointer">
-              <FiEye className="text-[#7A6E6E] text-sm w-5 h-5" />
+              <NavLink to="ver-producto" className="text-[#7A6E6E] text-sm w-5 h-5">  <FiEye className="text-[#7A6E6E] text-sm w-5 h-5" /></NavLink>   
             </div> )}
         </div>
         <div className="bg-white pt-4 px-0 pb-0 rounded-b-lg shadow-sm flex flex-col items-center">
-          <img src={ImageSrc} alt={ProductName} className="max-w-[180px] max-h-[180px] object-cover" />
+          <div className="h-[180px] flex items-center justify-center">
+            <img src={ImageSrc} alt={ProductName} className="max-w-[180px] max-h-[180px] object-cover" />
+          </div>
           <button className="w-full h-10 bg-[#E07A5F] text-white text-sm py-2 rounded-b-lg font-normal flex items-center justify-center gap-2 mt-4 hover:bg-transparent border-2 border-[#E07A5F] hover:border-[#E07A5F] hover:text-[#E07A5F] transition duration-300 cursor-pointer">
             <FiShoppingCart />
             Añadir al carrito

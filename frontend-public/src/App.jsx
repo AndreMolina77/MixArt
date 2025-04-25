@@ -15,11 +15,35 @@ import MyAccount from './pages/myaccount.jsx'
 import { AccountProvider } from './components/accountcontext.jsx'
 import ProductDetailPage from './pages/productview.jsx'
 import Cart from './pages/cart.jsx'
-import CheckoutPage from './pages/checkout.jsx'
+import Checkout from './pages/checkout.jsx'
+import Wishlist from './pages/wishlist.jsx'
 
 const App = () => {
   return (
-    <CheckoutPage/>
+    <>
+      <AccountProvider>
+        <Navbar/>
+        <AnnouncementBar/>
+        <Routes>
+          <Route path="/" element={<Home/>}/>
+          <Route path="/terminos-y-condiciones" element={<Terms/>}/>
+          <Route path="/politica-de-privacidad" element={<PrivacyPolicy/>}/>
+          <Route path="/faq" element={<FAQ/>}/>
+          <Route path="/registro" element={<Signup/>}/>
+          <Route path="/login" element={<Login/>}/>
+          <Route path="/contactanos" element={<Contact/>}/>
+          <Route path="/acerca-de" element={<About/>}/>
+          <Route path="/mi-cuenta" element={<MyAccount/>}/>
+          <Route path="/carrito" element={<Cart/>}/>
+          <Route path="carrito/checkout" element={<Checkout/>}/>
+          <Route path="lista-deseos" element={<Wishlist/>}/>
+          <Route path="lista-deseos/ver-producto" element={<ProductDetailPage/>}/>
+          <Route path="mi-cuenta/ver-producto" element={<ProductDetailPage/>}/>
+          <Route path="inicio/ver-producto" element={<ProductDetailPage/>}/>
+        </Routes>
+        <Footer/>
+      </AccountProvider>
+    </>
   )
 }
 export default App

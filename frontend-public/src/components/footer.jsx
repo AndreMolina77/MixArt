@@ -34,7 +34,7 @@ const Footer = () => {
             <ul className="space-y-2 text-sm font-['Alexandria'] font-regular">
               <li><NavLink to="/mi-cuenta" className="hover:text-[#d1d1d1] transition-colors">Mi cuenta</NavLink></li>
               <li><NavLink to="/login" className="hover:text-[#d1d1d1] transition-colors">Iniciar sesión</NavLink></li>
-              <li><NavLink to="/register" className="hover:text-[#d1d1d1] transition-colors">Registrarse</NavLink></li>
+              <li><NavLink to="/registro" className="hover:text-[#d1d1d1] transition-colors">Registrarse</NavLink></li>
               <li><NavLink to="/carrito" className="hover:text-[#d1d1d1] transition-colors">Carrito</NavLink></li>
               <li><NavLink to="/lista-deseos" className="hover:text-[#d1d1d1] transition-colors">Lista de deseos</NavLink></li>
               <li><NavLink to="/tienda" className="hover:text-[#d1d1d1] transition-colors">Tienda</NavLink></li>

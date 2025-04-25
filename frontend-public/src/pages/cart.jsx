@@ -8,7 +8,7 @@ import QuantityInput from '../components/quantityinput.jsx'
 
 const Cart = () => {
   return (
-    <div className="min-h-screen bg-[#FDF7E3] font-[Alexandria] text-[#7A6E6E] px-20 py-10">
+    <div className="min-h-screen bg-[#F4F1DE] font-[Alexandria] text-[#7A6E6E] px-20 py-10">
         <Breadcrumbs />
         <div className="mt-10 grid grid-cols-4 font-semibold text-sm py-4 px-6 rounded-t-md bg-[#FDF7E3] border-b border-[#E8E3CC]">
             <span>Producto</span>
@@ -16,7 +16,7 @@ const Cart = () => {
             <span>Cantidad</span>
             <span>Subtotal</span>
         </div>
-        <div className="grid grid-cols-4 items-center py-6 px-6 bg-[#FDF7E3] shadow-inner">
+        <div className="grid grid-cols-4 items-center py-6 px-6 bg-[#F4F1DE] shadow-inner">
             <div className="flex items-center gap-4">
                 <button className="text-red-500 text-lg font-bold">✖</button>
                 <img src={InTheRain} alt="In the rain II" className="w-12 h-12 object-cover" />

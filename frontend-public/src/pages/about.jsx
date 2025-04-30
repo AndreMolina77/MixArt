@@ -23,7 +23,7 @@ const About = () => {
   const benefits = [
     { id: 1, icon: FaTruck, title: 'ENTREGA GRATUITA Y RÁPIDA', description: 'Entrega gratuita para todos los pedidos superiores a $140' },
     { id: 2, icon: FaHeadset, title: 'SERVICIO AL CLIENTE 24/7', description: 'Atención al cliente amigable 24 horas al día, 7 días a la semana' },
-    { id: 3, icon: FaShieldAlt, title: 'GARANTÍA DE DEVOLUCIÓN DE DINERO', description: 'Devolvemos tu dinero en 30 días' }, 
+    { id: 3, icon: FaShieldAlt, title: 'GARANTÍA DE DEVOLUCIÓN DE DINERO', description: 'Devolvemos tu dinero en 30 días' }
   ]
   return (
     <div className="flex flex-col items-center py-12 px-4 bg-[#F4F1DE]">

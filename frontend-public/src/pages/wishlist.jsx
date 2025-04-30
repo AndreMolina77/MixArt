@@ -5,7 +5,7 @@ import SmallLifeForms from '../assets/slfiii.png'
 import MorningRain from '../assets/mriii.png'
 import AfterRain from '../assets/ariii.png'
 import Larkspur from '../assets/larkspur.png'
-import Chalotte from '../assets/charlotte.png'
+import Charlotte from '../assets/charlotte.png'
 import BlackBird from '../assets/blackbird.png'
 import Ocean from '../assets/ocean.png'
 import Mudflat from '../assets/mudflat.png'
@@ -18,7 +18,7 @@ const Wishlist = () => {
     { id: 4, ProductName: "Larkspur", Price: "$1,560", ImageSrc: Larkspur,  ShowTrash: true }
   ]
   const recommendedProducts = [
-    { id: 5, ProductName: "Charlotte Sometimes Hums as She Paints Painting", Price: "$3,600", FormerPrice: "$4,075", ImageSrc: Chalotte, Discount: "35%", ShowView: true, Rating: 5, ReviewCount: 65 },
+    { id: 5, ProductName: "Charlotte Sometimes Hums as She Paints Painting", Price: "$3,600", FormerPrice: "$4,075", ImageSrc: Charlotte, Discount: "35%", ShowView: true, Rating: 5, ReviewCount: 65 },
     { id: 6, ProductName: "Black Bird #2", Price: "$5,010", ImageSrc: BlackBird, ShowView: true, Rating: 5, ReviewCount: 65 },
     { id: 7, ProductName: "Ocean (limited edition)", Price: "$4,300", ImageSrc: Ocean, Discount: "40%", IsNew: true, ShowView: true, Rating: 4.5, ReviewCount: 65 },
     { id: 8, ProductName: "Pintura Mudflat", Price: "$490", ImageSrc: Mudflat, ShowView: true, Rating: 5, ReviewCount: 65 }

@@ -89,7 +89,10 @@ const ProductDetailPage = () => {
       </div>
       <div className="bg-[#F9F3E9] py-16 px-8">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-[#C46A50] text-xl font-semibold mb-8 pl-14 font-[Alexandria] text-center md:text-left">Productos relacionados</h2>
+        <div className="flex items-center mb-2">
+        <div className="bg-[#E07A5F] w-6 h-12 rounded-lg mr-2"></div>
+        <h2 className="text-[#E07A5F] text-xl font-semibold ml-3 font-[Alexandria] text-center md:text-left">Productos relacionados</h2>
+        </div>
           <div className="flex justify-center">
             <div className="flex gap-8 overflow-x-auto max-w-[90vw] px-4 py-6">
               <ProductCard Discount="-40%" ImageSrc={IntheRain} ProductName="In the rain II" Price="$5000" FormerPrice="$5990" Rating={5} ReviewCount={88} ShowWishlist={true} ShowView={true}/>

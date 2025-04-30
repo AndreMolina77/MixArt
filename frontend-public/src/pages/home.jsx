@@ -244,6 +244,106 @@ const HomePage = () => {
     );
 };
 
+const ProductCard = ({ image, title, price, rating, label }) => (
+    <div className="bg-white rounded-lg shadow-md p-4 w-64 relative">
+      {label && (
+        <span className="absolute top-2 left-2 bg-green-200 text-green-800 text-xs font-semibold px-2 py-1 rounded">
+          {label}
+        </span>
+      )}
+      <img src={image} alt={title} className="w-full h-40 object-cover rounded" />
+      <h3 className="mt-2 font-semibold text-gray-800 text-sm">{title}</h3>
+      <p className="text-orange-700 text-sm">{price}</p>
+      <div className="flex text-yellow-500 text-xs">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <Star key={i} fill={i < Math.floor(rating) ? '#fbbf24' : 'none'} />
+        ))}
+      </div>
+    </div>
+  );
+  
+  const HeroSection = () => (
+    <section className="bg-[#264734] text-white py-10 px-8 rounded-xl flex justify-between items-center">
+      <div>
+        <p className="text-sm mb-2">Categorías</p>
+        <h1 className="text-3xl font-bold mb-4">Decora tu espacio de trabajo</h1>
+        <div className="flex gap-2 mb-4">
+          {["23 horas", "05 min", "59 segundos", "35 segundos"].map((item, idx) => (
+            <span key={idx} className="bg-white text-black rounded-full px-3 py-1 text-xs font-semibold">
+              {item}
+            </span>
+          ))}
+        </div>
+        <button className="bg-[#bcd2c1] text-[#264734] font-semibold py-2 px-4 rounded">
+          ¡Compra ahora!
+        </button>
+      </div>
+      <img
+        src="https://via.placeholder.com/150x200/007744/ffffff?text=Artwork"
+        alt="Green trees"
+        className="w-40 h-52 object-cover rounded shadow-lg"
+      />
+    </section>
+  );
+  
+  const FeaturedSection = () => (
+    <section className="bg-black text-white rounded-lg p-6 grid grid-cols-2 gap-4 mt-10">
+      <div className="col-span-1">
+        <img
+          src="https://via.placeholder.com/300x300?text=Abstract"
+          alt="Lo que no puedes cambiar"
+          className="w-full h-60 object-cover rounded mb-2"
+        />
+        <h3 className="text-lg font-semibold">Lo que no puedes cambiar</h3>
+        <p className="text-sm mb-2">Explora la galería en expansión</p>
+        <button className="text-blue-200 text-sm underline">Compra ahora</button>
+      </div>
+      <div className="col-span-1 grid grid-cols-2 gap-2">
+        {['Abstract composition', 'Dying Light', 'Colorful Woman'].map((text, i) => (
+          <div key={i} className="bg-[#111] rounded p-2">
+            <p className="text-sm font-semibold mb-1">{text}</p>
+            <button className="text-blue-200 text-xs underline">Compra ahora</button>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+  
+  const HomePage = () => (
+    <div className="bg-[#f4f1de] min-h-screen font-[Alexandria] px-6 py-8">
+      <HeroSection />
+  
+      <div className="mt-10">
+        <p className="text-sm text-[#d2643b] font-semibold mb-1">Nuestros productos</p>
+        <h2 className="text-2xl font-bold mb-6">Explora nuestros productos</h2>
+        <div className="flex flex-wrap gap-4 justify-start">
+          <ProductCard image="https://via.placeholder.com/150" title="Two trees" price="$110.000" rating={5} />
+          <ProductCard image="https://via.placeholder.com/150" title="Figure study" price="$1.100" rating={4.5} />
+          <ProductCard image="https://via.placeholder.com/150" title="Pintura reflexión" price="$6.200" rating={5} />
+          <ProductCard image="https://via.placeholder.com/150" title="WILD Sculpture" price="$5.068" rating={4} />
+          <ProductCard image="https://via.placeholder.com/150" title="Hello Kitty!" price="$540" rating={4.5} label="Nuevo" />
+          <ProductCard image="https://via.placeholder.com/150" title="ABANDONED DREAMS" price="$1.130" rating={5} />
+          <ProductCard image="https://via.placeholder.com/150" title="Bai Tho Mountain Print" price="$322" rating={5} label="NUEVO" />
+          <ProductCard image="https://via.placeholder.com/150" title="Quilted Satin Jacket" price="$8.260" rating={4.5} />
+        </div>
+        <div className="text-center mt-6">
+          <button className="bg-[#d2643b] text-white px-6 py-2 rounded font-semibold">
+            Ver todos los productos
+          </button>
+        </div>
+      </div>
+  
+      <div className="mt-12">
+        <p className="text-sm text-[#d2643b] font-semibold mb-1">Destacados</p>
+        <h2 className="text-2xl font-bold mb-6">Recién llegado</h2>
+        <FeaturedSection />
+      </div>
+    </div>
+  );
+  
+  
+  
+
 export default HomePage;
 
 

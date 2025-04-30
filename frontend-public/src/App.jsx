@@ -35,11 +35,11 @@ const App = () => {
           <Route path="/acerca-de" element={<About/>}/>
           <Route path="/mi-cuenta" element={<MyAccount/>}/>
           <Route path="/carrito" element={<Cart/>}/>
-          <Route path="carrito/checkout" element={<Checkout/>}/>
-          <Route path="lista-deseos" element={<Wishlist/>}/>
-          <Route path="lista-deseos/ver-producto" element={<ProductDetailPage/>}/>
-          <Route path="mi-cuenta/ver-producto" element={<ProductDetailPage/>}/>
-          <Route path="inicio/ver-producto" element={<ProductDetailPage/>}/>
+          <Route path="/carrito/checkout" element={<Checkout/>}/>
+          <Route path="/lista-deseos" element={<Wishlist/>}/>
+          <Route path="/lista-deseos/ver-producto" element={<ProductDetailPage/>}/>
+          <Route path="/mi-cuenta/ver-producto" element={<ProductDetailPage/>}/>
+          <Route path="/inicio/ver-producto" element={<ProductDetailPage/>}/>
         </Routes>
         <Footer/>
       </AccountProvider>

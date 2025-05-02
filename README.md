@@ -16,6 +16,7 @@
 Cada una de las dependecias fue instalada utilizando los servicios de `Node.js` utilizando los comandos `npm i` o `npm install` + `nombre-libreria`
 
 ### Configuraciones añadidas
+Se añadió un archivo llamado `tailwind.config.js` en el cual se detallan todas las clases utilitarias de TailwindCSS que se van a utilizar o descartar. Dichas clases utilitarias se encuentran los archivos en src (dependencias de la libreria), el archivo principal `index.html`. También se define el tema por defecto de tailwind, el cual contiene clases de CSS tales como el estilo de fuente, espaciado y color
 
 ### 🧍🏻‍♂️ Integrantes del equipo 💻
 - Aldo André Molina Maldonado

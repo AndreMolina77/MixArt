@@ -13,11 +13,19 @@
 - framer-motion
 - Tailgrids
 - Typescript
+Cada una de las dependecias fue instalada utilizando los servicios de `Node.js` utilizando los comandos `npm i` o `npm install` + `nombre-libreria`
 
 ### Configuraciones añadidas
 
-
-
+### 🧍🏻‍♂️ Integrantes del equipo 💻
+- Aldo André Molina Maldonado
+- Juan Pablo Ayala Menjivar
+- Rafael Alejandro Menéndez Alfaro
+### Nombre del proyecto:
+# **MixArt🛍️🎨🖼️**
+## Información del proyecto:
+**MixArt** es una tienda en línea acerca de una galería de artes en la cuál se comercializan piezas artísticas, asimismo 
+como productos para artistas, es decir, materiales para la elaboración de obras artísticas. Su misión es promover la creatividad, inspiración, comunicación de mensajes y belleza grabados en una pieza de arte. Su visión es convertirse en la tienda de arte #1 en la región, habiendo colaborado con una variedad de artistas interesados en esta área.
 
 
 

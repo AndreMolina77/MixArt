@@ -1,0 +1,15 @@
+### Dependencias instaladas:
+React-icons/Fa
+React-router-dom
+React
+React-dom
+Lucide-react
+React-icons/Fi
+Fortawesome/Fontawesome-free
+Fortawesome/Fontawesome-svg-core
+Fortawesome/Fontawesome-svg-icons
+TailwindCSS/Forms
+classnames
+framer-motion
+Tailgrids
+Typescript

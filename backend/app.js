@@ -1,6 +1,6 @@
 import express from "express"
 import articlesRoutes from "./src/routes/articles.js"
-import artistsRoutes from "./src/routes/artists.js"
+import artistsRoutes from "./src/routes/employees.js"
 import artpiecesRoutes from "./src/routes/artpieces.js"
 import categoriesRoutes from "./src/routes/categories.js"
 import customersRoutes from "./src/routes/customers.js"

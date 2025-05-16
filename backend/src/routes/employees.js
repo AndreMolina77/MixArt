@@ -2,7 +2,7 @@ import express from "express";
 
 const router = express.Router();
 
-import artistController from "../controllers/artistsController.js";
+import artistController from "../controllers/employeesController.js";
 router
 router
   .route("/")

@@ -1,6 +1,14 @@
 import { Schema,model } from "mongoose";
 
 const customersSchema = new Schema ({
+    name: {
+        type: String,
+        require: true
+    },
+    lastName:{
+        type: String,
+        require: true
+    },
     username:{
         type: String, 
         require: true,
@@ -23,5 +31,13 @@ const customersSchema = new Schema ({
         type: String,
         require: false
     },
+    issNumber:{
+        type: String,
+        require: true
+    },
+    isVerified:{
+        type: Boolean,
+        require: true
+    }
 });
 export default model ("Customer", customersSchema, "Customer");

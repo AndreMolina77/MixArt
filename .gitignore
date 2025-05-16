@@ -1,1 +1,6 @@
 .qodo
+frontend-public/node_modules
+frontend-private/node_modules
+backend/node_modules
+.env
+.vscode

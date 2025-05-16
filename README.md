@@ -1,4 +1,7 @@
 ### Dependencias instaladas:
+```
+Esto irá creciendo conforme vaya avanzando el proyecto
+```
 - React-icons/Fa
 - React-router-dom
 - React

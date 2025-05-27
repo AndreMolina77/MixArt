@@ -6,11 +6,11 @@ import artistController from "../controllers/employeesController.js";
 router
 router
   .route("/")
-  .get(artistController.getartists)
-  .post(artistController.postartist);
+  .get(artistController.getEmployees)
+  .post(artistController.postEmployee);
 router
   .route("/:id")
-  .get(artistController.getartist)
-  .put(artistController.putartist)
-  .delete(artistController.deleteartist);
+  .get(artistController.getEmployee)
+  .put(artistController.putEmployee)
+  .delete(artistController.deleteEmployee);
 export default router;

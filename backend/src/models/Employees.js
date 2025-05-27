@@ -32,7 +32,7 @@ const employeesSchema = new Schema(
             type: String,
             require: true,
             trim: true,
-            enum: ['admin', 'vendedor', 'artista']
+            enum: ['vendedor', 'artista']
         },
         profilePic: {
             type: String,

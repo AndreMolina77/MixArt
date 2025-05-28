@@ -1,4 +1,4 @@
-import FirstTimeUser1 from './pages/FirstTimeUser1'
+import FirstTimeUser1 from './pages/FirstTimeUser'
 function App() {
   return (
     <>

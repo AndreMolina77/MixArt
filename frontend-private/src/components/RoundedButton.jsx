@@ -1,11 +1,11 @@
-import { ArrowRight } from 'lucide-react';
-//Prop `text` para manejar el texto segun la pantalla
-function RoundedButton({ Text }) {
+import { ArrowRight } from 'lucide-react'
+// Prop text para manejar el texto del boton y onClick para poder manejar estados
+function RoundedButton({ Text, onClick }) {
   return (
-    <button className={` inline-flex items-center justify-center bg-[#E07A5F] hover:bg-[#D17858] text-white font-inter font-bold px-6 lg:px-8 py-4 lg:py-5 rounded-full shadow-lg text-xl lg:text-2xl transition-colors duration-300 gap-x-4`}>
+    <button className={`group inline-flex items-center justify-center bg-[#E07A5F] text-white font-[Alexandria] font-normal px-6 lg:px-8 py-1.5 rounded-full shadow-lg text-xl transition-colors duration-300 gap-x-3 border-4 border-transparent hover:bg-transparent hover:text-[#E07A5F] hover:border-[#E07A5F] focus:outline-none focus:ring-2 focus:ring-[#f46161] active:ring-2 active:ring-[#f46161] cursor-pointer`} onClick={onClick}>
       {Text}
-      <span className="flex-shrink-0 bg-white rounded-full w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center text-2xl text-[#E07A5F]">
-        <ArrowRight size={24} /> {/*Usando el ícono de lucide-react para la flecha de derecha */}
+      <span className={`flex-shrink-0 rounded-full w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center text-xl transition-all duration-300 bg-white text-[#E07A5F] group-hover:bg-transparent group-hover:border-2 group-hover:border-[#E07A5F] group-hover:text-[#E07A5F]`}>
+        <ArrowRight size={24}/>{/*Utiliza la flecha de lucide-react para el icono */}
       </span>
     </button>
   )

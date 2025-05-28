@@ -1,15 +1,13 @@
-import { ArrowRight } from 'lucide-react' // Importa el icono de flecha de lucide-react
-//Prop `text` para manejar el texto según la pantalla
-function RoundedButton({Text}) {
+import { ArrowRight } from 'lucide-react';
+//Prop `text` para manejar el texto segun la pantalla
+function RoundedButton({ Text }) {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-      <button className="bg-[#e68a6a] text-white font-inter font-bold py-4 px-8 rounded-full shadow-lg flex items-center justify-center hover:bg-[#d17858] transition-colors duration-300 text-2xl sm:text-3xl lg:text-4xl w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg">
-        {Text}
-        <span className="ml-4 bg-white text-[#e68a6a] rounded-full w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center text-xl sm:text-2xl flex-shrink-0">
-          <ArrowRight size={24} /> {/* Usando el icono de lucide-react */}
-        </span>
-      </button>
-    </div>
+    <button className={` inline-flex items-center justify-center bg-[#E07A5F] hover:bg-[#D17858] text-white font-inter font-bold px-6 lg:px-8 py-4 lg:py-5 rounded-full shadow-lg text-xl lg:text-2xl transition-colors duration-300 gap-x-4`}>
+      {Text}
+      <span className="flex-shrink-0 bg-white rounded-full w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center text-2xl text-[#E07A5F]">
+        <ArrowRight size={24} /> {/*Usando el ícono de lucide-react para la flecha de derecha */}
+      </span>
+    </button>
   )
 }
 export default RoundedButton

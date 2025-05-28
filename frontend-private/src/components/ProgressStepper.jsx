@@ -1,16 +1,16 @@
 import React from 'react'
-const ProgressStepper = ({  steps = 4,  currentStep = 1,  completedColor = '#E07A5F', incompleteColor = '#8B7B7A', backgroundColor = '#FFFFFF', circleSize = 48, lineWidth = 80, lineHeight = 4}) => {
+const ProgressStepper = ({steps = 4, currentStep = 1, completedColor = '#E07A5F', incompleteColor = '#8B7B7A', backgroundColor = '#FFFFFF', circleSize = 32, borderWidth = 2, lineWidth = 40, lineHeight = 2}) => {
   return (
-    <div className="flex items-center">
-      {Array.from({ length: steps }, (_, index) => {
-        const stepNumber = index + 1
-        const isCompleted = stepNumber <= currentStep
-        const isActive = stepNumber === currentStep
+    <div className="flex items-center justify-center space-x-2">
+      {Array.from({ length: steps }).map((_, idx) => {
+        const step = idx + 1;
+        const completed = step <= currentStep
+        const active    = step === currentStep
         return (
-          <React.Fragment key={stepNumber}>
-            <div className="rounded-full border-4 transition-all duration-300 flex-shrink-0" style={{ width: `${circleSize}px`, height: `${circleSize}px`, backgroundColor: isCompleted ? completedColor : backgroundColor, borderColor: isCompleted ? completedColor : incompleteColor, boxShadow: isActive ? `0 0 0 4px ${completedColor}20` : 'none'}}/>
-            {index < steps - 1 && (
-              <div className="transition-all duration-300 flex-shrink-0" style={{ width: `${lineWidth}px`, height: `${lineHeight}px`, backgroundColor: stepNumber < currentStep ? completedColor : incompleteColor}}/>
+          <React.Fragment key={step}>
+            <div className="rounded-full transition-all duration-300 flex-shrink-0" style={{width: circleSize, height: circleSize, backgroundColor: completed ? completedColor : backgroundColor, border: completed ? 'none' : `${borderWidth}px solid ${incompleteColor}`, boxShadow: active ? `0 0 0 4px ${completedColor}33` : 'none'}}/>
+            {idx < steps - 1 && (
+              <div className="flex-shrink-0 transition-all duration-300" style={{width: lineWidth, height: lineHeight, backgroundColor: step < currentStep ? completedColor : incompleteColor}}/>
             )}
           </React.Fragment>
         )

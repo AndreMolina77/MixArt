@@ -31,12 +31,14 @@ const FirstTimeUser = () => {
       </div>
       {/* Center content */}
       <div className="flex flex-col items-center text-center">
-        {/* Logo grande */}
-        <img src={logo} alt="MixArt Logo" className="w-48 sm:w-72 md:w-96 lg:w-[500px] h-auto mb-6 object-contain" />
-        {/* Texto principal */}
-        <h1 className="text-4xl font-black text-[#7A6E6E] mb-15 leading-tight">{stepData.title}</h1>
+        <div className="mb-6">
+          {/* Logo grande */}
+          <img src={logo} alt="MixArt Logo" className="w-48 sm:w-72 md:w-96 lg:w-[500px] h-auto mb-6 object-contain" />
+          {/* Texto principal */}
+          <h1 className="text-4xl font-black text-[#7A6E6E] mb-15 leading-tight">{stepData.title}</h1>
+        </div>
         {/* Bottom group*/}
-        <div className="transform translate-x-80">
+        <div className="transform translate-x-64 xl:translate-x-72 2xl:translate-x-80">
           {/* Descripcion */}
           <p className="text-2xl text-[#7A6E6E] mb-10 max-w-3xl max-h-1xl leading-relaxed">{stepData.description}</p>
           <div className="flex justify-between w-full px-2 ">

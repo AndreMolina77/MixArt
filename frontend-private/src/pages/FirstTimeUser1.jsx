@@ -8,7 +8,7 @@ import museum1 from '../assets/museum-1.png';
 import dec2 from '../assets/dec2.png';
 
 const FirstTimeUser = () => (
-  <div className="relative w-full h-screen bg-primary overflow-hidden font-[Alexandria]">
+  <div className="relative w-full h-screen bg-[#F4F1DE] overflow-hidden font-[Alexandria]">
     {/* DESKTOP */}
     <div className="hidden lg:flex items-center justify-between h-full px-24 relative">
       {/* Arte izquierda */}
@@ -27,8 +27,10 @@ const FirstTimeUser = () => (
           en línea. Aquí podrás administrar productos, pedidos y clientes de
           manera eficiente.
         </p>
+        {/* Botón */}
         <RoundedButton Text="Comenzar" />
         <div className="mt-8">
+          {/* Progreso */}
           <ProgressStepper currentStep={1} />
         </div>
       </div>
@@ -39,10 +41,10 @@ const FirstTimeUser = () => (
     {/* MOBILE */}
     <div className="flex lg:hidden flex-col items-center justify-center min-h-screen px-6 py-10 space-y-8 text-center">
       <img src={logo} alt="MixArt Logo" className="max-w-[200px]" />
-      <h1 className="text-3xl font-bold text-secondary">
+      <h1 className="text-[32px] font-black text-[#7A6E6E] mb-6 leading-tight">
         👋 ¡Bienvenido a MixArt!
       </h1>
-      <p className="text-lg text-secondary max-w-md">
+      <p className="text-[16px] text-[#7A6E6E] mb-12 max-w-[640px] leading-relaxed">
         Esta es tu herramienta para gestionar fácilmente nuestra tienda de arte
         en línea. Aquí podrás administrar productos, pedidos y clientes de
         manera eficiente.
@@ -51,8 +53,10 @@ const FirstTimeUser = () => (
         <img src={dec1} alt="Décor" className="w-20 h-20 object-contain" />
         <img src={dec2} alt="Décor" className="w-20 h-20 object-contain" />
       </div>
+      {/* Botón */}
       <RoundedButton Text="Comenzar" />
       <div className="mt-6">
+        {/* Progreso */}
         <ProgressStepper currentStep={1} />
       </div>
     </div>

@@ -1,7 +1,7 @@
 import React from 'react'
-const ProgressStepper = ({steps = 4, currentStep = 1, completedColor = '#E07A5F', incompleteColor = '#8B7B7A', backgroundColor = '#FFFFFF', circleSize = 32, borderWidth = 2, lineWidth = 40, lineHeight = 2}) => {
+const ProgressStepper = ({steps = 4, currentStep = 1, completedColor = '#E07A5F', incompleteColor = '#7A6E6E', backgroundColor = '#F4F1DE', circleSize = 32, borderWidth = 3, lineWidth = 40, lineHeight = 2}) => {
   return (
-    <div className="flex items-center justify-center space-x-2">
+    <div className="flex items-center justify-center">
       {Array.from({ length: steps }).map((_, idx) => {
         const step = idx + 1;
         const completed = step <= currentStep

@@ -1,26 +1,26 @@
 import { Bell, User } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 
-const Header = ({ onLogout }) => {
+const Header = () => {
   const { user } = useAuth();
   // Funcion para obtener el nombre a mostrar
   const getDisplayName = () => {
-    if (!user?.email) return 'Usuario';
+    if (!user?.email) return 'Usuario'
     // Si es el email del admin, mostrar "Admin"
     if (user.email === 'thehillsami@gmail.com') {
-      return 'Admin';
+      return 'Admin'
     }
     // Para otros usuarios, extraer el nombre del email (parte antes del @)
-    const emailName = user.email.split('@')[0];
+    const emailName = user.email.split('@')[0]
     // Capitalizar primera letra
-    return emailName.charAt(0).toUpperCase() + emailName.slice(1);
+    return emailName.charAt(0).toUpperCase() + emailName.slice(1)
   }
   // Funcion para obtener el rol/título
   const getUserRole = () => {
-    if (!user?.email) return 'Empleado';
+    if (!user?.email) return 'Empleado'
   
     if (user.email === 'thehillsami@gmail.com') {
-      return 'Administrador';
+      return 'Administrador'
     }
     // En progreso
   }

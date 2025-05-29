@@ -25,7 +25,7 @@ const MainPage = () => {
             </div>
           </div>
         )
-      case 'artworks':
+      case 'artpieces':
         return (
           <div className="p-6 bg-white min-h-screen font-[Alexandria]">
             <div className="max-w-7xl mx-auto">
@@ -61,7 +61,7 @@ const MainPage = () => {
             </div>
           </div>
         )
-      case 'clients':
+      case 'customers':
         return (
           <div className="p-6 bg-white min-h-screen font-[Alexandria]">
             <div className="max-w-7xl mx-auto">
@@ -115,8 +115,7 @@ const MainPage = () => {
             </div>
           </div>
         )
-      default:
-        return <Dashboard />
+      default: return <Dashboard/>
     }
   }
   return (

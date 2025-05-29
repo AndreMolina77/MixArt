@@ -1,4 +1,4 @@
-// Configuracion para Artículos
+// Configuracion para Articulos
 export const articlesConfig = {
   title: "Artículos",
   columns: [
@@ -22,8 +22,8 @@ export const articlesConfig = {
     { name: 'description', type: 'textarea', label: 'Descripción', required: true, placeholder: 'Describe el artículo...', rows: 3 },
     { name: 'image', type: 'file', label: 'Imagen', accept: 'image/*', placeholder: 'Seleccionar imagen' },
     { name: 'stock', type: 'number', label: 'Stock', required: true, placeholder: '0', min: 0 },
-    { name: 'categoryId', type: 'select', label: 'Categoría', required: true, options: [] }, // Se llenará dinámicamente
-    { name: 'supplierId', type: 'select', label: 'Proveedor', required: true, options: [] }, // Se llenará dinámicamente
+    { name: 'categoryId', type: 'select', label: 'Categoría', required: true, options: 'categories' }, // Indicador especial, se llenara dinámicamente
+    { name: 'supplierId', type: 'select', label: 'Proveedor', required: true, options: 'suppliers' }, // Indicador especial, se llenara dinámicamente
     { name: 'discount', type: 'number', label: 'Descuento (%)', placeholder: '0', min: 0, max: 100 }
   ]
 }

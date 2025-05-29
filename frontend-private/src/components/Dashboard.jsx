@@ -3,7 +3,7 @@ import { dashboardStats, recentSales, topArtists, monthlySalesData, monthLabels 
 
 const Dashboard = () => {
   return (
-    <div className="min-h-screen bg-white p-6 font-[Alexandria]">
+    <div className="p-6 bg-white min-h-screen font-[Alexandria]">
       <div className="max-w-7xl mx-auto">
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -17,7 +17,7 @@ const Dashboard = () => {
                       <IconComponent className="w-6 h-6 text-white" />
                     </div>
                     <div className={`flex items-center text-sm font-medium ${stat.trend === 'up' ? 'text-emerald-600' : 'text-red-500'}`}>
-                      <TrendingUp className="w-4 h-4 mr-1" />
+                      <TrendingUp className="w-4 h-4 mr-1"/>
                       {stat.change}
                     </div>
                   </div>
@@ -27,10 +27,10 @@ const Dashboard = () => {
                   </div>
                 </div>
               </div>
-            )
+            );
           })}
         </div>
-        {/* Graficas y tablas */}
+        {/* Fila de graficos y tablas */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           {/* Resumen de ventas */}
           <div className="bg-gradient-to-br from-white to-gray-50 border border-gray-200 rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300">
@@ -54,8 +54,7 @@ const Dashboard = () => {
               ))}
             </div>
           </div>
-
-          {/* Top Artists */}
+          {/* Artistas destacados */}
           <div className="bg-gradient-to-br from-white to-gray-50 border border-gray-200 rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-xl font-semibold text-gray-800">Artistas Destacados</h3>
@@ -85,8 +84,7 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
-
-        {/* Recent Sales Table */}
+        {/* Tabla de ventas recientes */}
         <div className="bg-gradient-to-br from-white to-gray-50 border border-gray-200 rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-xl font-semibold text-gray-800">Ventas Recientes</h3>

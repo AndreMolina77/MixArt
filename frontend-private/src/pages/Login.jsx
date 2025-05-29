@@ -35,7 +35,7 @@ const Login = () => {
         toast.success('¡Inicio de sesión exitoso!')
         // Esperar un poco para que se vea el toast antes de redirigir
         setTimeout(() => {
-          navigate('/dashboard')
+          navigate('/main')
         }, 1000)
       } else {
         toast.error(result.message || 'Error al iniciar sesión')

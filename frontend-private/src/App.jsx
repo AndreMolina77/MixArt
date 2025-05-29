@@ -3,7 +3,7 @@ import { Toaster } from 'react-hot-toast'
 import { AuthProvider } from './context/AuthContext'
 import FirstTimeUser from './pages/FirstTimeUser'
 import Login from './pages/Login'
-import Dashboard from './pages/Dashboard'
+import MainPage from './pages/MainPage'
 
 function App() {
   return (
@@ -35,7 +35,7 @@ function App() {
         <Routes>
           <Route path="/" element={<FirstTimeUser />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/main" element={<MainPage />} />
         </Routes>
       </div>
     </AuthProvider>

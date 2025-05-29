@@ -1,16 +1,22 @@
-import { useState } from 'react';
-import { Search, BarChart3, Palette, FileText, Users, Grid3X3, UserCheck, ShoppingCart, Star, TrendingUp, Truck, Bookmark, Settings, Power, ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { useState } from 'react'
+import { Settings, Power, ChevronLeft, ChevronRight, X } from 'lucide-react'
 import menuItems from '../data/MenuData.js'
 
-const Sidebar = () => {
+const Sidebar = ({ currentView, setCurrentView, onLogout }) => {
   const [isCollapsed, setIsCollapsed] = useState(false)
+
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed)
   }
+
+  const handleMenuClick = (itemId) => {
+    setCurrentView(itemId)
+  }
+
   return (
     <div className={`bg-[#E07A5F] h-screen transition-all duration-300 ease-in-out ${
       isCollapsed ? 'w-16' : 'w-64'
-    } flex flex-col`}>
+    } flex flex-col relative`}>
       {/* Header */}
       <div className="bg-[#A9A9A9] h-16 flex items-center justify-between px-4">
         {!isCollapsed && (
@@ -18,7 +24,7 @@ const Sidebar = () => {
             <div className="w-8 h-8 bg-black rounded flex items-center justify-center">
               <span className="text-white font-bold text-sm">M</span>
             </div>
-            <span className="text-black font-alexandria font-bold text-lg">MixArt</span>
+            <span className="text-black font-[Alexandria] font-bold text-lg">MixArt</span>
           </div>
         )}
         {isCollapsed && (
@@ -26,21 +32,32 @@ const Sidebar = () => {
             <span className="text-white font-bold text-sm">M</span>
           </div>
         )}
-        <button onClick={toggleSidebar} className="text-black hover:bg-gray-400 rounded p-1 transition-colors duration-200">
+        <button 
+          onClick={toggleSidebar} 
+          className="text-black hover:bg-gray-400 rounded p-1 transition-colors duration-200"
+        >
           <X size={20} />
         </button>
       </div>
+
       {/* Menu Items */}
       <div className="flex-1 py-4">
         {menuItems.map((item) => {
           const IconComponent = item.icon;
+          const isActive = currentView === item.id;
           return (
-            <div key={item.id} className={`flex items-center px-4 py-3 mx-2 rounded cursor-pointer transition-colors duration-200 ${
-                item.active ? 'bg-black bg-opacity-20' : 'hover:bg-black hover:bg-opacity-10'
-              }`}>
+            <div 
+              key={item.id} 
+              onClick={() => handleMenuClick(item.id)}
+              className={`flex items-center px-4 py-3 mx-2 rounded cursor-pointer transition-colors duration-200 ${
+                isActive 
+                  ? 'bg-black bg-opacity-20' 
+                  : 'hover:bg-black hover:bg-opacity-10'
+              }`}
+            >
               <IconComponent size={28} className="text-black flex-shrink-0" />
               {!isCollapsed && (
-                <span className="ml-3 text-black font-alexandria text-base">
+                <span className="ml-3 text-black font-[Alexandria] text-base">
                   {item.label}
                 </span>
               )}
@@ -48,33 +65,43 @@ const Sidebar = () => {
           )
         })}
       </div>
+
       {/* Separador */}
       <div className="border-t border-black border-opacity-20 mx-4"></div>
-      {/* Configuracion */}
+
+      {/* Configuración */}
       <div className="py-4">
         <div className="flex items-center px-4 py-3 mx-2 rounded cursor-pointer hover:bg-black hover:bg-opacity-10 transition-colors duration-200">
           <Settings size={28} className="text-black flex-shrink-0" />
           {!isCollapsed && (
-            <span className="ml-3 text-black font-alexandria text-base">
+            <span className="ml-3 text-black font-[Alexandria] text-base">
               Configuración
             </span>
           )}
         </div>
       </div>
+
       {/* Logout */}
       <div className="pb-4">
-        <div className="flex items-center px-4 py-3 mx-2 rounded cursor-pointer hover:bg-black hover:bg-opacity-10 transition-colors duration-200">
+        <div 
+          onClick={onLogout}
+          className="flex items-center px-4 py-3 mx-2 rounded cursor-pointer hover:bg-black hover:bg-opacity-10 transition-colors duration-200"
+        >
           <Power size={28} className="text-black flex-shrink-0" />
           {!isCollapsed && (
-            <span className="ml-3 text-black font-alexandria text-base">
+            <span className="ml-3 text-black font-[Alexandria] text-base">
               Cerrar sesión
             </span>
           )}
         </div>
       </div>
-      {/* Boton de alternancia de colapso */}
+
+      {/* Botón de alternancia de colapso */}
       <div className="absolute top-1/2 -right-3 transform -translate-y-1/2">
-        <button onClick={toggleSidebar} className="bg-[#E07A5F] border-2 border-black rounded-full w-6 h-6 flex items-center justify-center hover:bg-opacity-80 transition-colors duration-200">
+        <button 
+          onClick={toggleSidebar} 
+          className="bg-[#E07A5F] border-2 border-black rounded-full w-6 h-6 flex items-center justify-center hover:bg-opacity-80 transition-colors duration-200"
+        >
           {isCollapsed ? (
             <ChevronRight size={14} className="text-black" />
           ) : (
@@ -85,4 +112,5 @@ const Sidebar = () => {
     </div>
   )
 }
+
 export default Sidebar

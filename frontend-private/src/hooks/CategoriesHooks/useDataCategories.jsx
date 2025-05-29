@@ -1,124 +1,165 @@
 import { useEffect, useState } from "react"
 import { toast } from "react-hot-toast"
+
 const useDataCategories = () => {
-const [activeTab, setActiveTab] = useState("list")
+  const [activeTab, setActiveTab] = useState("list")
   const API = "http://localhost:4000/api/categories"
   const [id, setId] = useState("")
-  const [nameCategory, setNameCategory] = useState("")
+  const [names, setNames] = useState("") // Corregido: debe ser 'names' según el modelo
   const [description, setDescription] = useState("")
   const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(true)
 
   const fetchCategories = async () => {
-    const response = await fetch(API)
-    if (!response.ok) {
-      throw new Error("Hubo un error al obtener las categorías")
+    try {
+      const response = await fetch(API, {
+        credentials: "include"
+      })
+      if (!response.ok) {
+        throw new Error("Hubo un error al obtener las categorías")
+      }
+      const data = await response.json()
+      setCategories(data)
+      setLoading(false)
+    } catch (error) {
+      console.error("Error al obtener categorías:", error)
+      toast.error("Error al cargar categorías")
+      setLoading(false)
     }
-    const data = await response.json()
-    setCategories(data)
-    setLoading(false)
   }
+
   useEffect(() => {
     fetchCategories()
   }, [])
 
   const saveCategory = async (e) => {
     e.preventDefault()
-    const newCategory = {
-      name: nameCategory,
-      description,
+    
+    if (!names || !description) {
+      toast.error("Todos los campos son requeridos")
+      return
     }
 
-    const response = await fetch(API, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(newCategory),
-    })
+    try {
+      const newCategory = {
+        names, // Corregido: debe ser 'names' según el modelo
+        description
+      }
 
-    if (!response.ok) {
-      throw new Error("Hubo un error al registrar la categoría")
+      const response = await fetch(API, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        credentials: "include",
+        body: JSON.stringify(newCategory)
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.message || "Hubo un error al registrar la categoría")
+      }
+
+      toast.success('Categoría registrada exitosamente')
+      fetchCategories()
+      clearForm()
+      setActiveTab("list")
+    } catch (error) {
+      console.error("Error al guardar categoría:", error)
+      toast.error(error.message || "Error al registrar categoría")
     }
-    const data = await response.json()
-    toast.success('Categoría registrada')
-    setCategories(data)
-    fetchCategories()
-    setNameCategory("")
-    setDescription("")
   }
 
   const deleteCategory = async (id) => {
-    const response = await fetch(`${API}/${id}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    try {
+      const response = await fetch(`${API}/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        credentials: "include"
+      })
 
-    if (!response.ok) {
-      throw new Error("Hubo un error al eliminar la categoría");
+      if (!response.ok) {
+        throw new Error("Hubo un error al eliminar la categoría")
+      }
+
+      toast.success('Categoría eliminada exitosamente')
+      fetchCategories()
+    } catch (error) {
+      console.error("Error al eliminar categoría:", error)
+      toast.error("Error al eliminar categoría")
     }
+  }
 
-      toast.success('Categoria Eliminada');
-    fetchCategories();
-  };
-
-  const updateCategories = async (dataCategory) => {
-    setId(dataCategory._id);
-    setNameCategory(dataCategory.name);
-    setDescription(dataCategory.description);
-    setActiveTab("form");
-  };
+  const updateCategory = async (dataCategory) => {
+    setId(dataCategory._id)
+    setNames(dataCategory.names) // Corregido: debe ser 'names' según el modelo
+    setDescription(dataCategory.description)
+    setActiveTab("form")
+  }
 
   const handleEdit = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
+
+    if (!names || !description) {
+      toast.error("Todos los campos son requeridos")
+      return
+    }
 
     try {
       const editCategory = {
-        name: nameCategory,
-        description,
-      };
+        names, // Corregido: debe ser 'names' según el modelo
+        description
+      }
+
       const response = await fetch(`${API}/${id}`, {
         method: "PUT",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/json"
         },
-        body: JSON.stringify(editCategory),
-      });
+        credentials: "include",
+        body: JSON.stringify(editCategory)
+      })
 
       if (!response.ok) {
-        throw new Error("Error al actualizar la categoría");
+        const errorData = await response.json()
+        throw new Error(errorData.message || "Error al actualizar la categoría")
       }
 
-      const data = await response.json();
-      console.log("data desde handleEdit en hook custom");
-      console.log(data);
-       toast.success('categoría actualizada');
-      setId("");
-      setDescription("");
-      setNameCategory("");
-      setActiveTab("list");
-      fetchCategories();
+      toast.success('Categoría actualizada exitosamente')
+      clearForm()
+      setActiveTab("list")
+      fetchCategories()
     } catch (error) {
-      console.error("Error al editar la categoría:", error);
+      console.error("Error al editar categoría:", error)
+      toast.error(error.message || "Error al actualizar categoría")
     }
-  };
+  }
+
+  const clearForm = () => {
+    setId("")
+    setNames("")
+    setDescription("")
+  }
 
   return {
     activeTab,
     setActiveTab,
     id,
-    nameCategory,
-    setNameCategory,
+    names,
+    setNames,
     description,
     setDescription,
     categories,
     loading,
     saveCategory,
     deleteCategory,
-    updateCategories,
+    updateCategory,
     handleEdit,
+    clearForm,
+    fetchCategories
   }
 }
+
 export default useDataCategories

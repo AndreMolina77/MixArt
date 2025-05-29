@@ -1,10 +1,27 @@
 const articlesController = {};
 
-import articlesModel from "../models/Articles.js";
+import articlesModel from "../models/Articles.js"
+import { v2 as cloudinary } from 'cloudinary'
+import { config } from "../utils/config.js"
+
+cloudinary.config({
+    cloud_name: config.CLOUDINARY.CLOUD_NAME,
+    api_key: config.CLOUDINARY.API_KEY,
+    api_secret: config.CLOUDINARY.API_SECRET
+})
 //Create (Post)
 articlesController.postArticles = async (req, res) => {
-    const { articleName, price, description, image, stock, categoryId, supplierId, discount } = req.body;
-    const newArticle = new articlesModel({ articleName, price, description, image, stock,  categoryId, supplierId, discount})
+    const { articleName, price, description, stock, categoryId, supplierId, discount } = req.body;
+    let imageURL = ""
+
+    if (req.file) {
+        const result = await cloudinary.uploader.upload(req.file.path, {
+            folder: "public",
+            allowed_formats: ["jpg", "jpeg", "png", "gif"],
+        })
+        imageURL = result.secure_url
+    }
+    const newArticle = new articlesModel({ articleName, price, description, image: imageURL, stock: stock || 0,  categoryId, supplierId, discount: discount || 0 })
 
     await newArticle.save();
     res.status(201).json({ message: "Artículo creado con éxito"});
@@ -16,8 +33,17 @@ articlesController.getArticles = async (req, res) => {
 };
 //Update (Put)
 articlesController.putArticles = async (req, res) => {
-    const { articleName, price, description, image, stock, categoryId, supplierId, discount } = req.body;
-    const updatedArticle = new articlesModel({ articleName, price, description, image, stock: stock || 0,  categoryId, supplierId, discount: discount || 0 }, {new: true})
+    const { articleName, price, description, stock, categoryId, supplierId, discount } = req.body
+    let imageURL = ""
+
+    if (req.file) {
+        const result = await cloudinary.uploader.upload(req.file.path, {
+            folder: "public",
+            allowed_formats: ["jpg", "jpeg", "png", "gif"],
+        })
+        imageURL = result.secure_url
+    }
+    const updatedArticle = new articlesModel({ articleName, price, description, image: imageURL, stock: stock || 0,  categoryId, supplierId, discount: discount || 0 }, {new: true})
 
     if (!updatedArticle) {
         return res.status(404).json({ message: "Artículo no encontrado" });

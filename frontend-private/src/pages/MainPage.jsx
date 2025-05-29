@@ -1,8 +1,11 @@
 import { useState } from 'react'
 import { useAuth } from '../hooks/useAuth'
-import Sidebar from '../components/Sidebar'
+import Sidebar from '../components/Dashboard/Sidebar'
 import Header from '../components/Dashboard/Header'
-import Dashboard from '../components/Dashboard'
+import Dashboard from '../components/Dashboard/Dashboard'
+import TableContainer from '../components/Table/TableContainer'
+// Importar configuraciones de tablas
+import { articlesConfig, categoriesConfig, suppliersConfig, customersConfig, employeesConfig } from '../data/TableConfigs.js'
 
 const MainPage = () => {
   const { user, logout } = useAuth()
@@ -10,6 +13,25 @@ const MainPage = () => {
 
   const handleLogout = async () => {
     await logout()
+  }
+  // Datos de ejemplo vacios para mostrar el estado sin datos
+  const emptyData = []
+  // Handlers temporales para las acciones CRUD (por ahora solo console.log)
+  const handleAdd = async (data) => {
+    console.log('Agregar: ', data)
+    // Aquí irá la logica para agregar al backend
+  }
+  const handleEdit = async (id, data) => {
+    console.log('Editar: ', id, data)
+    // Aquí irá la logica para editar en el backend
+  }
+  const handleDelete = async (id) => {
+    console.log('Eliminar:', id)
+    // Aquí irá la logica para eliminar del backend
+  }
+  const handleExport = (format, data) => {
+    console.log(`Exportar ${data.length} elementos en formato ${format}`)
+    // Aquí ira la logica para exportar
   }
   // Funcion para renderizar el contenido basado en la vista actual
   const renderContent = () => {
@@ -36,37 +58,33 @@ const MainPage = () => {
         )
       case 'articles':
         return (
-          <div className="p-6 bg-white min-h-screen font-[Alexandria]">
+          <div className="p-6 bg-white min-h-screen">
             <div className="max-w-7xl mx-auto">
-              <h1 className="text-3xl font-bold text-gray-800 mb-4">Artículos</h1>
-              <p className="text-gray-600">Gestión de artículos en desarrollo...</p>
+              <TableContainer config={articlesConfig} data={emptyData} onAdd={handleAdd} onEdit={handleEdit} onDelete={handleDelete} onExport={handleExport} isLoading={false}/>
             </div>
           </div>
         )
       case 'artists':
         return (
-          <div className="p-6 bg-white min-h-screen font-[Alexandria]">
+          <div className="p-6 bg-white min-h-screen">
             <div className="max-w-7xl mx-auto">
-              <h1 className="text-3xl font-bold text-gray-800 mb-4">Artistas</h1>
-              <p className="text-gray-600">Gestión de artistas en desarrollo...</p>
+              <TableContainer config={employeesConfig} data={emptyData} onAdd={handleAdd} onEdit={handleEdit} onDelete={handleDelete} onExport={handleExport} isLoading={false}/>
             </div>
           </div>
         )
       case 'categories':
         return (
-          <div className="p-6 bg-white min-h-screen font-[Alexandria]">
+          <div className="p-6 bg-white min-h-screen">
             <div className="max-w-7xl mx-auto">
-              <h1 className="text-3xl font-bold text-gray-800 mb-4">Categorías</h1>
-              <p className="text-gray-600">Gestión de categorías en desarrollo...</p>
+              <TableContainer config={categoriesConfig} data={emptyData} onAdd={handleAdd} onEdit={handleEdit} onDelete={handleDelete} onExport={handleExport} isLoading={false}/>
             </div>
           </div>
         )
-      case 'customers':
+      case 'clients':
         return (
-          <div className="p-6 bg-white min-h-screen font-[Alexandria]">
+          <div className="p-6 bg-white min-h-screen">
             <div className="max-w-7xl mx-auto">
-              <h1 className="text-3xl font-bold text-gray-800 mb-4">Clientes</h1>
-              <p className="text-gray-600">Gestión de clientes en desarrollo...</p>
+              <TableContainer config={customersConfig} data={emptyData} onAdd={handleAdd} onEdit={handleEdit} onDelete={handleDelete} onExport={handleExport} isLoading={false}/>
             </div>
           </div>
         )
@@ -99,10 +117,9 @@ const MainPage = () => {
         )
       case 'suppliers':
         return (
-          <div className="p-6 bg-white min-h-screen font-[Alexandria]">
+          <div className="p-6 bg-white min-h-screen">
             <div className="max-w-7xl mx-auto">
-              <h1 className="text-3xl font-bold text-gray-800 mb-4">Proveedores</h1>
-              <p className="text-gray-600">Gestión de proveedores en desarrollo...</p>
+              <TableContainer config={suppliersConfig} data={emptyData} onAdd={handleAdd} onEdit={handleEdit} onDelete={handleDelete} onExport={handleExport} isLoading={false}/>
             </div>
           </div>
         )
@@ -116,7 +133,7 @@ const MainPage = () => {
           </div>
         )
       default: 
-      return <Dashboard/>
+        return <Dashboard />
     }
   }
   return (
@@ -127,7 +144,7 @@ const MainPage = () => {
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
         <Header onLogout={handleLogout} />
-        {/* Contenido dinámico */}
+        {/* Contenido dinamico */}
         <div className="flex-1 overflow-auto">
           {renderContent()}
         </div>

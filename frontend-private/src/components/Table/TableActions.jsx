@@ -61,7 +61,7 @@ const TableActions = ({
           )}
           {/* Boton de añadir */}
           {actions.canAdd && onAdd && (
-            <ActionButton variant="primary" icon={Plus} onClick={onAdd} disabled={isLoading}> {/* Usa el componente Plus aquí */}
+            <ActionButton variant="primary" icon={Plus} onClick={onAdd} disabled={isLoading}>
               {addButtonText}
             </ActionButton>
           )}

@@ -131,7 +131,7 @@ const TableContainer = ({config, data = [], onAdd, onEdit, onDelete, onExport, i
   return (
     <div className={`font-[Alexandria] ${className}`}>
       {/* Header con titulo y acciones */}
-      <TableHeader title={config.title} subtitle={`${filteredAndSortedData.length} ${filteredAndSortedData.length === 1 ? 'elemento' : 'elementos'}`} searchValue={searchValue} onSearch={handleSearch} actions={config.actions} onAdd={config.actions?.canAdd ? handleAdd : undefined} onExport={config.actions?.canExport ? handleExport : undefined} onRefresh={handleRefresh} addButtonText={`Añadir ${config.title?.slice(0, -1) || 'Elemento'}`} addButtonIcon="add" isLoading={isLoading}/>
+      <TableHeader title={config.title} subtitle={`${filteredAndSortedData.length} ${filteredAndSortedData.length === 1 ? 'elemento' : 'elementos'}`} searchValue={searchValue} onSearch={handleSearch} actions={config.actions} onAdd={config.actions?.canAdd ? handleAdd : undefined} onExport={config.actions?.canExport ? handleExport : undefined} onRefresh={handleRefresh} addButtonText={`Añadir ${config.title?.slice(0) || 'Elemento'}`} addButtonIcon="add" isLoading={isLoading}/>
       {/* Tabla principal */}
       <DataTable data={paginatedData} columns={config.columns} isLoading={isLoading}
         pagination={{
@@ -141,11 +141,11 @@ const TableContainer = ({config, data = [], onAdd, onEdit, onDelete, onExport, i
         }} onPageChange={handlePageChange} onPageSizeChange={handlePageSizeChange} onSort={handleSort} onEdit={config.actions?.canEdit ? handleEdit : undefined} onDelete={config.actions?.canDelete ? handleDelete : undefined} onView={handleView} sortBy={sortBy} sortOrder={sortOrder}/>
       {/* Modal de Agregar */}
       {showAddModal && (
-        <FormModal isOpen={showAddModal} onClose={() => setShowAddModal(false)} onSubmit={handleAddSubmit} title={`Agregar ${config.title?.slice(0, -1) || 'Elemento'}`} fields={config.formFields} isLoading={isSubmitting}/>
+        <FormModal isOpen={showAddModal} onClose={() => setShowAddModal(false)} onSubmit={handleAddSubmit} title={`Agregar ${config.title?.slice(0) || 'Elemento'}`} fields={config.formFields} isLoading={isSubmitting}/>
       )}
       {/* Modal de Editar */}
       {showEditModal && selectedItem && (
-        <FormModal isOpen={showEditModal} onClose={() => setShowEditModal(false)} onSubmit={handleEditSubmit} title={`Editar ${config.title?.slice(0, -1) || 'Elemento'}`} fields={config.formFields} initialData={selectedItem} isLoading={isSubmitting}/>
+        <FormModal isOpen={showEditModal} onClose={() => setShowEditModal(false)} onSubmit={handleEditSubmit} title={`Editar ${config.title?.slice(0) || 'Elemento'}`} fields={config.formFields} initialData={selectedItem} isLoading={isSubmitting}/>
       )}
       {/* Modal de Confirmar Eliminacion */}
       {showDeleteModal && selectedItem && (

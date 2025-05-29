@@ -7,7 +7,6 @@ const reviewsSchema = new Schema(
             require: true,
             min: 8,
         },
-      
         comment: {
             type: String,
             require: true,
@@ -15,12 +14,12 @@ const reviewsSchema = new Schema(
         
         itemType: {
             type: String,
-            required: true,
+            require: true,
             enum: ['Article', 'ArtPiece']
         },
         itemId: {
             type: Schema.Types.ObjectId,
-            required: true,
+            require: true,
             refPath: 'contentType'
         },
 

@@ -4,9 +4,9 @@ import customersModel from '../models/Customers.js';
 
 ////POST
 customersController.postCustomers = async (req, res) => {
-    const {name, lastName, username, email, password, phoneNumber, profilePic, issNumber, isVerified} = req.body;
+    const {name, lastName, username, email, password, phoneNumber, issNumber, isVerified} = req.body;
 
-    const newCustomers = new customersModel({name, lastName, username, email, password, phoneNumber, profilePic, issNumber, isVerified})
+    const newCustomers = new customersModel({name, lastName, username, email, password, phoneNumber, issNumber, isVerified})
 
     await newCustomers.save()
     res.json({message: "Cliente guardaado"})
@@ -20,9 +20,9 @@ customersController.getCustomers = async (req, res) => {
 
 //PUT
 customersController.putCustomers = async (req, res) => {
-    const {name, lastName, username, email, password, phoneNumber, profilePic, issNumber, isVerified} = req.body;
+    const {name, lastName, username, email, password, phoneNumber, issNumber, isVerified} = req.body;
     const updateCustomer = await customersModel.findByIdAndUpdate(req.params.id,
-    {name, lastName, username, email, password, phoneNumber, profilePic, issNumber, isVerified},
+    {name, lastName, username, email, password, phoneNumber, issNumber, isVerified},
     {new:true}
     )
 

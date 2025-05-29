@@ -2,8 +2,8 @@ const employeesController = {};
 import employeesModel from "../models/Employees.js";
 //Create (Post)
 employeesController.postEmployee = async (req, res) => {
-    const{name, lastName, username, email, password, phoneNumber, userType, profilePic, issNumber, isVerified} = req.body;
-    const newEmployee = new employeesModel({name, lastName, username, email, password, phoneNumber, userType, profilePic, issNumber, isVerified })
+    const{name, lastName, username, email, password, phoneNumber, userType, issNumber, isVerified} = req.body;
+    const newEmployee = new employeesModel({name, lastName, username, email, password, phoneNumber, userType, issNumber, isVerified })
     
     await newEmployee.save();
     res.status(201).json({ message: "Empleado creado con éxito"});
@@ -15,8 +15,8 @@ employeesController.getEmployees = async (req, res) => {
 };
 //Update (Put)
 employeesController.putEmployee = async (req, res) => {
-    const{name, lastName, username, email, password, phoneNumber, userType, profilePic, issNumber, isVerified} = req.body;
-    const updateEmployee = new employeesModel({name, lastName, username, email, password, phoneNumber, userType, profilePic, issNumber, isVerified}, {new: true})
+    const{name, lastName, username, email, password, phoneNumber, userType, issNumber, isVerified} = req.body;
+    const updateEmployee = new employeesModel({name, lastName, username, email, password, phoneNumber, userType, issNumber, isVerified}, {new: true})
 
     if(!updateEmployee){
         return res.status(404).json({ message: "Empleado no encontrado" });

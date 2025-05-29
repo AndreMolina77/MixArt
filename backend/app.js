@@ -10,7 +10,6 @@ import ordersRoutes from "./src/routes/orders.js"
 import reviewsRoutes from "./src/routes/reviews.js"
 import salesRoutes from "./src/routes/sales.js"
 import suppliersRoutes from "./src/routes/suppliers.js"
-import wishlistRoutes from "./src/routes/wishlist.js"
 import loginRoutes from "./src/routes/login.js"
 import logoutRoutes from "./src/routes/logout.js"
 import signupRoutes from "./src/routes/signup.js"
@@ -32,7 +31,6 @@ app.use("/api/orders", ordersRoutes)
 app.use("/api/reviews", reviewsRoutes)
 app.use("/api/sales", salesRoutes)
 app.use("/api/suppliers", suppliersRoutes)
-app.use("/api/wishlist", wishlistRoutes)
 //No login requerido
 app.use("/api/login", loginRoutes)
 app.use("/api/logout", logoutRoutes)

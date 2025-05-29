@@ -1,4 +1,4 @@
-import { Search, BarChart3, Palette, FileText, Users, Grid3X3, UserCheck, ShoppingCart, Star, TrendingUp, Truck, Bookmark } from 'lucide-react'
+import { Search, BarChart3, Palette, FileText, Users, Grid3X3, UserCheck, ShoppingCart, Star, TrendingUp, Truck } from 'lucide-react'
 
 const menuItems = [
   { icon: Search, label: 'Buscar', id: 'search' },
@@ -11,7 +11,6 @@ const menuItems = [
   { icon: ShoppingCart, label: 'Pedidos', id: 'orders' },
   { icon: Star, label: 'Reseñas', id: 'reviews' },
   { icon: TrendingUp, label: 'Ventas', id: 'sales' },
-  { icon: Truck, label: 'Proveedores', id: 'suppliers' },
-  { icon: Bookmark, label: 'Lista de deseos', id: 'wishlist' }
+  { icon: Truck, label: 'Proveedores', id: 'suppliers' }
 ]
 export default menuItems

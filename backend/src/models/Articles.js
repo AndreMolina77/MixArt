@@ -17,7 +17,7 @@ const articlesSchema = new Schema(
       articleName: { type: String, require: true, match: [/^[^\s].+[^\s]$/, "El nombre del producto no puede ser solo espacios",], },
       price: { type: Number, require: true, min: 0,},
       description: { type: String, require: true, minlength: [5, "La descripción debe tener al menos 10 caracteres"],},
-      image: {type: String, require: false,},
+      image: {type: String, require: true,},
       stock: { type: Number, require: true, validate: { validator: Number.isInteger, message: "El stock debe ser un número entero" }, min: 1, },
       categoryId: { type: Schema.Types.ObjectId, ref: "Category", require: true, },
       supplierId: { type: Schema.Types.ObjectId, ref: "Supplier", require: true, },

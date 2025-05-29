@@ -5,7 +5,7 @@ import Header from '../components/Dashboard/Header'
 import Dashboard from '../components/Dashboard/Dashboard'
 import TableContainer from '../components/Table/TableContainer'
 // Importar todos los hooks
-import useDataSuppliers from '../hooks/'
+import useDataSuppliers from '../hooks/SuppliersHooks/useDataSuppliers'
 import useDataEmployees from '../hooks/EmployeesHooks/useDataEmployees'
 import useDataCustomers from '../hooks/CustomersHooks/useDataCustomers'
 import useDataArticles from '../hooks/ArticlesHooks/useDataArticles'

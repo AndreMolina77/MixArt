@@ -219,5 +219,4 @@ const useDataCustomers = () => {
     fetchCustomers
   }
 }
-
 export default useDataCustomers

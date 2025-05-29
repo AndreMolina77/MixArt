@@ -29,16 +29,16 @@
 import { Schema, model } from "mongoose";
 
 const orderItemSchema = new Schema({
-    itemType: { type: String, required: true, enum: ['Article', 'ArtPiece'] },
-    itemId: { type: Schema.Types.ObjectId, required: true, refPath: 'itemType'},
-    quantity: { type: Number, required: true, min: 1 },
-    subtotal: { type: Number, required: true, min: 0 }        
+    itemType: { type: String, require: true, enum: ['Article', 'ArtPiece'] },
+    itemId: { type: Schema.Types.ObjectId, require: true, refPath: 'itemType'},
+    quantity: { type: Number, require: true, min: 1 },
+    subtotal: { type: Number, require: true, min: 0 }        
 });
 const ordersSchema = new Schema({
-    customerId: { type: Schema.Types.ObjectId, required: true,ref: "Customer" },
+    customerId: { type: Schema.Types.ObjectId, require: true,ref: "Customer" },
     items: [orderItemSchema],
-    total: { type: Number, required: true, min: 0 },
-    status: { type: String, required: true, enum: ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'], default: 'Pending'}
+    total: { type: Number, require: true, min: 0 },
+    status: { type: String, require: true, enum: ['Pendiente', 'En proceso', 'Entregado', 'Enviado', 'Cancelado'], default: 'Pendiente'}
     },
     {  
         timestamps: true,

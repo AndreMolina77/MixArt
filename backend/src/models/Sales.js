@@ -17,7 +17,7 @@ import {Schema, model} from "mongoose";
     status: {
         type: String,
         require: true,
-        enum: ['Sold', 'Pending sale'], default: 'Pending sale',
+        enum: ['Sold', 'Pending sale'], default: 'Pending sale'
     }
- });
-export default model ("Sale", salesSchema, "Sale");
+ })
+export default model ("Sale", salesSchema, "Sale")

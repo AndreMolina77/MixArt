@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react"
 import { toast } from "react-hot-toast"
-//EJEMPLO DE COMO TE TIENEN QUE QUEDAR LOS HOOKS, MI AMOR
 const useDataCategories = () => {
 const [activeTab, setActiveTab] = useState("list")
   const API = "http://localhost:4000/api/categories"

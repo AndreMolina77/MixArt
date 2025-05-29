@@ -8,15 +8,7 @@ const DataTable = ({data = [], columns = [], isLoading = false,
     pageSize: 10,
     total: 0
   },
-  onPageChange, onPageSizeChange,
-  onSort,
-  onEdit,
-  onDelete,
-  onView,
-  sortBy = null,
-  sortOrder = 'asc',
-  className = ""
-}) => {
+  onPageChange, onPageSizeChange, onSort, onEdit, onDelete, onView, sortBy = null, sortOrder = 'asc', className = "" }) => {
   const [sortConfig, setSortConfig] = useState({ key: sortBy, direction: sortOrder })
 
   const handleSort = (columnKey) => {

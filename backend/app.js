@@ -16,7 +16,7 @@ import logoutRoutes from "./src/routes/logout.js"
 import signupRoutes from "./src/routes/signup.js"
 import signupCustomerRoutes from "./src/routes/signupCustomer.js"
 import recoveryPasswordRoutes from "./src/routes/recoveryPassword.js"
-import { validateAuthToken } from "./middlewares/validateAuthToken.js"
+import { validateAuthToken } from "./src/middlewares/validateAuthToken.js"
 
 dotenv.config()
 const app = express()

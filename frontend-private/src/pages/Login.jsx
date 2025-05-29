@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import toast from 'react-hot-toast'
+import { useAuth } from '../hooks/useAuth'
 import Button from '../components/Button.jsx'
 import GoogleButton from '../components/GoogleButton.jsx'
 import TextInput from '../components/Input.jsx'
@@ -8,17 +10,48 @@ import monogramHq from '../assets/monogram-hq.png'
 import logo from '../assets/logo.png'
 
 const Login = () => {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [rememberMe, setRememberMe] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
+  const { Login: authLogin } = useAuth()
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault()
-    // Aquí iría la lógica de autenticación
-    console.log('Login attempt with remember me:', rememberMe)
+    // Validaciones chikitas
+    if (!email || !password) {
+      toast.error('Por favor completa todos los campos')
+      return
+    }
+    if (!email.includes('@')) {
+      toast.error('Por favor ingresa un email válido')
+      return
+    }
+    setIsLoading(true)
+    try {
+      const result = await authLogin(email, password)
+      if (result.success) {
+        toast.success('¡Inicio de sesión exitoso!')
+        // Esperar un poco para que se vea el toast antes de redirigir
+        setTimeout(() => {
+          navigate('/dashboard')
+        }, 1000)
+      } else {
+        toast.error(result.message || 'Error al iniciar sesión')
+      }
+    } catch (error) {
+      toast.error('Error de conexión. Verifica tu internet.')
+      console.error('Login error:', error)
+    } finally {
+      setIsLoading(false)
+    }
   }
   const handleGoogleLogin = () => {
-    // Aquí iría la lógica de Google OAuth
-    console.log('Google login attempt')
+    toast('Función de Google en desarrollo', {
+      icon: '🚧',
+      duration: 3000
+    })
   }
   return (
     <div className="relative w-full h-screen bg-[#F4F1DE] overflow-hidden font-[Alexandria]">
@@ -50,9 +83,9 @@ const Login = () => {
             {/* Formulario */}
             <form onSubmit={handleLogin} className="space-y-6">
               {/* Campo de email */}
-              <TextInput text="Correo electrónico:" />
+              <TextInput text="Correo electrónico:" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="email@example.com" disabled={isLoading} required/>
               {/* Campo de contraseña */}
-              <PasswordInput text="Contraseña:" />
+              <PasswordInput text="Contraseña:" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Tu contraseña" disabled={isLoading} required/>
               {/* Recordarme y olvidaste contraseña */}
               <div className="flex items-center justify-between">
                 <label className="flex items-center">
@@ -101,8 +134,8 @@ const Login = () => {
           </p>
           {/* Formulario movil */}
           <form onSubmit={handleLogin} className="space-y-4">
-            <TextInput text="Correo electrónico:" />
-            <PasswordInput text="Contraseña:" />
+            <TextInput text="Correo electrónico:" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="email@example.com" disabled={isLoading} required/>
+            <PasswordInput text="Contraseña:" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Tu contraseña" disabled={isLoading} required/>
             <div className="flex items-center justify-between text-sm">
               <label className="flex items-center">
                 <input type="checkbox" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} className="w-3 h-3 text-[#E07A5F] bg-[#EBFEF5] border-[#81B29A] rounded"/>

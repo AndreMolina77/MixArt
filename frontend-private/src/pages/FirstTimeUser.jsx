@@ -25,7 +25,7 @@ const FirstTimeUser = () => {
           <img src={stepData.image.museum} alt="Museum frame" className="w-40 sm:w-56 md:w-72 object-contain" />
         </div>
       </div>
-      {/* TOP RIGHT: Orange branch element - STUCK TO RIGHT EDGE */}
+      {/* TOP RIGHT: Orange branch element*/}
       <div className="absolute top-12 right-0">
         <img src={stepData.image.dec2} alt="Decorative branch" className="w-16 sm:w-20 md:w-28 object-contain" />
       </div>
@@ -33,9 +33,9 @@ const FirstTimeUser = () => {
       <div className="flex flex-col items-center text-center">
         <div className="mb-6">
           {/* Logo grande */}
-          <img src={logo} alt="MixArt Logo" className="w-48 sm:w-72 md:w-96 lg:w-[500px] h-auto mb-6 object-contain" />
+          <img src={logo} alt="MixArt Logo" className="w-48 sm:w-72 md:w-96 lg:w-[500px] h-auto mb-6 object-contain mx-auto" />
           {/* Texto principal */}
-          <h1 className="text-4xl font-black text-[#7A6E6E] mb-15 leading-tight">{stepData.title}</h1>
+          <h1 className="text-4xl font-black text-[#7A6E6E] mb-15 leading-tight text-center">{stepData.title}</h1>
         </div>
         {/* Bottom group*/}
         <div className="transform translate-x-64 xl:translate-x-72 2xl:translate-x-80">

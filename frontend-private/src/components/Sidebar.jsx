@@ -1,6 +1,8 @@
 import { useState } from 'react'
-import { Settings, Power, ChevronLeft, ChevronRight, X } from 'lucide-react'
+import { Settings, Power, Menu, X } from 'lucide-react'
 import menuItems from '../data/MenuData.js'
+import BlackLogo from '../assets/mixartnegro.png' 
+import Monogram from '../assets/image.png'
 
 const Sidebar = ({ currentView, setCurrentView, onLogout }) => {
   const [isCollapsed, setIsCollapsed] = useState(false)
@@ -8,56 +10,61 @@ const Sidebar = ({ currentView, setCurrentView, onLogout }) => {
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed)
   }
-
   const handleMenuClick = (itemId) => {
     setCurrentView(itemId)
   }
-
   return (
-    <div className={`bg-[#E07A5F] h-screen transition-all duration-300 ease-in-out ${
-      isCollapsed ? 'w-16' : 'w-64'
-    } flex flex-col relative`}>
-      {/* Header */}
-      <div className="bg-[#A9A9A9] h-16 flex items-center justify-between px-4">
+    <div className={`bg-[#E07A5F] h-screen transition-all duration-300 ease-in-out ${isCollapsed ? 'w-20' : 'w-64'} flex flex-col relative shadow-lg`}>
+      {/* Header con Logo */}
+      <div className="bg-[#A9A9A9] h-16 flex items-center justify-between px-4 border-b border-gray-300">
         {!isCollapsed && (
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-black rounded flex items-center justify-center">
-              <span className="text-white font-bold text-sm">M</span>
+          <div className="flex items-center gap-3">
+            <img src={BlackLogo} alt="MixArt Logo" className="h-8 w-auto object-contain"
+              onError={(e) => {
+                // Fallback si no existe la imagen
+                e.target.style.display = 'none'
+                e.target.nextSibling.style.display = 'flex'
+              }}/>
+            {/* Fallback visual si no hay imagen */}
+            <div className="flex items-center gap-2" style={{display: 'none'}}>
+              <div className="w-8 h-8 bg-black rounded flex items-center justify-center">
+                <span className="text-white font-bold text-sm">M</span>
+              </div>
+              <span className="text-black font-[Alexandria] font-bold text-lg">MixArt</span>
             </div>
-            <span className="text-black font-[Alexandria] font-bold text-lg">MixArt</span>
           </div>
-        )}
+        )} 
         {isCollapsed && (
-          <div className="w-8 h-8 bg-black rounded flex items-center justify-center mx-auto">
-            <span className="text-white font-bold text-sm">M</span>
+          <div className="mx-auto">
+            <img src={Monogram}alt="MixArt Logo" className="w-24 h-24 object-contain"
+                onError={(e) => {
+                // Fallback si no existe la imagen
+                e.target.style.display = 'none'
+                e.target.nextSibling.style.display = 'flex'
+              }}/>
+            {/* Fallback visual si no hay imagen */}
+            <div className="w-12 h-12 bg-black rounded-lg flex items-center justify-center" style={{display: 'none'}}>
+              <span className="text-white font-bold text-lg">M</span>
+            </div>
           </div>
         )}
-        <button 
-          onClick={toggleSidebar} 
-          className="text-black hover:bg-gray-400 rounded p-1 transition-colors duration-200"
-        >
-          <X size={20} />
+        <button  onClick={toggleSidebar} className="text-black hover:bg-gray-300 rounded-lg p-2 transition-colors duration-200">
+          {isCollapsed ? <Menu size={20} /> : <X size={20} />}
         </button>
       </div>
-
-      {/* Menu Items */}
-      <div className="flex-1 py-4">
+      {/* Menu Items con Scroll */}
+      <div className="flex-1 py-4 overflow-y-auto scrollbar-thin scrollbar-thumb-black/20 scrollbar-track-transparent">
         {menuItems.map((item) => {
           const IconComponent = item.icon;
           const isActive = currentView === item.id;
           return (
-            <div 
-              key={item.id} 
-              onClick={() => handleMenuClick(item.id)}
-              className={`flex items-center px-4 py-3 mx-2 rounded cursor-pointer transition-colors duration-200 ${
-                isActive 
-                  ? 'bg-black bg-opacity-20' 
-                  : 'hover:bg-black hover:bg-opacity-10'
-              }`}
-            >
-              <IconComponent size={28} className="text-black flex-shrink-0" />
+            <div key={item.id} onClick={() => handleMenuClick(item.id)} className={`flex items-center px-4 py-3 mx-2 mb-1 rounded-lg cursor-pointer transition-all duration-200 group ${isActive ? 'bg-white/20 shadow-md border-l-4 border-white' : 'hover:bg-white/10 hover:translate-x-1'}`}>
+              <div className={`p-2 rounded-lg transition-colors duration-200 ${isActive ? 'bg-white text-[#E07A5F]' : 'text-white group-hover:bg-white/20'}`}>
+                <IconComponent size={20} className="flex-shrink-0"/>
+              </div>
               {!isCollapsed && (
-                <span className="ml-3 text-black font-[Alexandria] text-base">
+                <span className={`ml-3 font-[Alexandria] text-sm font-medium transition-colors duration-200 ${
+                  isActive ? 'text-white font-semibold' : 'text-white/90'}`}>
                   {item.label}
                 </span>
               )}
@@ -65,52 +72,35 @@ const Sidebar = ({ currentView, setCurrentView, onLogout }) => {
           )
         })}
       </div>
-
       {/* Separador */}
-      <div className="border-t border-black border-opacity-20 mx-4"></div>
-
+      <div className="border-t border-white/60 mx-4"></div>
       {/* Configuración */}
-      <div className="py-4">
-        <div className="flex items-center px-4 py-3 mx-2 rounded cursor-pointer hover:bg-black hover:bg-opacity-10 transition-colors duration-200">
-          <Settings size={28} className="text-black flex-shrink-0" />
+      <div className="py-3">
+        <div className="flex items-center px-4 py-3 mx-2 mb-1 rounded-lg cursor-pointer hover:bg-white/10 hover:translate-x-1 transition-all duration-200 group">
+          <div className="p-2 rounded-lg text-white group-hover:bg-white/20 transition-colors duration-200">
+            <Settings size={20} className="flex-shrink-0" />
+          </div>
           {!isCollapsed && (
-            <span className="ml-3 text-black font-[Alexandria] text-base">
+            <span className="ml-3 text-white/90 font-[Alexandria] text-sm font-medium">
               Configuración
             </span>
           )}
         </div>
       </div>
-
       {/* Logout */}
       <div className="pb-4">
-        <div 
-          onClick={onLogout}
-          className="flex items-center px-4 py-3 mx-2 rounded cursor-pointer hover:bg-black hover:bg-opacity-10 transition-colors duration-200"
-        >
-          <Power size={28} className="text-black flex-shrink-0" />
+        <div onClick={onLogout} className="flex items-center px-4 py-3 mx-2 mb-1 rounded-lg cursor-pointer hover:bg-red-500/20 hover:translate-x-1 transition-all duration-200 group">
+          <div className="p-2 rounded-lg text-white group-hover:bg-red-500/30 transition-colors duration-200">
+            <Power size={20} className="flex-shrink-0" />
+          </div>
           {!isCollapsed && (
-            <span className="ml-3 text-black font-[Alexandria] text-base">
+            <span className="ml-3 text-white/90 font-[Alexandria] text-sm font-medium">
               Cerrar sesión
             </span>
           )}
         </div>
       </div>
-
-      {/* Botón de alternancia de colapso */}
-      <div className="absolute top-1/2 -right-3 transform -translate-y-1/2">
-        <button 
-          onClick={toggleSidebar} 
-          className="bg-[#E07A5F] border-2 border-black rounded-full w-6 h-6 flex items-center justify-center hover:bg-opacity-80 transition-colors duration-200"
-        >
-          {isCollapsed ? (
-            <ChevronRight size={14} className="text-black" />
-          ) : (
-            <ChevronLeft size={14} className="text-black" />
-          )}
-        </button>
-      </div>
     </div>
   )
 }
-
 export default Sidebar

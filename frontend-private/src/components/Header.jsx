@@ -1,9 +1,8 @@
-import React from 'react'
 import { Bell, User } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 
-const Header = () => {
-  const { user } = useAuth()
+const Header = ({ onLogout }) => {
+  const { user } = useAuth();
   // Funcion para obtener el nombre a mostrar
   const getDisplayName = () => {
     if (!user?.email) return 'Usuario';
@@ -12,22 +11,22 @@ const Header = () => {
       return 'Admin';
     }
     // Para otros usuarios, extraer el nombre del email (parte antes del @)
-    const emailName = user.email.split('@')[0]
+    const emailName = user.email.split('@')[0];
     // Capitalizar primera letra
     return emailName.charAt(0).toUpperCase() + emailName.slice(1);
   }
-  // Funcion para obtener el rol
+  // Funcion para obtener el rol/título
   const getUserRole = () => {
-    if (!user?.email) return 'Empleado'
-    
+    if (!user?.email) return 'Empleado';
+  
     if (user.email === 'thehillsami@gmail.com') {
-      return 'Administrador'
+      return 'Administrador';
     }
-    // En progreso 🚧
+    // En progreso
   }
   return (
-    <div className="bg-[#E0DCC6] px-6 py-4 flex items-center justify-between font-[Alexandria] border-b border-[#7A6E6E]/10">
-      {/* Lado izquierdo - Saludo y estadísticas */}
+    <div className="bg-[#E0DCC6] px-6 py-4 flex items-center justify-between font-[Alexandria] border-b border-[#7A6E6E]/10 shadow-sm">
+      {/* Lado izquierdo - Saludo y estadisticas */}
       <div className="flex-1">
         <h1 className="text-xl font-bold text-[#7A6E6E] mb-1">Bienvenido de vuelta, {getDisplayName()}</h1>
         <p className="text-sm text-[#7A6E6E]/70">¡Aquí están las estadísticas del inventario de la tienda en línea!</p>
@@ -36,12 +35,10 @@ const Header = () => {
       <div className="flex items-center space-x-4">
         {/* Notificaciones */}
         <div className="relative">
-          <button className="p-2 rounded-full hover:bg-[#7A6E6E]/10 transition-colors duration-200 relative">
-            <Bell className="w-6 h-6 text-[#7A6E6E]" />
+          <button className="p-3 rounded-full hover:bg-[#7A6E6E]/10 transition-colors duration-200 relative group">
+            <Bell className="w-6 h-6 text-[#7A6E6E] group-hover:text-[#7A6E6E]/80" />
             {/* Badge de notificación */}
-            <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-medium">
-              2
-            </span>
+            <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-medium animate-pulse">2</span>
           </button>
         </div>
         {/* Separador vertical */}
@@ -53,8 +50,8 @@ const Header = () => {
             <div className="text-xs text-[#7A6E6E]/70">{getUserRole()}</div>
           </div>
           {/* Avatar */}
-          <div className="relative">
-            <button className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center hover:shadow-lg transition-all duration-200 transform hover:scale-105">
+          <div className="relative group cursor-pointer">
+            <button className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center hover:shadow-lg transition-all duration-200 transform hover:scale-105 group-hover:from-blue-600 group-hover:to-blue-700">
               <User className="w-5 h-5 text-white" />
             </button>
           </div>

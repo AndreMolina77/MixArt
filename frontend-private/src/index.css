@@ -11,3 +11,26 @@ body {
 input::-ms-reveal {
     display: none;
 }
+/* Scrollbar personalizado */
+.scrollbar-thin {
+    scrollbar-width: thin;
+}
+.scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.3);
+}
+.scrollbar-thumb-black\/20::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+}
+.scrollbar-track-transparent::-webkit-scrollbar-track {
+    background: transparent;
+}

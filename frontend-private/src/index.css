@@ -4,3 +4,10 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+    background-color: #F4F1DE;
+}
+input::-ms-reveal {
+    display: none;
+}

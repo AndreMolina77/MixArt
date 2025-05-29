@@ -60,7 +60,7 @@ const FirstTimeUser = () => {
           <div className="mb-10">
             <RoundedButton Text={currentStep === onboardingSteps.length - 1 ? 'Finalizar' : 'Siguiente'} onClick={() => {
               if (currentStep === onboardingSteps.length - 1) {
-                navigate('/registro')
+                navigate('/login')
               } else {
                 setCurrentStep(currentStep + 1)
               }

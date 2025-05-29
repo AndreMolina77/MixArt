@@ -15,6 +15,30 @@ const TableContainer = ({config, data = [], onAdd, onEdit, onDelete, onExport, i
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [selectedItem, setSelectedItem] = useState(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  // Procesar campos con opciones dinámicas
+  const processedFormFields = useMemo(() => {
+    return config.formFields.map(field => {
+      if (field.options === 'categories' && categoriesData?.categories) {
+        return {
+          ...field,
+          options: categoriesData.categories.map(cat => ({
+            value: cat._id,
+            label: cat.names
+          }))
+        }
+      }
+      if (field.options === 'suppliers' && suppliersData?.suppliers) {
+        return {
+          ...field,
+          options: suppliersData.suppliers.map(sup => ({
+            value: sup._id,
+            label: sup.supplierName
+          }))
+        }
+      }
+      return field
+    })
+  }, [config.formFields, categoriesData, suppliersData])
   // Filtrar y ordenar datos
   const filteredAndSortedData = useMemo(() => {
     let filtered = data
@@ -141,11 +165,11 @@ const TableContainer = ({config, data = [], onAdd, onEdit, onDelete, onExport, i
         }} onPageChange={handlePageChange} onPageSizeChange={handlePageSizeChange} onSort={handleSort} onEdit={config.actions?.canEdit ? handleEdit : undefined} onDelete={config.actions?.canDelete ? handleDelete : undefined} onView={handleView} sortBy={sortBy} sortOrder={sortOrder}/>
       {/* Modal de Agregar */}
       {showAddModal && (
-        <FormModal isOpen={showAddModal} onClose={() => setShowAddModal(false)} onSubmit={handleAddSubmit} title={`Agregar ${config.title?.slice(0) || 'Elemento'}`} fields={config.formFields} isLoading={isSubmitting}/>
+        <FormModal isOpen={showAddModal} onClose={() => setShowAddModal(false)} onSubmit={handleAddSubmit} title={`Agregar ${config.title?.slice(0) || 'Elemento'}`} fields={processedFormFields} isLoading={isSubmitting}/>
       )}
       {/* Modal de Editar */}
       {showEditModal && selectedItem && (
-        <FormModal isOpen={showEditModal} onClose={() => setShowEditModal(false)} onSubmit={handleEditSubmit} title={`Editar ${config.title?.slice(0) || 'Elemento'}`} fields={config.formFields} initialData={selectedItem} isLoading={isSubmitting}/>
+        <FormModal isOpen={showEditModal} onClose={() => setShowEditModal(false)} onSubmit={handleEditSubmit} title={`Editar ${config.title?.slice(0) || 'Elemento'}`} fields={processedFormFields} initialData={selectedItem} isLoading={isSubmitting}/>
       )}
       {/* Modal de Confirmar Eliminacion */}
       {showDeleteModal && selectedItem && (

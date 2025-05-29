@@ -16,28 +16,161 @@ import { articlesConfig, categoriesConfig, suppliersConfig, customersConfig, emp
 const MainPage = () => {
   const { user, logout } = useAuth()
   const [currentView, setCurrentView] = useState('dashboard')
+  // Inicializar todos los hooks
+  const suppliersData = useDataSuppliers()
+  const employeesData = useDataEmployees()
+  const customersData = useDataCustomers()
+  const articlesData = useDataArticles()
+  const categoriesData = useDataCategories()
 
   const handleLogout = async () => {
     await logout()
   }
-  // Datos de ejemplo vacios para mostrar el estado sin datos
-  const emptyData = []
-  // Handlers temporales para las acciones CRUD (por ahora solo console.log)
-  const handleAdd = async (data) => {
-    console.log('Agregar: ', data)
-    // Aquí irá la logica para agregar al backend
-  }
-  const handleEdit = async (id, data) => {
-    console.log('Editar: ', id, data)
-    // Aquí irá la logica para editar en el backend
-  }
-  const handleDelete = async (id) => {
-    console.log('Eliminar:', id)
-    // Aquí irá la logica para eliminar del backend
-  }
-  const handleExport = (format, data) => {
-    console.log(`Exportar ${data.length} elementos en formato ${format}`)
-    // Aquí ira la logica para exportar
+  // Handlers dinamicos basados en la vista actual
+  const getHandlersForView = () => {
+    switch (currentView) {
+      case 'suppliers':
+        return {
+          data: suppliersData.suppliers,
+          loading: suppliersData.loading,
+          onAdd: async (data) => {
+            // Simular evento de formulario
+            const fakeEvent = { preventDefault: () => {} }
+            // Setear los datos en el hook
+            Object.keys(data).forEach(key => {
+              const setter = suppliersData[`set${key.charAt(0).toUpperCase() + key.slice(1)}`]
+              if (setter) setter(data[key])
+            })
+            await suppliersData.saveSupplier(fakeEvent)
+          },
+          onEdit: async (id, data) => {
+            const item = suppliersData.suppliers.find(s => s._id === id)
+            if (item) {
+              await suppliersData.updateSupplier(item)
+              // Setear los nuevos datos
+              Object.keys(data).forEach(key => {
+                const setter = suppliersData[`set${key.charAt(0).toUpperCase() + key.slice(1)}`]
+                if (setter) setter(data[key])
+              })
+              const fakeEvent = { preventDefault: () => {} }
+              await suppliersData.handleEdit(fakeEvent)
+            }
+          },
+          onDelete: async (id) => await suppliersData.deleteSupplier(id)
+        }
+      case 'employees':
+        return {
+          data: employeesData.employees,
+          loading: employeesData.loading,
+          onAdd: async (data) => {
+            const fakeEvent = { preventDefault: () => {} }
+            Object.keys(data).forEach(key => {
+              const setter = employeesData[`set${key.charAt(0).toUpperCase() + key.slice(1)}`]
+              if (setter) setter(data[key])
+            })
+            await employeesData.saveEmployee(fakeEvent)
+          },
+          onEdit: async (id, data) => {
+            const item = employeesData.employees.find(e => e._id === id)
+            if (item) {
+              await employeesData.updateEmployee(item)
+              Object.keys(data).forEach(key => {
+                const setter = employeesData[`set${key.charAt(0).toUpperCase() + key.slice(1)}`]
+                if (setter) setter(data[key])
+              })
+              const fakeEvent = { preventDefault: () => {} }
+              await employeesData.handleEdit(fakeEvent)
+            }
+          },
+          onDelete: async (id) => await employeesData.deleteEmployee(id)
+        }
+      case 'customers':
+        return {
+          data: customersData.customers,
+          loading: customersData.loading,
+          onAdd: async (data) => {
+            const fakeEvent = { preventDefault: () => {} }
+            Object.keys(data).forEach(key => {
+              const setter = customersData[`set${key.charAt(0).toUpperCase() + key.slice(1)}`]
+              if (setter) setter(data[key])
+            })
+            await customersData.saveCustomer(fakeEvent)
+          },
+          onEdit: async (id, data) => {
+            const item = customersData.customers.find(c => c._id === id)
+            if (item) {
+              await customersData.updateCustomer(item)
+              Object.keys(data).forEach(key => {
+                const setter = customersData[`set${key.charAt(0).toUpperCase() + key.slice(1)}`]
+                if (setter) setter(data[key])
+              })
+              const fakeEvent = { preventDefault: () => {} }
+              await customersData.handleEdit(fakeEvent)
+            }
+          },
+          onDelete: async (id) => await customersData.deleteCustomer(id)
+        }
+        case 'articles': 
+        return {
+          data: articlesData.articles,
+          loading: articlesData.loading,
+          onAdd: async (data) => {
+            const fakeEvent = { preventDefault: () => {} }
+            Object.keys(data).forEach(key => {
+              const setter = articlesData[`set${key.charAt(0).toUpperCase() + key.slice(1)}`]
+              if (setter) setter(data[key])
+            })
+            await articlesData.saveArticle(fakeEvent)
+          },
+          onEdit: async (id, data) => {
+            const item = articlesData.articles.find(a => a._id === id)
+            if (item) {
+              await articlesData.updateArticle(item)
+              Object.keys(data).forEach(key => {
+                const setter = articlesData[`set${key.charAt(0).toUpperCase() + key.slice(1)}`]
+                if (setter) setter(data[key])
+              })
+              const fakeEvent = { preventDefault: () => {} }
+              await articlesData.handleEdit(fakeEvent)
+            }
+          },
+          onDelete: async (id) => await articlesData.deleteArticle(id)
+        }
+        case 'categories':
+          return {
+            data: categoriesData.categories,
+            loading: categoriesData.loading,
+            onAdd: async (data) => {
+              const fakeEvent = { preventDefault: () => {} }
+              Object.keys(data).forEach(key => {
+                const setter = categoriesData[`set${key.charAt(0).toUpperCase() + key.slice(1)}`]
+                if (setter) setter(data[key])
+              })
+              await categoriesData.saveCategory(fakeEvent)
+            },
+            onEdit: async (id, data) => {
+              const item = categoriesData.categories.find(c => c._id === id)
+              if (item) {
+                await categoriesData.updateCategory(item)
+                Object.keys(data).forEach(key => {
+                  const setter = categoriesData[`set${key.charAt(0).toUpperCase() + key.slice(1)}`]
+                  if (setter) setter(data[key])
+                })
+                const fakeEvent = { preventDefault: () => {} }
+                await categoriesData.handleEdit(fakeEvent)
+              }
+            },
+            onDelete: async (id) => await categoriesData.deleteCategory(id)
+          }
+      default:
+        return {
+          data: [],
+          loading: false,
+          onAdd: async (data) => console.log('Add:', data),
+          onEdit: async (id, data) => console.log('Edit:', id, data),
+          onDelete: async (id) => console.log('Delete:', id)
+        }
+    }
   }
   // Funcion para renderizar el contenido basado en la vista actual
   const renderContent = () => {
@@ -63,34 +196,38 @@ const MainPage = () => {
           </div>
         )
       case 'articles':
+        const articlesHandler = getHandlersForView()
         return (
           <div className="p-6 bg-white min-h-screen">
             <div className="max-w-7xl mx-auto">
-              <TableContainer config={articlesConfig} data={emptyData} onAdd={handleAdd} onEdit={handleEdit} onDelete={handleDelete} onExport={handleExport} isLoading={false}/>
+              <TableContainer config={articlesConfig} data={articlesHandler.data} onAdd={articlesHandler.onAdd} onEdit={articlesHandler.onEdit} onDelete={articlesHandler.onDelete} onExport={handleExport} isLoading={articlesHandler.loading} categoriesData={categoriesData} suppliersData={suppliersData}/>
             </div>
           </div>
         )
       case 'employees':
+        const employeesHandler = getHandlersForView()
         return (
           <div className="p-6 bg-white min-h-screen">
             <div className="max-w-7xl mx-auto">
-              <TableContainer config={employeesConfig} data={emptyData} onAdd={handleAdd} onEdit={handleEdit} onDelete={handleDelete} onExport={handleExport} isLoading={false}/>
+              <TableContainer config={employeesConfig} data={employeesHandler.data} onAdd={employeesHandler.onAdd} onEdit={employeesHandler.onEdit} onDelete={employeesHandler.onDelete} onExport={handleExport} isLoading={employeesHandler.loading}/>
             </div>
           </div>
         )
       case 'categories':
+        const categoriesHandler = getHandlersForView()
         return (
           <div className="p-6 bg-white min-h-screen">
             <div className="max-w-7xl mx-auto">
-              <TableContainer config={categoriesConfig} data={emptyData} onAdd={handleAdd} onEdit={handleEdit} onDelete={handleDelete} onExport={handleExport} isLoading={false}/>
+              <TableContainer config={categoriesConfig} data={categoriesHandler.data} onAdd={categoriesHandler.onAdd} onEdit={categoriesHandler.onEdit} onDelete={categoriesHandler.onDelete} onExport={handleExport} isLoading={categoriesHandler.loading}/>
             </div>
           </div>
         )
-      case 'clients':
+      case 'customers':
+        const customersHandler = getHandlersForView()
         return (
           <div className="p-6 bg-white min-h-screen">
             <div className="max-w-7xl mx-auto">
-              <TableContainer config={customersConfig} data={emptyData} onAdd={handleAdd} onEdit={handleEdit} onDelete={handleDelete} onExport={handleExport} isLoading={false}/>
+              <TableContainer config={customersConfig} data={customersHandler.data} onAdd={customersHandler.onAdd} onEdit={customersHandler.onEdit} onDelete={customersHandler.onDelete} onExport={handleExport} isLoading={customersHandler.loading}/>
             </div>
           </div>
         )
@@ -122,10 +259,11 @@ const MainPage = () => {
           </div>
         )
       case 'suppliers':
+        const suppliersHandlers = getHandlersForView()
         return (
           <div className="p-6 bg-white min-h-screen">
             <div className="max-w-7xl mx-auto">
-              <TableContainer config={suppliersConfig} data={emptyData} onAdd={handleAdd} onEdit={handleEdit} onDelete={handleDelete} onExport={handleExport} isLoading={false}/>
+              <TableContainer config={suppliersConfig} data={suppliersHandlers.data} onAdd={suppliersHandlers.onAdd} onEdit={suppliersHandlers.onEdit} onDelete={suppliersHandlers.onDelete} onExport={handleExport} isLoading={suppliersHandlers.loading}/>
             </div>
           </div>
         )
@@ -139,7 +277,7 @@ const MainPage = () => {
           </div>
         )
       default: 
-        return <Dashboard />
+        return <Dashboard/>
     }
   }
   return (

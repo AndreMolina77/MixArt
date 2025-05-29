@@ -4,6 +4,12 @@ import Sidebar from '../components/Dashboard/Sidebar'
 import Header from '../components/Dashboard/Header'
 import Dashboard from '../components/Dashboard/Dashboard'
 import TableContainer from '../components/Table/TableContainer'
+// Importar todos los hooks
+import useDataSuppliers from '../hooks/'
+import useDataEmployees from '../hooks/EmployeesHooks/useDataEmployees'
+import useDataCustomers from '../hooks/CustomersHooks/useDataCustomers'
+import useDataArticles from '../hooks/ArticlesHooks/useDataArticles'
+import useDataCategories from '../hooks/CategoriesHooks/useDataCategories'
 // Importar configuraciones de tablas
 import { articlesConfig, categoriesConfig, suppliersConfig, customersConfig, employeesConfig } from '../data/TableConfigs.js'
 

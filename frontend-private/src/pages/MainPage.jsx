@@ -15,7 +15,7 @@ const MainPage = () => {
   const renderContent = () => {
     switch (currentView) {
       case 'dashboard':
-        return <Dashboard />
+        return <Dashboard/>
       case 'search':
         return (
           <div className="p-6 bg-white min-h-screen font-[Alexandria]">

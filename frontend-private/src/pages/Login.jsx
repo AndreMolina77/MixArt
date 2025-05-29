@@ -58,7 +58,7 @@ const Login = () => {
       {/* DESKTOP */}
       <div className="hidden lg:flex h-full">
         {/* Sección izquierda con logo y decoracion */}
-        <div className="w-1/2 relative flex flex-col items-center justify-center bg-[#A6A6A6] overflow-hidden">
+        <div className="w-1/2 relative flex flex-col items-center justify-center bg-[#A9A9A9] overflow-hidden">
           {/* Monogram en esquina superior izquierda */}
           <img src={monogramHq} alt="Monogram" className="absolute top-6 left-6 w-12 h-12 object-contain"/>
           {/* Logo MixArt centrado */}

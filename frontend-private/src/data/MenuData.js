@@ -7,7 +7,7 @@ const menuItems = [
   { icon: FileText, label: 'Artículos', id: 'articles' },
   { icon: Users, label: 'Empleados', id: 'employees' },
   { icon: Grid3X3, label: 'Categorías', id: 'categories' },
-  { icon: UserCheck, label: 'Clientes', id: 'clients' },
+  { icon: UserCheck, label: 'Clientes', id: 'customers' },
   { icon: ShoppingCart, label: 'Pedidos', id: 'orders' },
   { icon: Star, label: 'Reseñas', id: 'reviews' },
   { icon: TrendingUp, label: 'Ventas', id: 'sales' },

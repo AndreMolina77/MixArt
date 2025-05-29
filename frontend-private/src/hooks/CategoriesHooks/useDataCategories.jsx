@@ -1,77 +1,91 @@
 import { useEffect, useState } from "react"
 import { toast } from "react-hot-toast"
 
+// Un custom hook para manejar la logica de las categorias
 const useDataCategories = () => {
+  // Estado para controlar la pestana activa (lista o formulario)
   const [activeTab, setActiveTab] = useState("list")
+  // URL de la API para las categorias
   const API = "http://localhost:4000/api/categories"
+  // Estados para los campos del formulario de categoria
   const [id, setId] = useState("")
-  const [names, setNames] = useState("") // Corregido: debe ser 'names' según el modelo
+  const [names, setNames] = useState("") // Estado para el nombre de la categoria
   const [description, setDescription] = useState("")
+  // Estado para almacenar los datos de las categorias
   const [categories, setCategories] = useState([])
+  // Estado para controlar el estado de carga de datos
   const [loading, setLoading] = useState(true)
 
+  // Funcion para obtener las categorias desde la API
   const fetchCategories = async () => {
     try {
       const response = await fetch(API, {
-        credentials: "include"
+        credentials: "include" // Incluye cookies en la peticion
       })
       if (!response.ok) {
-        throw new Error("Hubo un error al obtener las categorías")
+        throw new Error("Hubo un error al obtener las categorias")
       }
       const data = await response.json()
-      setCategories(data)
-      setLoading(false)
+      setCategories(data) // Actualiza el estado con las categorias obtenidas
+      setLoading(false) // Desactiva el estado de carga
     } catch (error) {
-      console.error("Error al obtener categorías:", error)
-      toast.error("Error al cargar categorías")
+      console.error("Error al obtener categorias:", error)
+      toast.error("Error al cargar categorias") // Muestra una notificacion de error
       setLoading(false)
     }
   }
 
+  // useEffect para cargar los datos iniciales al montar el componente
   useEffect(() => {
     fetchCategories()
-  }, [])
+  }, []) // Se ejecuta solo una vez al inicio
 
+  // Funcion para guardar una nueva categoria
   const saveCategory = async (e) => {
-    e.preventDefault()
-    
+    e.preventDefault() // Evita el comportamiento por defecto del formulario
+
+    // Valida que todos los campos requeridos no esten vacios
     if (!names || !description) {
       toast.error("Todos los campos son requeridos")
       return
     }
 
     try {
+      // Objeto con los datos de la nueva categoria
       const newCategory = {
-        names, // Corregido: debe ser 'names' según el modelo
+        names, // Nombre de la categoria
         description
       }
 
+      // Realiza la peticion POST a la API
       const response = await fetch(API, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
         credentials: "include",
-        body: JSON.stringify(newCategory)
+        body: JSON.stringify(newCategory) // Envia los datos como JSON
       })
 
       if (!response.ok) {
         const errorData = await response.json()
-        throw new Error(errorData.message || "Hubo un error al registrar la categoría")
+        throw new Error(errorData.message || "Hubo un error al registrar la categoria")
       }
 
-      toast.success('Categoría registrada exitosamente')
-      fetchCategories()
-      clearForm()
-      setActiveTab("list")
+      toast.success('Categoria registrada exitosamente') // Muestra notificacion de exito
+      fetchCategories() // Refresca la lista de categorias
+      clearForm() // Limpia el formulario
+      setActiveTab("list") // Vuelve a la pestana de lista
     } catch (error) {
-      console.error("Error al guardar categoría:", error)
-      toast.error(error.message || "Error al registrar categoría")
+      console.error("Error al guardar categoria:", error)
+      toast.error(error.message || "Error al registrar categoria")
     }
   }
 
+  // Funcion para eliminar una categoria
   const deleteCategory = async (id) => {
     try {
+      // Realiza la peticion DELETE a la API
       const response = await fetch(`${API}/${id}`, {
         method: "DELETE",
         headers: {
@@ -81,24 +95,26 @@ const useDataCategories = () => {
       })
 
       if (!response.ok) {
-        throw new Error("Hubo un error al eliminar la categoría")
+        throw new Error("Hubo un error al eliminar la categoria")
       }
 
-      toast.success('Categoría eliminada exitosamente')
-      fetchCategories()
+      toast.success('Categoria eliminada exitosamente') // Muestra notificacion de exito
+      fetchCategories() // Refresca la lista de categorias
     } catch (error) {
-      console.error("Error al eliminar categoría:", error)
-      toast.error("Error al eliminar categoría")
+      console.error("Error al eliminar categoria:", error)
+      toast.error("Error al eliminar categoria")
     }
   }
 
+  // Funcion para cargar los datos de una categoria en el formulario para edicion
   const updateCategory = async (dataCategory) => {
     setId(dataCategory._id)
-    setNames(dataCategory.names) // Corregido: debe ser 'names' según el modelo
+    setNames(dataCategory.names) // Setea el nombre de la categoria
     setDescription(dataCategory.description)
-    setActiveTab("form")
+    setActiveTab("form") // Cambia a la pestana de formulario
   }
 
+  // Funcion para manejar la edicion de una categoria existente
   const handleEdit = async (e) => {
     e.preventDefault()
 
@@ -108,11 +124,13 @@ const useDataCategories = () => {
     }
 
     try {
+      // Objeto con los datos de la categoria a editar
       const editCategory = {
-        names, // Corregido: debe ser 'names' según el modelo
+        names, // Nombre de la categoria
         description
       }
 
+      // Realiza la peticion PUT a la API para actualizar la categoria
       const response = await fetch(`${API}/${id}`, {
         method: "PUT",
         headers: {
@@ -124,25 +142,27 @@ const useDataCategories = () => {
 
       if (!response.ok) {
         const errorData = await response.json()
-        throw new Error(errorData.message || "Error al actualizar la categoría")
+        throw new Error(errorData.message || "Error al actualizar la categoria")
       }
 
-      toast.success('Categoría actualizada exitosamente')
-      clearForm()
-      setActiveTab("list")
-      fetchCategories()
+      toast.success('Categoria actualizada exitosamente')
+      clearForm() // Limpia el formulario
+      setActiveTab("list") // Vuelve a la pestana de lista
+      fetchCategories() // Refresca la lista de categorias
     } catch (error) {
-      console.error("Error al editar categoría:", error)
-      toast.error(error.message || "Error al actualizar categoría")
+      console.error("Error al editar categoria:", error)
+      toast.error(error.message || "Error al actualizar categoria")
     }
   }
 
+  // Funcion para limpiar el formulario
   const clearForm = () => {
     setId("")
     setNames("")
     setDescription("")
   }
 
+  // Retorna los estados y funciones para ser usados por el componente
   return {
     activeTab,
     setActiveTab,

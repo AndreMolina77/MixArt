@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Edit, Trash2, Eye } from 'lucide-react'
-import ActionButton from './ActionButton'
+import ActionButton from './Buttons/ActionButton'
 
 const DataTable = ({data = [], columns = [], isLoading = false, 
   pagination = {

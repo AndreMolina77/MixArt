@@ -1,17 +1,16 @@
-import { Search, Filter, RefreshCw } from 'lucide-react'
-import ActionButton from './ActionButton'
-import ExportButton from './ExportButton'
+import { Search, Filter, RefreshCw, Plus } from 'lucide-react' // Importa Plus aquí
+import ActionButton from './Buttons/ActionButton'
+import ExportButton from './Buttons/ExportButton'
 
 const TableActions = ({
   // Configuración de acciones
-  actions = { canAdd: true, canExport: true, canFilter: true, canRefresh: true
-  },
+  actions = { canAdd: true, canExport: true, canFilter: true, canRefresh: true },
   // Callbacks
   onAdd, onExport, onFilter, onRefresh, onSearch,
   // Estados
   isLoading = false, searchValue = "",
   // Personalizacion
-  addButtonText = "Añadir", addButtonIcon = "add", title = "",
+  addButtonText = "Añadir", title = "",
   // Props adicionales
   customActions = [], className = ""
 }) => {
@@ -62,7 +61,7 @@ const TableActions = ({
           )}
           {/* Boton de añadir */}
           {actions.canAdd && onAdd && (
-            <ActionButton variant="primary" icon={addButtonIcon} onClick={onAdd} disabled={isLoading}>
+            <ActionButton variant="primary" icon={Plus} onClick={onAdd} disabled={isLoading}> {/* Usa el componente Plus aquí */}
               {addButtonText}
             </ActionButton>
           )}

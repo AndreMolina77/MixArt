@@ -64,7 +64,7 @@ const MainPage = () => {
             </div>
           </div>
         )
-      case 'artists':
+      case 'employees':
         return (
           <div className="p-6 bg-white min-h-screen">
             <div className="max-w-7xl mx-auto">

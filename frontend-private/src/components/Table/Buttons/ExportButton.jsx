@@ -2,17 +2,12 @@ import { useState, useRef, useEffect } from 'react'
 import { Download, ChevronDown, FileText, Table, FileSpreadsheet } from 'lucide-react'
 import ActionButton from './ActionButton'
 
-const ExportButton = ({ 
-  onExport, 
-  disabled = false, 
-  isLoading = false,
+const ExportButton = ({ onExport, disabled = false, isLoading = false,
   exportOptions = [
     { key: 'excel', label: 'Excel (.xlsx)', icon: FileSpreadsheet },
     { key: 'csv', label: 'CSV (.csv)', icon: Table },
     { key: 'pdf', label: 'PDF (.pdf)', icon: FileText }
-  ],
-  className = ""
-}) => {
+  ], className = ""}) => {
   const [isOpen, setIsOpen] = useState(false)
   const dropdownRef = useRef(null)
   const buttonRef = useRef(null)
@@ -42,10 +37,11 @@ const ExportButton = ({
     <div className="relative inline-block">
       <div ref={buttonRef}>
         <ActionButton variant="outline" icon={Download} onClick={toggleDropdown} disabled={disabled} isLoading={isLoading} className={`${className} ${isOpen ? 'ring-2 ring-[#E07A5F] ring-offset-2' : ''}`}>
-          <span>Exportar</span>
-          <ChevronDown 
-            className={`w-4 h-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} 
-          />
+          {/* Contenedor flex para alinear texto e icono */}
+          <div className="flex items-center gap-1">
+            <span>Exportar</span>
+            <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+          </div>
         </ActionButton>
       </div>
       {/* Dropdown menu */}

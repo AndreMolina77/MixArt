@@ -1,5 +1,5 @@
 import { BarChart3, TrendingUp, ShoppingCart, Eye, Star } from 'lucide-react'
-import { dashboardStats, recentSales, topArtists, monthlySalesData, monthLabels } from '../data/DashboardData.js'
+import { dashboardStats, recentSales, topArtists, monthlySalesData, monthLabels } from '../../data/DashboardData.js'
 
 const Dashboard = () => {
   return (

@@ -1,7 +1,6 @@
 import { Plus, Edit, Trash2, Eye, Mail, Download, Filter } from 'lucide-react'
 
 const ActionButton = ({variant = "primary", size = "md", icon, children, onClick, disabled = false, loading = false, className = "", ...props }) => {
-  
   // Configuracion de iconos por defecto segun la variante
   const getDefaultIcon = () => {
     switch (variant) {
@@ -15,13 +14,12 @@ const ActionButton = ({variant = "primary", size = "md", icon, children, onClick
       default: return null
     }
   }
-
-  // Configuración de estilos por variant
+  // Configuracion de estilos por variant
   const getVariantStyles = () => {
     switch (variant) {
       case 'primary':
       case 'add':
-        return 'bg-[#E07A5F] border-[#E07A5F] text-white hover:bg-transparent hover:text-[#E07A5F] focus:ring-[#E07A5F]/20'
+        return 'bg-[#E07A5F] border-[#E07A5F] text-white hover:bg-transparent hover:text-[#E07A5F] focus:ring-[#E07A5F]/60'
       case 'secondary':
         return 'bg-[#81B29A] border-[#81B29A] text-white hover:bg-transparent hover:text-[#81B29A] focus:ring-[#81B29A]/20'
       case 'edit':
@@ -38,8 +36,7 @@ const ActionButton = ({variant = "primary", size = "md", icon, children, onClick
         return 'bg-[#E07A5F] border-[#E07A5F] text-white hover:bg-transparent hover:text-[#E07A5F] focus:ring-[#E07A5F]/20'
     }
   }
-
-  // Configuración de tamaños
+  // Configuracion de tamaños
   const getSizeStyles = () => {
     switch (size) {
       case 'xs':
@@ -56,30 +53,12 @@ const ActionButton = ({variant = "primary", size = "md", icon, children, onClick
         return 'px-4 py-2 text-sm'
     }
   }
-
   const IconComponent = icon || getDefaultIcon()
   const variantStyles = getVariantStyles()
   const sizeStyles = getSizeStyles()
 
   return (
-    <button
-      onClick={onClick}
-      disabled={disabled || loading}
-      className={`
-        inline-flex items-center justify-center gap-2 
-        font-[Alexandria] font-medium
-        border-2 rounded-lg
-        transition-all duration-300
-        focus:outline-none focus:ring-2 focus:ring-offset-2
-        disabled:opacity-50 disabled:cursor-not-allowed
-        transform hover:scale-105 active:scale-95
-        shadow-sm hover:shadow-md
-        ${variantStyles}
-        ${sizeStyles}
-        ${className}
-      `}
-      {...props}
-    >
+    <button onClick={onClick} disabled={disabled || loading} className={` inline-flex items-center justify-center gap-2 font-[Alexandria] font-medium border-2 rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 active:scale-95 shadow-sm hover:shadow-md ${variantStyles} ${sizeStyles} ${className}`} {...props}>
       {loading ? (
         <>
           <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>

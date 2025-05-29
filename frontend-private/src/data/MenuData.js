@@ -5,7 +5,7 @@ const menuItems = [
   { icon: BarChart3, label: 'Dashboard', id: 'dashboard' },
   { icon: Palette, label: 'Obras de arte', id: 'artpieces' },
   { icon: FileText, label: 'Artículos', id: 'articles' },
-  { icon: Users, label: 'Artistas', id: 'artists' },
+  { icon: Users, label: 'Empleados', id: 'employees' },
   { icon: Grid3X3, label: 'Categorías', id: 'categories' },
   { icon: UserCheck, label: 'Clientes', id: 'clients' },
   { icon: ShoppingCart, label: 'Pedidos', id: 'orders' },

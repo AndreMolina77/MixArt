@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { Settings, Power, Menu, X } from 'lucide-react'
-import menuItems from '../data/MenuData.js'
-import BlackLogo from '../assets/mixartnegro.png' 
-import Monogram from '../assets/image.png'
+import menuItems from '../../data/MenuData.js'
+import BlackLogo from '../../assets/mixartnegro.png' 
+import Monogram from '../../assets/image.png'
 
 const Sidebar = ({ currentView, setCurrentView, onLogout }) => {
   const [isCollapsed, setIsCollapsed] = useState(false)

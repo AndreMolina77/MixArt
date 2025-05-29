@@ -3,7 +3,7 @@ import { Search, BarChart3, Palette, FileText, Users, Grid3X3, UserCheck, Shoppi
 const menuItems = [
   { icon: Search, label: 'Buscar', id: 'search' },
   { icon: BarChart3, label: 'Dashboard', id: 'dashboard' },
-  { icon: Palette, label: 'Obras de arte', id: 'artworks' },
+  { icon: Palette, label: 'Obras de arte', id: 'artpieces' },
   { icon: FileText, label: 'Artículos', id: 'articles' },
   { icon: Users, label: 'Artistas', id: 'artists' },
   { icon: Grid3X3, label: 'Categorías', id: 'categories' },

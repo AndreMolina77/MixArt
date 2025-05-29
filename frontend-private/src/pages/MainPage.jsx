@@ -115,7 +115,8 @@ const MainPage = () => {
             </div>
           </div>
         )
-      default: return <Dashboard/>
+      default: 
+      return <Dashboard/>
     }
   }
   return (

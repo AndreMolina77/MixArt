@@ -10,25 +10,24 @@ const [activeTab, setActiveTab] = useState("list")
   const [loading, setLoading] = useState(true)
 
   const fetchCategories = async () => {
-    const response = await fetch(API);
+    const response = await fetch(API)
     if (!response.ok) {
-      throw new Error("Hubo un error al obtener las categorías");
+      throw new Error("Hubo un error al obtener las categorías")
     }
-    const data = await response.json();
-    setCategories(data);
-    setLoading(false);
-  };
-
+    const data = await response.json()
+    setCategories(data)
+    setLoading(false)
+  }
   useEffect(() => {
-    fetchCategories();
-  }, []);
+    fetchCategories()
+  }, [])
 
   const saveCategory = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
     const newCategory = {
       name: nameCategory,
       description,
-    };
+    }
 
     const response = await fetch(API, {
       method: "POST",
@@ -36,19 +35,18 @@ const [activeTab, setActiveTab] = useState("list")
         "Content-Type": "application/json",
       },
       body: JSON.stringify(newCategory),
-    });
+    })
 
     if (!response.ok) {
-      throw new Error("Hubo un error al registrar la categoría");
+      throw new Error("Hubo un error al registrar la categoría")
     }
-
-    const data = await response.json();
-    toast.success('Categoría registrada');
-    setCategories(data);
-    fetchCategories();
-    setNameCategory("");
-    setDescription("");
-  };
+    const data = await response.json()
+    toast.success('Categoría registrada')
+    setCategories(data)
+    fetchCategories()
+    setNameCategory("")
+    setDescription("")
+  }
 
   const deleteCategory = async (id) => {
     const response = await fetch(`${API}/${id}`, {
@@ -107,7 +105,6 @@ const [activeTab, setActiveTab] = useState("list")
     }
   };
 
-  
   return {
     activeTab,
     setActiveTab,

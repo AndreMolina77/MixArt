@@ -1,4 +1,3 @@
-// src/context/AuthContext.jsx
 import { createContext, useState, useEffect } from "react"
 
 const API = "http://localhost:4000/api"
@@ -94,5 +93,4 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   )
 }
-// Export el contexto para poder usarlo en el hook
 export { AuthContext }

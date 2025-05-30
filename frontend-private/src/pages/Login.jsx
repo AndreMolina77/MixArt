@@ -1,8 +1,8 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+// src/pages/Login.jsx
+import { useState, useEffect } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import { useAuth } from '../hooks/useAuth'
-import Button from '../components/Buttons/Button'
 import GoogleButton from '../components/Buttons/GoogleButton'
 import TextInput from '../components/Input/Input'
 import PasswordInput from '../components/Input/PasswordInput'
@@ -15,11 +15,19 @@ const Login = () => {
   const [rememberMe, setRememberMe] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
-  const { Login: authLogin } = useAuth()
+  const location = useLocation()
+  const { Login: authLogin, user, isLoading: authLoading } = useAuth()
+  // Redirigir si ya está autenticado
+  useEffect(() => {
+    if (!authLoading && user) {
+      const from = location.state?.from?.pathname || '/main'
+      navigate(from, { replace: true })
+    }
+  }, [user, authLoading, navigate, location])
 
   const handleLogin = async (e) => {
     e.preventDefault()
-    // Validaciones chikitas
+    // Validaciones
     if (!email || !password) {
       toast.error('Por favor completa todos los campos')
       return
@@ -31,11 +39,14 @@ const Login = () => {
     setIsLoading(true)
     try {
       const result = await authLogin(email, password)
+    
       if (result.success) {
         toast.success('¡Inicio de sesión exitoso!')
-        // Esperar un poco para que se vea el toast antes de redirigir
+        // Redirigir a la página que intentaba acceder o al main
+        const from = location.state?.from?.pathname || '/main'
+        // Pequeño delay para que se vea el toast
         setTimeout(() => {
-          navigate('/main')
+          navigate(from, { replace: true })
         }, 1000)
       } else {
         toast.error(result.message || 'Error al iniciar sesión')
@@ -47,17 +58,29 @@ const Login = () => {
       setIsLoading(false)
     }
   }
+  // Función para iniciar sesion con Google
   const handleGoogleLogin = () => {
     toast('Función de Google en desarrollo', {
       icon: '🚧',
       duration: 3000
     })
   }
+  // Mostrar loading si está verificando autenticacion
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#F4F1DE]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#E07A5F] mx-auto mb-4"></div>
+          <p className="text-[#7A6E6E] font-[Alexandria]">Cargando...</p>
+        </div>
+      </div>
+    )
+  }
   return (
     <div className="relative w-full h-screen bg-[#F4F1DE] overflow-hidden font-[Alexandria]">
       {/* DESKTOP */}
       <div className="hidden lg:flex h-full">
-        {/* Sección izquierda con logo y decoracion */}
+        {/* Sección izquierda con logo y decoración */}
         <div className="w-1/2 relative flex flex-col items-center justify-center bg-[#A9A9A9] overflow-hidden">
           {/* Monogram en esquina superior izquierda */}
           <img src={monogramHq} alt="Monogram" className="absolute top-6 left-6 w-12 h-12 object-contain"/>
@@ -66,11 +89,11 @@ const Login = () => {
             <img src={logo} alt="MixArt Logo" className="w-120 h-auto object-contain mb-6" />
           </div>
         </div>
-        {/* Seccion derecha con correo y contraseña */}
+        {/* Seccion derecha con formulario */}
         <div className="w-1/2 flex flex-col justify-center px-16 bg-[#F4F1DE]">
           <div className="max-w-md w-full mx-auto">
             {/* Boton de volver */}
-            <button onClick={() => navigate(-1)}className="flex items-center text-[#7A6E6E] mb-8 hover:text-[#5c5252] transition">
+            <button onClick={() => navigate(-1)} className="flex items-center text-[#7A6E6E] mb-8 hover:text-[#5c5252] transition">
               <span className="text-xl mr-2">&lt;</span>
               <span className="text-md">Atrás</span>
             </button>
@@ -96,9 +119,10 @@ const Login = () => {
                   ¿Olvidaste tu contraseña?
                 </button>
               </div>
-              {/* Botón de continuar */}
+              {/* Boton de continuar */}
               <div className="pt-4">
-                <Button Text="Continuar"/>
+                <button type="submit" disabled={isLoading} className={`w-full h-12 bg-[#E07A5F] border-[#E07A5F] hover:bg-transparent border-2 text-white text-base font-semibold leading-6 rounded-md transition duration-300 shadow-sm font-[Alexandria] ${isLoading ? 'opacity-50 cursor-not-allowed' : 'hover:text-[#E07A5F] cursor-pointer'}`}> {isLoading ? 'Iniciando sesión...' : 'Continuar'}
+                </button>
               </div>
             </form>
             {/* Separador */}
@@ -107,7 +131,7 @@ const Login = () => {
               <span className="px-4 text-sm text-[#7A6E6E]">o</span>
               <div className="flex-1 border-t border-[#7A6E6E] opacity-30"></div>
             </div>
-            {/* Botón de Google */}
+            {/* Boton de Google */}
             <GoogleButton onClick={handleGoogleLogin} />
           </div>
         </div>
@@ -126,12 +150,10 @@ const Login = () => {
         <div className="text-center mb-8">
           <img src={logo} alt="MixArt Logo" className="w-48 h-auto object-contain mx-auto mb-4" />
         </div>
-        {/* Contenido del formulario */}
+        {/* Contenido del formulario movil */}
         <div className="flex-1 flex flex-col justify-center max-w-sm mx-auto w-full">
           <h1 className="text-2xl font-bold text-[#7A6E6E] mb-2 text-center">Iniciar sesión</h1>
-          <p className="text-[#7A6E6E] mb-8 text-center">
-            Únete a nuestro equipo
-          </p>
+          <p className="text-[#7A6E6E] mb-8 text-center">Únete a nuestro equipo</p>
           {/* Formulario movil */}
           <form onSubmit={handleLogin} className="space-y-4">
             <TextInput text="Correo electrónico:" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="email@example.com" disabled={isLoading} required/>
@@ -146,7 +168,7 @@ const Login = () => {
               </button>
             </div>
             <div className="pt-4">
-              <Button Text="Continuar"/>
+              <button type="submit" disabled={isLoading} className={`w-full h-12 bg-[#E07A5F] border-[#E07A5F] hover:bg-transparent border-2 text-white text-base font-semibold leading-6 rounded-md transition duration-300 shadow-sm font-[Alexandria] ${isLoading ? 'opacity-50 cursor-not-allowed' : 'hover:text-[#E07A5F] cursor-pointer'}`}>{isLoading ? 'Iniciando sesión...' : 'Continuar'}</button>
             </div>
           </form>
           <div className="my-4 flex items-center">

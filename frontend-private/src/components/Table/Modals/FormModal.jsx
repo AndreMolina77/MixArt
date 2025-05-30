@@ -1,150 +1,94 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
+import { useForm } from 'react-hook-form'
 import BaseModal from './BaseModal'
 import { Save, X, Upload, Eye, EyeOff } from 'lucide-react'
+import { useState } from 'react'
 
 const FormModal = ({isOpen, onClose, onSubmit, title, fields, initialData = {}, isLoading = false, submitButtonText = 'Guardar'}) => {
-  const [formData, setFormData] = useState({})
-  const [errors, setErrors] = useState({})
   const [showPasswords, setShowPasswords] = useState({})
-  // FIX: Solo UN useEffect que se ejecuta cuando se abre el modal
+  // Configurar react-hook-form
+  const { register, handleSubmit, formState: { errors }, reset, watch } = useForm({
+    mode: 'onChange', // Validar en tiempo real
+    defaultValues: {}
+  })
+  // Inicializar formulario cuando se abre el modal
   useEffect(() => {
     if (isOpen) {
-      console.log('=== INICIALIZANDO FORM MODAL ===')
-      console.log('Initial data:', initialData)
+      console.log('🚀 === INICIALIZANDO REACT HOOK FORM ===')
+      console.log('📦 Initial data:', initialData)
       
-      const initialFormData = {}
+      const defaultValues = {}
       fields.forEach(field => {
         const initialValue = initialData[field.name]
         if (field.type === 'checkbox') {
-          initialFormData[field.name] = Boolean(initialValue)
+          defaultValues[field.name] = Boolean(initialValue)
         } else if (field.type === 'number') {
-          initialFormData[field.name] = initialValue !== undefined ? Number(initialValue) : ''
+          defaultValues[field.name] = initialValue !== undefined ? Number(initialValue) : ''
         } else {
-          initialFormData[field.name] = initialValue || ''
+          defaultValues[field.name] = initialValue || ''
         }
       })
-      console.log('Form data inicializado:', initialFormData)
-      setFormData(initialFormData)
-      setErrors({})
+      console.log('🔄 Resetting form with:', defaultValues)
+      reset(defaultValues)
       setShowPasswords({})
     }
-  }, [isOpen]) // Solo depende de isOpen - NUNCA de fields o initialData
-  // Validar campo individual
-  const validateField = (field, value) => {
-    let error = ''
-    // Validacion de campos requeridos
-    if (field.required) {
-      if (field.type === 'checkbox') {
-        // Para checkboxes, no validar como requerido
-      } else if (field.type === 'number') {
-        if (value === '' || value === null || value === undefined) {
-          error = `${field.label} es requerido`
+  }, [isOpen]) // Solo depende de isOpen - NUNCA fields o initialData
+  // Manejar envio del formulario
+  const onFormSubmit = (data) => {
+    console.log('✅ === FORM ENVIADO CON REACT HOOK FORM ===')
+    console.log('📤 Data:', data)
+    onSubmit(data)
+  }
+  // Obtener reglas de validacion para cada campo
+  const getValidationRules = (field) => {
+    const rules = {}
+    if (field.required && field.type !== 'checkbox') {
+      rules.required = `${field.label} es requerido`
+    }
+    if (field.type === 'email') {
+      rules.pattern = {
+        value: /\S+@\S+\.\S+/,
+        message: 'Email inválido'
+      }
+    }
+    if (field.type === 'tel') {
+      rules.pattern = {
+        value: /^\d{8,}$/,
+        message: 'Teléfono debe tener al menos 8 dígitos'
+      }
+      rules.setValueAs = (value) => value.replace(/\D/g, '') // Limpiar caracteres no numericos
+    }
+    if (field.type === 'number') {
+      rules.min = {
+        value: field.min || 0,
+        message: `Debe ser mayor o igual a ${field.min || 0}`
+      }
+      if (field.max) {
+        rules.max = {
+          value: field.max,
+          message: `Debe ser menor o igual a ${field.max}`
         }
-      } else if (!value || value.toString().trim() === '') {
-        error = `${field.label} es requerido`
+      }
+      rules.setValueAs = (value) => value === '' ? '' : Number(value)
+    }
+    if (field.minLength) {
+      rules.minLength = {
+        value: field.minLength,
+        message: `Mínimo ${field.minLength} caracteres`
       }
     }
-    // Validaciones especificas solo si hay valor
-    if (value && !error) {
-      if (field.type === 'email' && !/\S+@\S+\.\S+/.test(value)) {
-        error = 'Email inválido'
-      } else if (field.type === 'tel' && !/^\d{8,}$/.test(value.replace(/\D/g, ''))) {
-        error = 'Teléfono debe tener al menos 8 dígitos'
-      } else if (field.type === 'number' && (isNaN(value) || Number(value) < 0)) {
-        error = 'Debe ser un número válido mayor o igual a 0'
-      } else if (field.minLength && value.length < field.minLength) {
-        error = `Mínimo ${field.minLength} caracteres`
-      } else if (field.maxLength && value.length > field.maxLength) {
-        error = `Máximo ${field.maxLength} caracteres`
+    if (field.maxLength) {
+      rules.maxLength = {
+        value: field.maxLength,
+        message: `Máximo ${field.maxLength} caracteres`
       }
     }
-    return error
+    return rules
   }
-  // Manejar cambios en los campos
-  const handleInputChange = (fieldName, value) => {
-    console.log(`📝 Cambiando campo ${fieldName}:`, value)
-    
-    setFormData(prev => {
-      const newData = {
-        ...prev,
-        [fieldName]: value
-      }
-      console.log(`📄 FormData actualizado:`, newData)
-      return newData
-    })
-    // Limpiar error del campo cuando el usuario empieza a escribir
-    if (errors[fieldName]) {
-      setErrors(prev => ({
-        ...prev,
-        [fieldName]: ''
-      }))
-    }
-  }
-  // Validar todo el formulario
-  const validateForm = () => {
-    console.log('🔍 === VALIDANDO FORMULARIO ===')
-    console.log('📊 Datos ACTUALES del formulario:', formData)
-    console.log('📋 Campos a validar:', fields.map(f => ({ name: f.name, required: f.required })))
-    
-    const newErrors = {}
-    let isValid = true
-
-    fields.forEach(field => {
-      const value = formData[field.name]
-      const error = validateField(field, value)
-      console.log(`🔎 Campo "${field.name}": valor="${value}" (tipo: ${typeof value}), required=${field.required}, error="${error}"`)
-      
-      if (error) {
-        newErrors[field.name] = error
-        isValid = false
-      }
-    })
-    console.log('❌ Errores encontrados:', newErrors)
-    console.log('✅ Formulario válido:', isValid)
-    
-    setErrors(newErrors)
-    return isValid
-  }
-  // Enviar formulario
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    console.log('🚀 === ENVIANDO FORMULARIO ===')
-    console.log('📤 Datos finales a enviar:', formData)
-    // Si formData esta vacuo o incompleto, reinicializar una vez
-    const expectedFieldsCount = fields.length
-    const actualFieldsCount = Object.keys(formData).length
-    console.log(`📊 Campos esperados: ${expectedFieldsCount}, campos actuales: ${actualFieldsCount}`)
-    if (actualFieldsCount === 0 || actualFieldsCount < expectedFieldsCount) {
-      console.log('❌ PROBLEMA: FormData incompleto, reinicializando...')
-      // Reinicializar formData con la estructura correcta
-      const newFormData = {}
-      fields.forEach(field => {
-        const initialValue = initialData[field.name]
-        if (field.type === 'checkbox') {
-          newFormData[field.name] = Boolean(initialValue)
-        } else if (field.type === 'number') {
-          newFormData[field.name] = initialValue !== undefined ? Number(initialValue) : ''
-        } else {
-          newFormData[field.name] = initialValue || ''
-        }
-      })
-      setFormData(newFormData)
-      console.log('🔄 FormData reinicializado:', newFormData)
-      // Mostrar mensaje al usuario
-      setErrors({ _general: 'Por favor, completa el formulario nuevamente.' })
-      return
-    }
-    if (validateForm()) {
-      console.log('✅ Formulario válido, enviando datos...')
-      onSubmit(formData)
-    } else {
-      console.log('❌ Formulario inválido, no se envía')
-    }
-  }
-  // Renderizar campo según tipo
+  // Renderizar campo segun tipo
   const renderField = (field) => {
     const hasError = errors[field.name]
-    const value = formData[field.name] || (field.type === 'number' ? '' : '')
+    const validation = getValidationRules(field)
 
     const baseInputClasses = `w-full px-3 py-2 border rounded-lg font-[Alexandria] transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#E07A5F] ${
       hasError 
@@ -154,11 +98,11 @@ const FormModal = ({isOpen, onClose, onSubmit, title, fields, initialData = {}, 
     switch (field.type) {
       case 'textarea':
         return (
-          <textarea value={value} onChange={(e) => handleInputChange(field.name, e.target.value)} placeholder={field.placeholder} rows={field.rows || 3} className={`${baseInputClasses} resize-none`} disabled={isLoading}/>
+          <textarea {...register(field.name, validation)} placeholder={field.placeholder} rows={field.rows || 3} className={`${baseInputClasses} resize-none`} disabled={isLoading}/>
         )
       case 'select':
         return (
-          <select value={value} onChange={(e) => handleInputChange(field.name, e.target.value)} className={baseInputClasses} disabled={isLoading}>
+          <select {...register(field.name, validation)} className={baseInputClasses} disabled={isLoading}>
             <option value="">Seleccionar {field.label}</option>
             {field.options?.map(option => (
               <option key={option.value} value={option.value}>
@@ -170,11 +114,11 @@ const FormModal = ({isOpen, onClose, onSubmit, title, fields, initialData = {}, 
       case 'file':
         return (
           <div className="relative">
-            <input type="file" onChange={(e) => handleInputChange(field.name, e.target.files[0])} accept={field.accept} className="hidden" id={`file-${field.name}`} disabled={isLoading}/>
+            <input {...register(field.name, validation)} type="file" accept={field.accept} className="hidden" id={`file-${field.name}`} disabled={isLoading}/>
             <label htmlFor={`file-${field.name}`} className={`${baseInputClasses} cursor-pointer flex items-center justify-center space-x-2 hover:bg-gray-50`}>
               <Upload className="w-4 h-4 text-gray-500" />
               <span className="text-gray-500">
-                {value ? value.name || 'Archivo seleccionado' : field.placeholder || 'Seleccionar archivo'}
+                {watch(field.name)?.[0]?.name || field.placeholder || 'Seleccionar archivo'}
               </span>
             </label>
           </div>
@@ -182,8 +126,8 @@ const FormModal = ({isOpen, onClose, onSubmit, title, fields, initialData = {}, 
       case 'password':
         return (
           <div className="relative">
-            <input type={showPasswords[field.name] ? 'text' : 'password'} value={value} onChange={(e) => handleInputChange(field.name, e.target.value)} placeholder={field.placeholder} className={`${baseInputClasses} pr-10`} disabled={isLoading}/>
-            <button type="button" onClick={() => setShowPasswords(prev => ({...prev, [field.name]: !prev[field.name]}))} className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700">
+            <input {...register(field.name, validation)} type={showPasswords[field.name] ? 'text' : 'password'} placeholder={field.placeholder} className={`${baseInputClasses} pr-10`} disabled={isLoading}/>
+            <button type="button" onClick={() => setShowPasswords(prev => ({...prev, [field.name]: !prev[field.name] }))} className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700">
               {showPasswords[field.name] ? 
                 <EyeOff className="w-4 h-4" /> : 
                 <Eye className="w-4 h-4" />
@@ -194,29 +138,37 @@ const FormModal = ({isOpen, onClose, onSubmit, title, fields, initialData = {}, 
       case 'checkbox':
         return (
           <div className="flex items-center space-x-2">
-            <input type="checkbox" checked={Boolean(value)} onChange={(e) => handleInputChange(field.name, e.target.checked)} className="w-4 h-4 text-[#E07A5F] border-gray-300 rounded focus:ring-[#E07A5F]" disabled={isLoading}/>
+            <input {...register(field.name)} type="checkbox" className="w-4 h-4 text-[#E07A5F] border-gray-300 rounded focus:ring-[#E07A5F]" disabled={isLoading}/>
             <span className="text-sm text-gray-600">{field.checkboxLabel || field.label}</span>
           </div>
         )
       case 'number':
         return (
-          <input type="number" value={value} onChange={(e) => handleInputChange(field.name, e.target.value)} placeholder={field.placeholder} className={baseInputClasses} disabled={isLoading} min={field.min !== undefined ? field.min : undefined} max={field.max !== undefined ? field.max : undefined} step={field.step || 'any'}/>
+          <input {...register(field.name, validation)} type="number" placeholder={field.placeholder} className={baseInputClasses} disabled={isLoading} min={field.min} max={field.max} step={field.step || 'any'}/>
         )
       default:
         return (
-          <input type={field.type || 'text'} value={value} onChange={(e) => handleInputChange(field.name, e.target.value)} placeholder={field.placeholder} className={baseInputClasses} disabled={isLoading}/>
+          <input {...register(field.name, validation)} type={field.type || 'text'} placeholder={field.placeholder} className={baseInputClasses} disabled={isLoading}/>
         )
     }
   }
+  // Procesar datos antes de enviar (para archivos)
+  const processFormData = (data) => {
+    const processedData = { ...data }
+    // Procesar archivos
+    fields.forEach(field => {
+      if (field.type === 'file' && data[field.name]) {
+        // Si es un FileList, tomar el primer archivo
+        if (data[field.name] instanceof FileList) {
+          processedData[field.name] = data[field.name][0] || null
+        }
+      }
+    })
+    return processedData
+  }
   return (
     <BaseModal isOpen={isOpen} onClose={onClose} title={title} size="lg">
-      <form onSubmit={handleSubmit} className="p-6">
-        {/* Mostrar error general si existe */}
-        {errors._general && (
-          <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-            <p className="text-yellow-800 font-[Alexandria]">{errors._general}</p>
-          </div>
-        )}
+      <form onSubmit={handleSubmit((data) => onFormSubmit(processFormData(data)))} className="p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           {fields.map((field) => (
             <div key={field.name} className={field.fullWidth ? 'md:col-span-2' : ''}>
@@ -226,7 +178,9 @@ const FormModal = ({isOpen, onClose, onSubmit, title, fields, initialData = {}, 
               </label>
               {renderField(field)}
               {errors[field.name] && (
-                <p className="mt-1 text-sm text-red-600 font-[Alexandria]">{errors[field.name]}</p>
+                <p className="mt-1 text-sm text-red-600 font-[Alexandria]">
+                  {errors[field.name]?.message}
+                </p>
               )}
               {field.helperText && !errors[field.name] && (
                 <p className="mt-1 text-sm text-gray-500 font-[Alexandria]">{field.helperText}</p>
@@ -258,4 +212,5 @@ const FormModal = ({isOpen, onClose, onSubmit, title, fields, initialData = {}, 
     </BaseModal>
   )
 }
+
 export default FormModal

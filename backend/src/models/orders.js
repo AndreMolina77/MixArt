@@ -35,7 +35,7 @@ const orderItemSchema = new Schema({
     subtotal: { type: Number, require: true, min: 0 }        
 });
 const ordersSchema = new Schema({
-    customerId: { type: Schema.Types.ObjectId, require: true,ref: "Customer" },
+    customerId: { type: Schema.Types.ObjectId, require: true, ref: "Customer" },
     items: [orderItemSchema],
     total: { type: Number, require: true, min: 0 },
     status: { type: String, require: true, enum: ['Pendiente', 'En proceso', 'Entregado', 'Enviado', 'Cancelado'], default: 'Pendiente'}

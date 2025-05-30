@@ -19,12 +19,11 @@ salesController.postSales = async (req, res) => {
         res.status(400).json({ message: "Error al crear la orden", error: error.message });
     };
 }
-
 //GET
 salesController.getSales = async (req, res) => {
     try {
         const orders = await ordersModel.find()
-        .populate("customersId", "username email") 
+        .populate("customerId", "username email") 
         .populate({path: "items.itemId", select: "name price", }); 
         res.status(200).json(orders);
     } catch (error) {

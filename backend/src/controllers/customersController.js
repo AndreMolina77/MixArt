@@ -2,7 +2,7 @@ const customersController = {};
 
 import customersModel from '../models/Customers.js';
 
-////POST
+//POST
 customersController.postCustomers = async (req, res) => {
     const {name, lastName, username, email, password, phoneNumber, issNumber, isVerified} = req.body;
 
@@ -11,28 +11,27 @@ customersController.postCustomers = async (req, res) => {
     await newCustomers.save()
     res.json({message: "Cliente guardaado"})
 }
-
 //GET
 customersController.getCustomers = async (req, res) => {
     const customers = await customersModel.find()
     res.json(customers)
 }
-
 //PUT
 customersController.putCustomers = async (req, res) => {
     const {name, lastName, username, email, password, phoneNumber, issNumber, isVerified} = req.body;
-    const updateCustomer = await customersModel.findByIdAndUpdate(req.params.id,
-    {name, lastName, username, email, password, phoneNumber, issNumber, isVerified},
-    {new:true}
-    )
-
+    const updatedCustomer = await customersModel.findByIdAndUpdate(req.params.id, {name, lastName, username, email, password, phoneNumber, issNumber, isVerified}, {new:true})
+    if(!updatedCustomer){
+        return res.status(404).json({message: "Cliente no encontrado"})
+    }
     res.json({message: "Cliente actualizado"})
 
 }
-
 //DELETE
 customersController.deleteCustomers = async (req,res) => {
     const deleteCustomers = await customersModel.findByIdAndDelete(req.params.id)
+    if(!deleteCustomers){
+        return res.status(404).json({message: "Cliente no encontrado"})
+    }
     res.json({message: "Cliente eliminado"})
 }
 

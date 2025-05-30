@@ -27,11 +27,11 @@ export const articlesConfig = {
     { name: 'discount', type: 'number', label: 'Descuento (%)', placeholder: '0', min: 0, max: 100 }
   ]
 }
-// Configuración para Categorias
+// Configuracion para Categorias
 export const categoriesConfig = {
   title: "Categorías",
   columns: [
-    { key: 'names', label: 'Nombre', sortable: true, searchable: true },
+    { key: 'categoryName', label: 'Nombre', sortable: true, searchable: true },
     { key: 'description', label: 'Descripción', searchable: true },
     { key: 'createdAt', label: 'Fecha de Creación', sortable: true, type: 'date' }
   ],
@@ -42,7 +42,7 @@ export const categoriesConfig = {
     canExport: true
   },
   formFields: [
-    { name: 'names', type: 'text', label: 'Nombre de la Categoría', required: true, placeholder: 'Ej: Pinturas' },
+    { name: 'categoryName', type: 'text', label: 'Nombre de la Categoría', required: true, placeholder: 'Ej: Pinturas' },
     { name: 'description', type: 'textarea', label: 'Descripción', required: true, placeholder: 'Describe la categoría...', rows: 3 }
   ]
 }

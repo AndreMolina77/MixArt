@@ -1,14 +1,12 @@
 const categoriesController = {};
 
 import categoriesModel from "../models/categories.js";
- 
-
 //Create (Post)
 categoriesController.postcategories  = async (req, res) =>{
-    const{name, description} = req.body;
-    const newcategories = new categoriesModel({name, description})
+    const{categoryName, description} = req.body;
+    const newCategory = new categoriesModel({categoryName, description})
 
-    await newcategories.save();
+    await newCategory.save();
     res.status(201).json({ message: "Categoria creada con éxito"});
 };
 //Read (Get)
@@ -18,18 +16,18 @@ categoriesController.getcategories = async (req, res) => {
 };
 //Update (Put)
 categoriesController.putcategories = async (req, res) => {
-    const{names, description} = req.body;
-    const updatecategories = new categoriesModel({names, description}, {new: true})
+    const{categoryName, description} = req.body;
+    const updatedCategory = await categoriesModel.findByIdAndUpdate(req.params.id, { categoryName, description }, { new: true });
 
-    if(!updatecategories){
+    if(!updatedCategory){
         return res.status(404).json({ message: "Categoria no encontrada" });
     }
     res.json({ message: "Categoria actualizada con éxito" });
 };
 //Delete (Delete) por su ID
 categoriesController.deletecategories = async (req, res) =>{
-    const deletecategories = await categoriesModel.find(req.params.id);
-    if (!deletecategories) {
+    const deletedCategory = await categoriesModel.findByIdAndDelete(req.params.id);
+    if (!deletedCategory) {
         return res.status(404).json({ message: "Categoria no encontrada" });
     }
     res.json({ message: "Categoria eliminada con éxito" });

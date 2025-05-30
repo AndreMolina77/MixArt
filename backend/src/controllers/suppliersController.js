@@ -21,24 +21,24 @@ suppliersController.getSuppliers = async (req, res) => {
 //PUT
 suppliersController.putSuppliers = async (req, res) => {
     const {supplierName, email, phoneNumber, address} = req.body;
-    const updateSupplier = await suppliersModel.findByIdAndUpdate(req.params.id,
-    {supplierName, email, phoneNumber, address},
-    {new:true}
-    )
-
+    const updateSupplier = await suppliersModel.findByIdAndUpdate(req.params.id, {supplierName, email, phoneNumber, address}, {new:true})
+    if(!updateSupplier){
+        return res.status(404).json({message: "Proveedor no encontrado"})
+    }
     res.json({message: "Proveedor actualizado"})
-
 }
 
 //DELETE
 suppliersController.deleteSuppliers = async (req,res) => {
     const deleteSuppliers = await suppliersModel.findByIdAndDelete(req.params.id)
+    if(!deleteSuppliers){
+        return res.status(404).json({message: "Proveedor no encontrado"})
+    }
     res.json({message: "Proveedor eliminado"})
 }
-
 //GET POR ID
 suppliersController.getSupplier = async (req, res) => {
     const supplier = await suppliersModel.findById(req.params.id)
     res.json(supplier)
 }
-export default suppliersController;
+export default suppliersController

@@ -22,7 +22,7 @@ ordersController.postOrders = async (req, res) => {
 ordersController.getOrders = async (req, res) => {
     try {
         const orders = await ordersModel.find()
-        .populate("customersId", "username email") 
+        .populate("customerId", "username email") 
         .populate({path: "items.itemId", select: "name price", }); 
         res.status(200).json(orders);
     } catch (error) {

@@ -43,8 +43,7 @@ articlesController.putArticles = async (req, res) => {
         })
         imageURL = result.secure_url
     }
-    const updatedArticle = new articlesModel({ articleName, price, description, image: imageURL, stock: stock || 0,  categoryId, supplierId, discount: discount || 0 }, {new: true})
-
+    const updatedArticle = new articlesModel.findByIdAndUpdate(req.params.id, { articleName, price, description, image: imageURL, stock: stock || 0,  categoryId, supplierId, discount: discount || 0 }, { new: true });
     if (!updatedArticle) {
         return res.status(404).json({ message: "Artículo no encontrado" });
     }

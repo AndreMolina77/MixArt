@@ -19,7 +19,7 @@ const artPiecesSchema = new Schema(
       image: {type: String, require: true,},
       categoryId: { type: Schema.Types.ObjectId, ref: "Category", require: true, },
       artist: { type: String, require: true, },
-      discount: { type: Number, require: true, validate: { validator: function (value) { return value !== 0; }, message: "El descuento no puede ser 0"}, min: [0, "El descuento no puede ser menor que 0"], max: [100, "El descuento no puede exceder el 100%"], },
+      discount: { type: Number, require: true, default: 0, min: [0, "El descuento no puede ser menor que 0"], max: [100, "El descuento no puede exceder el 100%"] },
     },
     {
         timestamps: true,

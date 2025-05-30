@@ -63,7 +63,7 @@ ordersController.deleteOrders = async (req, res) => {
 //Read (Get) pero por su ID
 ordersController.getOrder = async (req, res) => {
     try {
-        const order = await ordersModel.find(req.params.id)
+        const order = await ordersModel.findById(req.params.id)
         .populate("customersId", "username email") 
         .populate({path: "items.itemId", select: "name price", }); 
         if (!order) {

@@ -22,7 +22,7 @@ salesController.postSales = async (req, res) => {
 //GET
 salesController.getSales = async (req, res) => {
     try {
-        const orders = await ordersModel.find()
+        const orders = await salesModel.find()
         .populate("customerId", "username email") 
         .populate({path: "items.itemId", select: "name price", }); 
         res.status(200).json(orders);
@@ -37,7 +37,7 @@ salesController.putSales = async (req, res) => {
     try {
         const updates = {customerId, items, total, status};
 
-        const updatedOrder = await ordersModel.findByIdAndUpdate(req.params.id, updates, { new: true })
+        const updatedOrder = await salesModel.findByIdAndUpdate(req.params.id, updates, { new: true })
             .populate("cuestomersId", "username email")
             .populate({path: "items.itemId", select: "name price",}); 
         if (!updatedOrder) {
@@ -52,7 +52,7 @@ salesController.putSales = async (req, res) => {
 //DELETE
 salesController.deleteSales = async (req, res) => {
     try {
-      const deletedOrder = await ordersModel.findByIdAndDelete(req.params.id);
+      const deletedOrder = await salesModel.findByIdAndDelete(req.params.id);
   
       if (!deletedOrder) {
         return res.status(404).json({ message: "Order no encontrada" });
@@ -67,7 +67,7 @@ salesController.deleteSales = async (req, res) => {
 //GET POR ID
 salesController.getSale = async (req, res) => {
     try {
-        const order = await ordersModel.find(req.params.id)
+        const order = await salesModel.findById(req.params.id)
         .populate("customersId", "username email") 
         .populate({path: "items.itemId", select: "name price",}); 
         res.status(200).json(order);

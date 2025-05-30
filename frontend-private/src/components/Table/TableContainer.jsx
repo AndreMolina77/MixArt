@@ -4,7 +4,7 @@ import DataTable from './DataTable'
 import FormModal from './Modals/FormModal'
 import ConfirmModal from './Modals/ConfirmModal'
 
-const TableContainer = ({config, data = [], onAdd, onEdit, onDelete, onExport, isLoading = false, className = ""}) => {
+const TableContainer = ({config, data = [], onAdd, onEdit, onDelete, onExport, isLoading = false, className = "", categoriesData, suppliersData}) => {
   const [searchValue, setSearchValue] = useState("")
   const [sortBy, setSortBy] = useState(null)
   const [sortOrder, setSortOrder] = useState('asc')
@@ -15,7 +15,7 @@ const TableContainer = ({config, data = [], onAdd, onEdit, onDelete, onExport, i
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [selectedItem, setSelectedItem] = useState(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
-  // Procesar campos con opciones dinámicas
+  // Procesar campos con opciones dinamicas
   const processedFormFields = useMemo(() => {
     return config.formFields.map(field => {
       if (field.options === 'categories' && categoriesData?.categories) {
@@ -23,7 +23,7 @@ const TableContainer = ({config, data = [], onAdd, onEdit, onDelete, onExport, i
           ...field,
           options: categoriesData.categories.map(cat => ({
             value: cat._id,
-            label: cat.names
+            label: cat.categoryName
           }))
         }
       }
@@ -38,7 +38,7 @@ const TableContainer = ({config, data = [], onAdd, onEdit, onDelete, onExport, i
       }
       return field
     })
-  }, [config.formFields, categoriesData, suppliersData])
+  }, [config.formFields, categoriesData?.categories, suppliersData?.suppliers])
   // Filtrar y ordenar datos
   const filteredAndSortedData = useMemo(() => {
     let filtered = data
@@ -58,7 +58,6 @@ const TableContainer = ({config, data = [], onAdd, onEdit, onDelete, onExport, i
         const bVal = b[sortBy]
         
         if (aVal === bVal) return 0
-        
         const result = aVal > bVal ? 1 : -1
         return sortOrder === 'asc' ? result : -result
       })
@@ -103,14 +102,24 @@ const TableContainer = ({config, data = [], onAdd, onEdit, onDelete, onExport, i
     // Logica de vista in progress
   }
   const handleAddSubmit = async (formData) => {
+    console.log('🏗️ === DEBUG TABLECONTAINER - HANDLE ADD SUBMIT ===')
+    console.log('📦 FormData recibido en TableContainer:', formData)
+    console.log('📊 Tipo de formData:', typeof formData)
+    console.log('📋 Keys de formData:', Object.keys(formData))
+    console.log('📝 Valores:', Object.values(formData))
+    
     setIsSubmitting(true)
     try {
       if (onAdd) {
+        console.log('📤 Llamando a onAdd con:', formData)
         await onAdd(formData)
+        console.log('✅ onAdd completado exitosamente')
+      } else {
+        console.log('❌ onAdd no está definido')
       }
       setShowAddModal(false)
     } catch (error) {
-      console.error('Error al crear:', error)
+      console.error('❌ Error en handleAddSubmit:', error)
     } finally {
       setIsSubmitting(false)
     }

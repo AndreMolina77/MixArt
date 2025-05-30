@@ -43,7 +43,7 @@ articlesController.putArticles = async (req, res) => {
         })
         imageURL = result.secure_url
     }
-    const updatedArticle = new articlesModel.findByIdAndUpdate(req.params.id, { articleName, price, description, image: imageURL, stock: stock || 0,  categoryId, supplierId, discount: discount || 0 }, { new: true });
+    const updatedArticle = await articlesModel.findByIdAndUpdate(req.params.id, { articleName, price, description, image: imageURL, stock: stock || 0,  categoryId, supplierId, discount: discount || 0 }, { new: true });
     if (!updatedArticle) {
         return res.status(404).json({ message: "Artículo no encontrado" });
     }
@@ -59,7 +59,7 @@ articlesController.deleteArticles = async (req, res) => {
 };
 //Read (Get) pero por su ID
 articlesController.getArticle = async (req, res) => {
-    const article = await articlesModel.find(req.params.id).populate('categoryId').populate('supplierId');
+    const article = await articlesModel.findById(req.params.id).populate('categoryId').populate('supplierId');
     if (!article) {
         return res.status(404).json({ message: "Articulo no encontrado" });
     }

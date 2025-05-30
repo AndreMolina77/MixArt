@@ -16,7 +16,7 @@ employeesController.getEmployees = async (req, res) => {
 //Update (Put)
 employeesController.putEmployee = async (req, res) => {
     const{name, lastName, username, email, password, phoneNumber, userType, issNumber, isVerified} = req.body;
-    const updateEmployee = new employeesModel.findByIdAndUpdate(req.params.id, {name, lastName, username, email, password, phoneNumber, userType, issNumber, isVerified}, {new: true})
+    const updateEmployee = await employeesModel.findByIdAndUpdate(req.params.id, {name, lastName, username, email, password, phoneNumber, userType, issNumber, isVerified}, {new: true})
 
     if(!updateEmployee){
         return res.status(404).json({ message: "Empleado no encontrado" });
@@ -33,7 +33,7 @@ employeesController.deleteEmployee = async (req, res) =>{
 };
 //Read (Get) pero por su ID
 employeesController.getEmployee = async (req, res) =>{
-    const employee = await employeesModel.find(req.params.id);
+    const employee = await employeesModel.findById(req.params.id);
     if (!employee) {
         return res.status(404).json({ message: "Empleado no encontrado" });
     }

@@ -27,23 +27,68 @@ const DataTable = ({data = [], columns = [], isLoading = false,
   }
   const renderCellContent = (item, column) => {
     const value = item[column.key]
-    
+    // Manejar valores null/undefined/objetos
+    console.log(`Renderizando celda ${column.key}:`, value, typeof value)
     switch (column.type) {
       case 'badge':
-        const badgeColors = {active: 'bg-green-100 text-green-800', inactive: 'bg-red-100 text-red-800', pending: 'bg-yellow-100 text-yellow-800', completed: 'bg-blue-100 text-blue-800'}
+        // Convertir a string de forma segura
+        const badgeValue = value?.toString()?.toLowerCase() || 'unknown'
+        const badgeColors = {
+          active: 'bg-green-100 text-green-800',
+          inactive: 'bg-red-100 text-red-800', 
+          pending: 'bg-yellow-100 text-yellow-800',
+          'pendiente': 'bg-yellow-100 text-yellow-800',
+          completed: 'bg-blue-100 text-blue-800',
+          'completado': 'bg-blue-100 text-blue-800',
+          'en proceso': 'bg-blue-100 text-blue-800',
+          'entregado': 'bg-green-100 text-green-800',
+          'enviado': 'bg-blue-100 text-blue-800',
+          'cancelado': 'bg-red-100 text-red-800',
+          'true': 'bg-green-100 text-green-800',
+          'false': 'bg-red-100 text-red-800',
+          'vendedor': 'bg-purple-100 text-purple-800',
+          'artista': 'bg-orange-100 text-orange-800',
+          'customer': 'bg-blue-100 text-blue-800'
+        }
+        // Texto a mostrar
+        let displayText = value
+        if (typeof value === 'boolean') {
+          displayText = value ? 'Verificado' : 'No verificado'
+        } else if (value === true || value === 'true') {
+          displayText = 'Verificado'
+        } else if (value === false || value === 'false') {
+          displayText = 'No verificado'
+        }
         return (
-          <span className={`px-2 py-1 rounded-full text-xs font-medium ${badgeColors[value?.toLowerCase()] || 'bg-gray-100 text-gray-800'}`}>
-            {value}
+          <span className={`px-2 py-1 rounded-full text-xs font-medium ${badgeColors[badgeValue] || 'bg-gray-100 text-gray-800'}`}>
+            {displayText}
           </span>
         )
       case 'number':
-        return <span className="font-mono">{value?.toLocaleString()}</span>
+        return <span className="font-mono">{value?.toLocaleString() || '0'}</span>
       case 'currency':
-        return <span className="font-mono">${value?.toFixed(2)}</span>
+        const numValue = Number(value) || 0
+        return <span className="font-mono">${numValue.toFixed(2)}</span>
       case 'date':
-        return new Date(value).toLocaleDateString()
+        if (!value) return '-'
+        try {
+          return new Date(value).toLocaleDateString()
+        } catch (error) {
+          return value?.toString() || '-'
+        }
       default:
-        return value
+        // FIX: Manejar objetos populados (como categoryId, supplierId)
+        if (value && typeof value === 'object') {
+          // Si es un objeto con nombre/título
+          if (value.categoryName) return value.categoryName
+          if (value.supplierName) return value.supplierName
+          if (value.name) return value.name
+          if (value.username) return value.username
+          // Si es un objeto pero no sabemos qué mostrar
+          return value._id || JSON.stringify(value)
+        }
+        // Para valores simples
+        return value?.toString() || '-'
     }
   }
   const totalPages = Math.ceil(pagination.total / pagination.pageSize)

@@ -1,6 +1,7 @@
 import express from "express"
 import cors from "cors"
 import dotenv from "dotenv"
+import cookieParser from "cookie-parser"
 import articlesRoutes from "./src/routes/articles.js"
 import employeesRoutes from "./src/routes/employees.js"
 import artpiecesRoutes from "./src/routes/artpieces.js"
@@ -20,6 +21,7 @@ import { validateAuthToken } from "./src/middlewares/validateAuthToken.js"
 dotenv.config()
 const app = express()
 app.use(express.json())
+app.use(cookieParser())
 app.use(cors({origin: "http://localhost:5173", credentials: true}))
 //Login requerido
 app.use("/api/articles", validateAuthToken(["admin", "vendedor"]), articlesRoutes)

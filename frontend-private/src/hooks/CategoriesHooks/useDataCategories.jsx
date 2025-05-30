@@ -33,7 +33,19 @@ const useDataCategories = () => {
   const saveCategory = async (e) => {
     e.preventDefault()
     
+    console.log('💾 === DEBUG HOOK - SAVE CATEGORY ===')
+    console.log('📊 Estado actual del hook:')
+    console.log('  - categoryName:', categoryName)
+    console.log('  - description:', description)
+    console.log('  - categoryName tipo:', typeof categoryName)
+    console.log('  - description tipo:', typeof description)
+    console.log('  - categoryName length:', categoryName?.length)
+    console.log('  - description length:', description?.length)
+    
     if (!categoryName || !description) {
+      console.log('❌ VALIDACIÓN FALLÓ en hook:')
+      console.log('  - categoryName válido:', !!categoryName)
+      console.log('  - description válido:', !!description)
       toast.error("Todos los campos son requeridos")
       return
     }
@@ -42,6 +54,8 @@ const useDataCategories = () => {
         categoryName,
         description
       }
+      console.log('📦 Objeto a enviar al servidor:', newCategory)
+      
       const response = await fetch(API, {
         method: "POST",
         headers: {
@@ -50,16 +64,22 @@ const useDataCategories = () => {
         credentials: "include",
         body: JSON.stringify(newCategory)
       })
+      console.log('🌐 Response status:', response.status)
+      console.log('🌐 Response ok:', response.ok)
       if (!response.ok) {
         const errorData = await response.json()
+        console.log('❌ Error del servidor:', errorData)
         throw new Error(errorData.message || "Hubo un error al registrar la categoría")
       }
+      const responseData = await response.json()
+      console.log('✅ Respuesta del servidor:', responseData)
+      
       toast.success('Categoría registrada exitosamente')
       fetchCategories()
       clearForm()
       setActiveTab("list")
     } catch (error) {
-      console.error("Error al guardar categoría:", error)
+      console.error("❌ Error en saveCategory:", error)
       toast.error(error.message || "Error al registrar categoría")
     }
   }

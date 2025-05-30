@@ -35,7 +35,7 @@ categoriesController.deletecategories = async (req, res) =>{
 };
 //Read (Get) pero por su ID
 categoriesController.getcategory  = async (req, res) =>{
-    const categories = await categoriesModel.find(req.params.id);
+    const categories = await categoriesModel.findById(req.params.id);
     if (!categories) {
         return res.status(404).json({ message: "Categoria no encontrada" });
     }

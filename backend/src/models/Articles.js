@@ -21,7 +21,7 @@ const articlesSchema = new Schema(
       stock: { type: Number, require: true, validate: { validator: Number.isInteger, message: "El stock debe ser un número entero" }, min: 1, },
       categoryId: { type: Schema.Types.ObjectId, ref: "Category", require: true, },
       supplierId: { type: Schema.Types.ObjectId, ref: "Supplier", require: true, },
-      discount: { type: Number, require: true, validate: { validator: function (value) { return value !== 0; }, message: "El descuento no puede ser 0"}, min: [0, "El descuento no puede ser menor que 0"], max: [100, "El descuento no puede exceder el 100%"], },
+      discount: { type: Number, require: true, default: 0, min: [0, "El descuento no puede ser menor que 0"], max: [100, "El descuento no puede exceder el 100%"] },
     },
     {
       timestamps: true,

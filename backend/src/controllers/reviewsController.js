@@ -43,7 +43,7 @@ reviewsController.deletereview = async (req,res) => {
 };
 //Read (Get) pero por su ID
 reviewsController.getreviews = async (req, res) =>{
-    const review = await reviewsModel.find(req.params.id).populate(itemId).populate(customerId);
+    const review = await reviewsModel.findById(req.params.id).populate(itemId).populate(customerId);
     if (!review) {
         return res.status(404).json({ message: "Review no encontrada" });
     }

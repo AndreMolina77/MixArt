@@ -20,7 +20,7 @@ const reviewsSchema = new Schema(
         itemId: {
             type: Schema.Types.ObjectId,
             require: true,
-            refPath: 'contentType'
+            refPath: 'itemType'
         },
 
         customerId: {

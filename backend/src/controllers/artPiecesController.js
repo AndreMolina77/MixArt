@@ -43,7 +43,7 @@ artPiecesController.putArtPieces = async (req, res) => {
         })
         imageURL = result.secure_url
     }
-    const updatedArtPiece = new artPiecesModel.findByIdAndUpdate(req.params.id, { artPieceName, price, description, image: imageURL, categoryId, artist, discount: discount || 0 }, { new: true });
+    const updatedArtPiece = await artPiecesModel.findByIdAndUpdate(req.params.id, { artPieceName, price, description, image: imageURL, categoryId, artist, discount: discount || 0 }, { new: true });
     if (!updatedArtPiece) {
         return res.status(404).json({ message: "Artículo no encontrado" })
     }
@@ -59,7 +59,7 @@ artPiecesController.deleteArtPieces = async (req, res) => {
 };
 //Read (Get) pero por su ID
 artPiecesController.getArtPiece = async (req, res) => {
-    const artPiece = await artPiecesModel.find(req.params.id).populate('categoryId');
+    const artPiece = await artPiecesModel.findById(req.params.id).populate('categoryId');
     if (!artPiece) {
         return res.status(404).json({ message: "Articulo no encontrado" });
     }

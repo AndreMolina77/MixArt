@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useAuth } from '../hooks/useAuth'
+import { toast } from 'react-hot-toast'
 import Sidebar from '../components/Dashboard/Sidebar'
 import Header from '../components/Dashboard/Header'
 import Dashboard from '../components/Dashboard/Dashboard'
@@ -14,7 +15,7 @@ import useDataCategories from '../hooks/CategoriesHooks/useDataCategories'
 import { articlesConfig, categoriesConfig, suppliersConfig, customersConfig, employeesConfig } from '../data/TableConfigs.js'
 
 const MainPage = () => {
-  const { user, logout } = useAuth()
+  const { user, logout, API } = useAuth()
   const [currentView, setCurrentView] = useState('dashboard')
   // Inicializar todos los hooks
   const suppliersData = useDataSuppliers()
@@ -26,7 +27,12 @@ const MainPage = () => {
   const handleLogout = async () => {
     await logout()
   }
-  // Handlers dinamicos basados en la vista actual
+  // Funcion handleExport
+  const handleExport = (format, data) => {
+    console.log(`Exportando ${data?.length || 0} elementos en formato ${format}`)
+    // In progress
+  }
+  // FIX: Handlers directos que NO usan setters
   const getHandlersForView = () => {
     switch (currentView) {
       case 'suppliers':
@@ -34,26 +40,49 @@ const MainPage = () => {
           data: suppliersData.suppliers,
           loading: suppliersData.loading,
           onAdd: async (data) => {
-            // Simular evento de formulario
-            const fakeEvent = { preventDefault: () => {} }
-            // Setear los datos en el hook
-            Object.keys(data).forEach(key => {
-              const setter = suppliersData[`set${key.charAt(0).toUpperCase() + key.slice(1)}`]
-              if (setter) setter(data[key])
-            })
-            await suppliersData.saveSupplier(fakeEvent)
+            console.log('🚀 === SUPPLIERS ADD ===')
+            console.log('📦 Data recibido:', data)
+            
+            try {
+              const response = await fetch(`${API}/suppliers`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify(data)
+              })
+              if (!response.ok) {
+                const errorData = await response.json()
+                throw new Error(errorData.message || "Error al registrar proveedor")
+              }
+              toast.success('Proveedor registrado exitosamente')
+              suppliersData.fetchSuppliers()
+            } catch (error) {
+              console.error("Error:", error)
+              toast.error(error.message || "Error al registrar proveedor")
+              throw error
+            }
           },
           onEdit: async (id, data) => {
-            const item = suppliersData.suppliers.find(s => s._id === id)
-            if (item) {
-              await suppliersData.updateSupplier(item)
-              // Setear los nuevos datos
-              Object.keys(data).forEach(key => {
-                const setter = suppliersData[`set${key.charAt(0).toUpperCase() + key.slice(1)}`]
-                if (setter) setter(data[key])
+            console.log('🔧 === SUPPLIERS EDIT ===')
+            console.log('ID:', id, 'Data:', data)
+            
+            try {
+              const response = await fetch(`${API}/suppliers/${id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify(data)
               })
-              const fakeEvent = { preventDefault: () => {} }
-              await suppliersData.handleEdit(fakeEvent)
+              if (!response.ok) {
+                const errorData = await response.json()
+                throw new Error(errorData.message || "Error al actualizar proveedor")
+              }
+              toast.success('Proveedor actualizado exitosamente')
+              suppliersData.fetchSuppliers()
+            } catch (error) {
+              console.error("Error:", error)
+              toast.error(error.message || "Error al actualizar proveedor")
+              throw error
             }
           },
           onDelete: async (id) => await suppliersData.deleteSupplier(id)
@@ -63,23 +92,48 @@ const MainPage = () => {
           data: employeesData.employees,
           loading: employeesData.loading,
           onAdd: async (data) => {
-            const fakeEvent = { preventDefault: () => {} }
-            Object.keys(data).forEach(key => {
-              const setter = employeesData[`set${key.charAt(0).toUpperCase() + key.slice(1)}`]
-              if (setter) setter(data[key])
-            })
-            await employeesData.saveEmployee(fakeEvent)
+            console.log('🚀 === EMPLOYEES ADD ===')
+            console.log('📦 Data recibido:', data)
+            
+            try {
+              const response = await fetch(`${API}/employees`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify(data)
+              })
+              if (!response.ok) {
+                const errorData = await response.json()
+                throw new Error(errorData.message || "Error al registrar empleado")
+              }
+              toast.success('Empleado registrado exitosamente')
+              employeesData.fetchEmployees()
+            } catch (error) {
+              console.error("Error:", error)
+              toast.error(error.message || "Error al registrar empleado")
+              throw error
+            }
           },
           onEdit: async (id, data) => {
-            const item = employeesData.employees.find(e => e._id === id)
-            if (item) {
-              await employeesData.updateEmployee(item)
-              Object.keys(data).forEach(key => {
-                const setter = employeesData[`set${key.charAt(0).toUpperCase() + key.slice(1)}`]
-                if (setter) setter(data[key])
+            console.log('🔧 === EMPLOYEES EDIT ===')
+            
+            try {
+              const response = await fetch(`${API}/employees/${id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify(data)
               })
-              const fakeEvent = { preventDefault: () => {} }
-              await employeesData.handleEdit(fakeEvent)
+              if (!response.ok) {
+                const errorData = await response.json()
+                throw new Error(errorData.message || "Error al actualizar empleado")
+              }
+              toast.success('Empleado actualizado exitosamente')
+              employeesData.fetchEmployees()
+            } catch (error) {
+              console.error("Error:", error)
+              toast.error(error.message || "Error al actualizar empleado")
+              throw error
             }
           },
           onDelete: async (id) => await employeesData.deleteEmployee(id)
@@ -89,79 +143,183 @@ const MainPage = () => {
           data: customersData.customers,
           loading: customersData.loading,
           onAdd: async (data) => {
-            const fakeEvent = { preventDefault: () => {} }
-            Object.keys(data).forEach(key => {
-              const setter = customersData[`set${key.charAt(0).toUpperCase() + key.slice(1)}`]
-              if (setter) setter(data[key])
-            })
-            await customersData.saveCustomer(fakeEvent)
+            console.log('🚀 === CUSTOMERS ADD ===')
+            console.log('📦 Data recibido:', data)
+            
+            try {
+              const response = await fetch(`${API}/customers`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify(data)
+              })
+              if (!response.ok) {
+                const errorData = await response.json()
+                throw new Error(errorData.message || "Error al registrar cliente")
+              }
+              toast.success('Cliente registrado exitosamente')
+              customersData.fetchCustomers()
+            } catch (error) {
+              console.error("Error:", error)
+              toast.error(error.message || "Error al registrar cliente")
+              throw error
+            }
           },
           onEdit: async (id, data) => {
-            const item = customersData.customers.find(c => c._id === id)
-            if (item) {
-              await customersData.updateCustomer(item)
-              Object.keys(data).forEach(key => {
-                const setter = customersData[`set${key.charAt(0).toUpperCase() + key.slice(1)}`]
-                if (setter) setter(data[key])
-              })
-              const fakeEvent = { preventDefault: () => {} }
-              await customersData.handleEdit(fakeEvent)
+            console.log('🔧 === CUSTOMERS EDIT ===')
+            try {
+              const response = await fetch(`${API}/customers/${id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify(data)
+              })    
+              if (!response.ok) {
+                const errorData = await response.json()
+                throw new Error(errorData.message || "Error al actualizar cliente")
+              }
+              toast.success('Cliente actualizado exitosamente')
+              customersData.fetchCustomers()
+            } catch (error) {
+              console.error("Error:", error)
+              toast.error(error.message || "Error al actualizar cliente")
+              throw error
             }
           },
           onDelete: async (id) => await customersData.deleteCustomer(id)
         }
-        case 'articles': 
+      case 'articles': 
         return {
           data: articlesData.articles,
           loading: articlesData.loading,
           onAdd: async (data) => {
-            const fakeEvent = { preventDefault: () => {} }
-            Object.keys(data).forEach(key => {
-              const setter = articlesData[`set${key.charAt(0).toUpperCase() + key.slice(1)}`]
-              if (setter) setter(data[key])
-            })
-            await articlesData.saveArticle(fakeEvent)
+            console.log('🚀 === ARTICLES ADD ===')
+            console.log('📦 Data recibido:', data)
+            try {
+              // Para artículos, usar FormData si hay imagen
+              let body
+              let headers = { credentials: "include" }
+              
+              if (data.image && data.image instanceof File) {
+                console.log('📸 Detected file upload, using FormData')
+                const formData = new FormData()
+                Object.keys(data).forEach(key => {
+                  formData.append(key, data[key])
+                })
+                body = formData
+                // No set Content-Type for FormData, let browser set it
+              } else {
+                console.log('📝 No file, using JSON')
+                headers["Content-Type"] = "application/json"
+                body = JSON.stringify(data)
+              }
+              const response = await fetch(`${API}/articles`, {
+                method: "POST",
+                headers,
+                credentials: "include",
+                body
+              })
+              if (!response.ok) {
+                const errorData = await response.json()
+                throw new Error(errorData.message || "Error al registrar artículo")
+              }
+              toast.success('Artículo registrado exitosamente')
+              articlesData.fetchArticles()
+            } catch (error) {
+              console.error("Error:", error)
+              toast.error(error.message || "Error al registrar artículo")
+              throw error
+            }
           },
           onEdit: async (id, data) => {
-            const item = articlesData.articles.find(a => a._id === id)
-            if (item) {
-              await articlesData.updateArticle(item)
-              Object.keys(data).forEach(key => {
-                const setter = articlesData[`set${key.charAt(0).toUpperCase() + key.slice(1)}`]
-                if (setter) setter(data[key])
+            console.log('🔧 === ARTICLES EDIT ===')
+            
+            try {
+              let body
+              let headers = { credentials: "include" }
+              
+              if (data.image && data.image instanceof File) {
+                const formData = new FormData()
+                Object.keys(data).forEach(key => {
+                  formData.append(key, data[key])
+                })
+                body = formData
+              } else {
+                headers["Content-Type"] = "application/json"
+                body = JSON.stringify(data)
+              }
+              const response = await fetch(`${API}/articles/${id}`, {
+                method: "PUT",
+                headers,
+                credentials: "include",
+                body
               })
-              const fakeEvent = { preventDefault: () => {} }
-              await articlesData.handleEdit(fakeEvent)
+              if (!response.ok) {
+                const errorData = await response.json()
+                throw new Error(errorData.message || "Error al actualizar artículo")
+              }
+              toast.success('Artículo actualizado exitosamente')
+              articlesData.fetchArticles()
+            } catch (error) {
+              console.error("Error:", error)
+              toast.error(error.message || "Error al actualizar artículo")
+              throw error
             }
           },
           onDelete: async (id) => await articlesData.deleteArticle(id)
         }
-        case 'categories':
-          return {
-            data: categoriesData.categories,
-            loading: categoriesData.loading,
-            onAdd: async (data) => {
-              const fakeEvent = { preventDefault: () => {} }
-              Object.keys(data).forEach(key => {
-                const setter = categoriesData[`set${key.charAt(0).toUpperCase() + key.slice(1)}`]
-                if (setter) setter(data[key])
+      case 'categories':
+        return {
+          data: categoriesData.categories,
+          loading: categoriesData.loading,
+          onAdd: async (data) => {
+            console.log('🚀 === CATEGORIES ADD ===')
+            console.log('📦 Data recibido:', data)
+            
+            try {
+              const response = await fetch(`${API}/categories`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify(data)
               })
-              await categoriesData.saveCategory(fakeEvent)
-            },
-            onEdit: async (id, data) => {
-              const item = categoriesData.categories.find(c => c._id === id)
-              if (item) {
-                await categoriesData.updateCategory(item)
-                Object.keys(data).forEach(key => {
-                  const setter = categoriesData[`set${key.charAt(0).toUpperCase() + key.slice(1)}`]
-                  if (setter) setter(data[key])
-                })
-                const fakeEvent = { preventDefault: () => {} }
-                await categoriesData.handleEdit(fakeEvent)
+              if (!response.ok) {
+                const errorData = await response.json()
+                throw new Error(errorData.message || "Error al registrar categoría")
               }
-            },
-            onDelete: async (id) => await categoriesData.deleteCategory(id)
-          }
+              toast.success('Categoría registrada exitosamente')
+              categoriesData.fetchCategories()
+            } catch (error) {
+              console.error("Error:", error)
+              toast.error(error.message || "Error al registrar categoría")
+              throw error
+            }
+          },
+          onEdit: async (id, data) => {
+            console.log('🔧 === CATEGORIES EDIT ===')
+            console.log('ID:', id, 'Data:', data)
+            
+            try {
+              const response = await fetch(`${API}/categories/${id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify(data)
+              })
+              if (!response.ok) {
+                const errorData = await response.json()
+                throw new Error(errorData.message || "Error al actualizar categoría")
+              }
+              toast.success('Categoría actualizada exitosamente')
+              categoriesData.fetchCategories()
+            } catch (error) {
+              console.error("Error:", error)
+              toast.error(error.message || "Error al actualizar categoría")
+              throw error
+            }
+          },
+          onDelete: async (id) => await categoriesData.deleteCategory(id)
+        }
       default:
         return {
           data: [],
@@ -172,7 +330,6 @@ const MainPage = () => {
         }
     }
   }
-  // Funcion para renderizar el contenido basado en la vista actual
   const renderContent = () => {
     switch (currentView) {
       case 'dashboard':
@@ -200,7 +357,7 @@ const MainPage = () => {
         return (
           <div className="p-6 bg-white min-h-screen">
             <div className="max-w-7xl mx-auto">
-              <TableContainer config={articlesConfig} data={articlesHandler.data} onAdd={articlesHandler.onAdd} onEdit={articlesHandler.onEdit} onDelete={articlesHandler.onDelete} onExport={handleExport} isLoading={articlesHandler.loading} categoriesData={categoriesData} suppliersData={suppliersData}/>
+              <TableContainer config={articlesConfig} data={articlesHandler.data} onAdd={articlesHandler.onAdd}  onEdit={articlesHandler.onEdit} onDelete={articlesHandler.onDelete} onExport={handleExport} isLoading={articlesHandler.loading} categoriesData={categoriesData} suppliersData={suppliersData}/>
             </div>
           </div>
         )
@@ -282,13 +439,9 @@ const MainPage = () => {
   }
   return (
     <div className="flex h-screen bg-white font-[Alexandria] overflow-hidden">
-      {/* Sidebar */}
       <Sidebar currentView={currentView} setCurrentView={setCurrentView} onLogout={handleLogout}/>
-      {/* Contenido principal */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Header */}
-        <Header onLogout={handleLogout} />
-        {/* Contenido dinamico */}
+        <Header onLogout={handleLogout}/>
         <div className="flex-1 overflow-auto">
           {renderContent()}
         </div>

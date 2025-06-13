@@ -1,5 +1,3 @@
-import React from 'react'
-
 const WelcomeUser = ({ Name }) => {
   return (
     <div className="text-1rem font-semibold">

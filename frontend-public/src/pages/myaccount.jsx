@@ -1,4 +1,4 @@
-import { React, useState, useEffect}from 'react'
+import { useState, useEffect }from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import Breadcrumbs from '../components/breadcrumbs.jsx'
 import Form from '../components/form.jsx'
@@ -19,7 +19,7 @@ const MyAccount = () => {
   const navigate = useNavigate()
   useEffect(() => {
     const rawHash = location.hash.substring(1)
-    const decodedHash = decodeURIComponent(rawHash) // Add this line
+    const decodedHash = decodeURIComponent(rawHash)
     if (decodedHash  && [
       'perfil',
       'direcciones',

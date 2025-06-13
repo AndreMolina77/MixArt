@@ -10,53 +10,76 @@ export const AuthProvider = ({ children }) => {
 
   const Login = async (email, password) => {
     try {
+      console.log("🔐 === AUTH CONTEXT LOGIN ===")
+      console.log("📧 Email:", email)
+      
       const response = await fetch(`${API}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
-        credentials: "include" // Para incluir cookies en la peticion
+        credentials: "include" // Para incluir cookies en la petición
       })
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.message || "Error en la autenticación")
-      }
+
+      console.log("📡 Login response status:", response.status)
+
       const data = await response.json()
-      // Guardar informacion del usuario
+      console.log("📦 Login response data:", data)
+
+      if (!response.ok) {
+        console.log("❌ Login failed:", data.message)
+        throw new Error(data.message || "Error en la autenticación")
+      }
+
+      console.log("✅ Login successful")
+      
+      // Guardar información del usuario
       const userInfo = { email }
       localStorage.setItem("user", JSON.stringify(userInfo))
       
       setUser(userInfo)
-      // No guardamos el token en localStorage, solo dependemos de la cookie httpOnly
+      setAuthCookie(true) // Indicador de que hay cookie válida
+
       return { success: true, message: data.message }
     } catch (error) {
+      console.log("❌ Login error:", error.message)
       return { success: false, message: error.message }
     }
   }
+
   const logout = async () => {
     try {
+      console.log("🚪 === LOGOUT ===")
       // Llamar al endpoint de logout en el backend para limpiar la cookie
       await fetch(`${API}/logout`, {
         method: "POST",
-        credentials: "include", // Para incluir cookies en la peticion
+        credentials: "include", // Para incluir cookies en la petición
       })
+      console.log("✅ Server logout successful")
     } catch (error) {
-      console.error("Error durante el logout:", error)
+      console.error("❌ Error durante el logout:", error)
     } finally {
-      // Limpiar datos locales independientemente de si la peticion al servidor tuvo exito
+      // Limpiar datos locales independientemente de si la petición al servidor tuvo éxito
+      console.log("🧹 Cleaning local data")
       localStorage.removeItem("user")
       setAuthCookie(null)
       setUser(null)
     }
   }
-  // Verificar autenticacion al cargar la aplicacion
+
+  // Verificar autenticación al cargar la aplicación (SOLO UNA VEZ)
   useEffect(() => {
     const checkAuth = async () => {
       try {
+        console.log("🔍 === CHECKING INITIAL AUTH ===")
+        
         // Intentar restaurar usuario desde localStorage
         const savedUser = localStorage.getItem("user")
+        console.log("💾 Saved user in localStorage:", savedUser)
         
         if (savedUser) {
-          // Verificar si la sesion sigue siendo valida con el servidor
+          console.log("🔄 Found saved user, validating with server...")
+          
+          // Verificar si la sesión sigue siendo válida con el servidor
           const response = await fetch(`${API}/validateAuthToken`, {
             method: "POST",
             credentials: "include",
@@ -64,33 +87,53 @@ export const AuthProvider = ({ children }) => {
               'Content-Type': 'application/json'
             }
           })
+
+          console.log("📡 Validation response status:", response.status)
+
           if (response.ok) {
-            // Sesión valida, restaurar usuario
+            console.log("✅ Session valid - restoring user")
+            // Sesión válida, restaurar usuario
             setUser(JSON.parse(savedUser))
-            setAuthCookie(true) // Indicador de que hay cookie valida
+            setAuthCookie(true) // Indicador de que hay cookie válida
           } else {
-            // Sesión invalida, limpiar datos locales
+            console.log("❌ Session invalid - cleaning local data")
+            // Sesión inválida, limpiar datos locales
             localStorage.removeItem("user")
             setUser(null)
             setAuthCookie(null)
           }
+        } else {
+          console.log("📭 No saved user found")
         }
       } catch (error) {
-        console.error("Error checking auth:", error)
+        console.error("❌ Error checking auth:", error)
         // En caso de error, limpiar datos locales
         localStorage.removeItem("user")
         setUser(null)
         setAuthCookie(null)
       } finally {
+        console.log("✅ Initial auth check complete")
         setIsLoading(false)
       }
     }
+
     checkAuth()
-  }, [])
+  }, []) // Array vacío - solo ejecutar una vez al montar
+
   return (
-    <AuthContext.Provider value={{ user, Login, logout, authCookie, setAuthCookie, API, isLoading }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      Login, 
+      logout, 
+      authCookie, 
+      setAuthCookie, 
+      API,
+      isLoading 
+    }}>
       {children}
     </AuthContext.Provider>
   )
 }
+
+// Export el contexto para poder usarlo en el hook
 export { AuthContext }

@@ -11,7 +11,6 @@ const reviewsSchema = new Schema(
             type: String,
             require: true,
         },
-        
         itemType: {
             type: String,
             require: true,
@@ -22,7 +21,6 @@ const reviewsSchema = new Schema(
             require: true,
             refPath: 'itemType'
         },
-
         customerId: {
             type: Schema.Types.ObjectId,
             ref: "Customer",

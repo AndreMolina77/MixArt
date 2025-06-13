@@ -1,4 +1,3 @@
-import React from 'react'
 import '@fortawesome/fontawesome-free/css/all.min.css'
 import { FaPaperPlane } from 'react-icons/fa'
 import { NavLink } from 'react-router-dom'

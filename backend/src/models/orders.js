@@ -28,21 +28,19 @@
 ] */
 import { Schema, model } from "mongoose";
 
-const orderItemSchema = new Schema({
-    itemType: { type: String, require: true, enum: ['Article', 'ArtPiece'] },
-    itemId: { type: Schema.Types.ObjectId, require: true, refPath: 'itemType'},
-    quantity: { type: Number, require: true, min: 1 },
-    subtotal: { type: Number, require: true, min: 0 }        
-});
 const ordersSchema = new Schema({
     customerId: { type: Schema.Types.ObjectId, require: true, ref: "Customer" },
-    items: [orderItemSchema],
+    items: [{
+        itemType: { type: String, require: true, enum: ['Article', 'ArtPiece'] },
+        itemId: { type: Schema.Types.ObjectId, require: true, refPath: 'itemType'},
+        quantity: { type: Number, require: true, min: 1 },
+        subtotal: { type: Number, require: true, min: 0 } 
+    }],
     total: { type: Number, require: true, min: 0 },
     status: { type: String, require: true, enum: ['Pendiente', 'En proceso', 'Entregado', 'Enviado', 'Cancelado'], default: 'Pendiente'}
-    },
-    {  
+    }, {  
         timestamps: true,
         strict: false
     }
-);
-export default model("Order", ordersSchema, "Order");    
+)
+export default model("Order", ordersSchema, "Order")

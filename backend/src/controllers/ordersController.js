@@ -31,20 +31,26 @@ ordersController.getOrders = async (req, res) => {
 };
 //Update (Put)
 ordersController.putOrders = async (req, res) => {
-    const {customerId, items, total, status} = req.body;
     try {
-        const updates = {customerId, items, total, status};
+        
+        const {customerId, items, total, status} = req.body;
 
-        const updatedOrder = await ordersModel.findByIdAndUpdate(req.params.id, updates, { new: true })
-            .populate("cuestomersId", "username email")
-            .populate({path: "items.itemId", select: "name price",}); 
-        if (!updatedOrder) {
-            return res.status(404).json({ message: "Orden no encontrada" });
+        console.log('📝 Actualizando pedido:', req.params.id)
+        console.log('📦 Datos recibidos:', { customerId, items, total, status })
+        // Validaciones
+        if (!customerId || !items || !Array.isArray(items) || items.length === 0) {
+        return res.status(400).json({ message: 'Datos de pedido inválidos' })
         }
-        res.status(200).json({ message: "Orden actualizada correctamente"});
+        const updatedOrder = await ordersModel.findByIdAndUpdate(req.params.id, { customerId, items, total, status },
+            { new: true, runValidators: true }).populate('customerId', 'name lastName email username') 
+        if (!updatedOrder) {
+            return res.status(404).json({ message: "Pedido no encontrado" });
+        }
+        res.json(updatedOrder)
+        res.status(200).json({ message: "Pedido actualizado correctamente"});
     } catch (error) {
-        res.status(400).json({ message: "Error al actualizar la orden", error: error.message });
-    }
+        res.status(400).json({ message: "Error al actualizar el pedido", error: error.message });
+    }   
 };
 // Delete (Delete) por su ID
 ordersController.deleteOrders = async (req, res) => {

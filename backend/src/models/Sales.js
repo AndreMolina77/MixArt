@@ -19,5 +19,8 @@ import {Schema, model} from "mongoose";
         require: true,
         enum: ['Sold', 'Pending sale'], default: 'Pending sale'
     }
- })
+}, {
+    timestamps: true,
+    strict: false
+})
 export default model ("Sale", salesSchema, "Sale")

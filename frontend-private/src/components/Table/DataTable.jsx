@@ -27,11 +27,10 @@ const DataTable = ({data = [], columns = [], isLoading = false,
   }
   const renderCellContent = (item, column) => {
     const value = item[column.key]
-    // Manejar valores null/undefined/objetos
     console.log(`Renderizando celda ${column.key}:`, value, typeof value)
+    
     switch (column.type) {
       case 'badge':
-        // Convertir a string de forma segura
         const badgeValue = value?.toString()?.toLowerCase() || 'unknown'
         const badgeColors = {
           active: 'bg-green-100 text-green-800',
@@ -50,7 +49,6 @@ const DataTable = ({data = [], columns = [], isLoading = false,
           'artista': 'bg-orange-100 text-orange-800',
           'customer': 'bg-blue-100 text-blue-800'
         }
-        // Texto a mostrar
         let displayText = value
         if (typeof value === 'boolean') {
           displayText = value ? 'Verificado' : 'No verificado'
@@ -68,7 +66,7 @@ const DataTable = ({data = [], columns = [], isLoading = false,
         return <span className="font-mono">{value?.toLocaleString() || '0'}</span>
       case 'currency':
         const numValue = Number(value) || 0
-        return <span className="font-mono">${numValue.toFixed(2)}</span>
+        return <span className="font-mono text-green-600 font-medium">${numValue.toFixed(2)}</span>
       case 'date':
         if (!value) return '-'
         try {
@@ -76,10 +74,24 @@ const DataTable = ({data = [], columns = [], isLoading = false,
         } catch (error) {
           return value?.toString() || '-'
         }
+      case 'items-count':
+        if (!value || !Array.isArray(value)) return '0 productos'
+        const count = value.length
+        const totalItems = value.reduce((sum, item) => sum + (item.quantity || 0), 0)
+        return (
+          <div className="text-sm">
+            <div className="font-medium">{count} {count === 1 ? 'producto' : 'productos'}</div>
+            <div className="text-gray-500">{totalItems} {totalItems === 1 ? 'unidad' : 'unidades'}</div>
+          </div>
+        )
       default:
-        // FIX: Manejar objetos populados (como categoryId, supplierId)
+        // CORREGIDO: Manejar objetos populados y clientes
         if (value && typeof value === 'object') {
-          // Si es un objeto con nombre/título
+          // Para clientes: mostrar nombre completo
+          if (column.key === 'customerId' && value.name && value.lastName) {
+            return `${value.name} ${value.lastName}`
+          }
+          // Para categorías y proveedores
           if (value.categoryName) return value.categoryName
           if (value.supplierName) return value.supplierName
           if (value.name) return value.name

@@ -4,7 +4,7 @@ import DataTable from './DataTable'
 import FormModal from './Modals/FormModal'
 import ConfirmModal from './Modals/ConfirmModal'
 
-const TableContainer = ({config, data = [], onAdd, onEdit, onDelete, onExport, isLoading = false, className = "", categoriesData, suppliersData}) => {
+const TableContainer = ({config, data = [], onAdd, onEdit, onDelete, onExport, isLoading = false, className = "", categoriesData, suppliersData, customersData, articlesData, artPiecesData, ordersData}) => {
   const [searchValue, setSearchValue] = useState("")
   const [sortBy, setSortBy] = useState(null)
   const [sortOrder, setSortOrder] = useState('asc')
@@ -18,6 +18,7 @@ const TableContainer = ({config, data = [], onAdd, onEdit, onDelete, onExport, i
   // Procesar campos con opciones dinamicas
   const processedFormFields = useMemo(() => {
     return config.formFields.map(field => {
+      // Manejar categorias
       if (field.options === 'categories' && categoriesData?.categories) {
         return {
           ...field,
@@ -27,6 +28,7 @@ const TableContainer = ({config, data = [], onAdd, onEdit, onDelete, onExport, i
           }))
         }
       }
+      // Manejar proveedores
       if (field.options === 'suppliers' && suppliersData?.suppliers) {
         return {
           ...field,
@@ -36,9 +38,34 @@ const TableContainer = ({config, data = [], onAdd, onEdit, onDelete, onExport, i
           }))
         }
       }
+      // Manejar clientes
+      if (field.options === 'customers' && customersData?.customers) {
+        return {
+          ...field,
+          options: customersData.customers.map(customer => ({
+            value: customer._id,
+            label: `${customer.name} ${customer.lastName} (${customer.email})`
+          }))
+        }
+      }
+      // Manejar pedidos
+      if (field.options === 'orders' && ordersData?.orders) {
+        return {
+          ...field,
+          options: ordersData.orders.map(order => ({
+            value: order._id,
+            label: `Pedido #${order._id.slice(-6)} - $${order.total}`
+          }))
+        }
+      }
+      // Manejar productos dinamicos para reseñas (basado en itemType)
+      if (field.name === 'itemId' && field.options === 'items') {
+        // Este caso necesita lógica especial que se manejará en el FormModal
+        return field
+      }
       return field
     })
-  }, [config.formFields, categoriesData?.categories, suppliersData?.suppliers])
+  }, [config.formFields, categoriesData?.categories, suppliersData?.suppliers, customersData?.customers, ordersData?.orders])
   // Filtrar y ordenar datos
   const filteredAndSortedData = useMemo(() => {
     let filtered = data
@@ -90,7 +117,26 @@ const TableContainer = ({config, data = [], onAdd, onEdit, onDelete, onExport, i
     setShowAddModal(true)
   }
   const handleEdit = (item) => {
-    setSelectedItem(item)
+    console.log('🔧 === EDIT ITEM ===')
+    console.log('📦 Item original:', item)
+    // Procesar el item para extraer IDs de objetos populados
+    const processedItem = { ...item }
+    // Procesar campos que pueden ser objetos populados
+    if (item.customerId && typeof item.customerId === 'object') {
+      processedItem.customerId = item.customerId._id
+    }
+    if (item.categoryId && typeof item.categoryId === 'object') {
+      processedItem.categoryId = item.categoryId._id
+    }
+    if (item.supplierId && typeof item.supplierId === 'object') {
+      processedItem.supplierId = item.supplierId._id
+    }
+    if (item.orderId && typeof item.orderId === 'object') {
+      processedItem.orderId = item.orderId._id
+    }
+    console.log('📦 Item procesado:', processedItem)
+    
+    setSelectedItem(processedItem)
     setShowEditModal(true)
   }
   const handleDelete = (item) => {
@@ -125,14 +171,23 @@ const TableContainer = ({config, data = [], onAdd, onEdit, onDelete, onExport, i
     }
   }
   const handleEditSubmit = async (formData) => {
+    console.log('🔧 === HANDLE EDIT SUBMIT EN TABLECONTAINER ===')
+    console.log('📦 FormData recibido:', formData)
+    console.log('📦 SelectedItem:', selectedItem)
+    
     setIsSubmitting(true)
     try {
       if (onEdit && selectedItem) {
+        console.log('📤 Llamando onEdit con:', selectedItem._id, formData)
         await onEdit(selectedItem._id, formData)
+        console.log('✅ onEdit completado exitosamente')
+      } else {
+        console.log('❌ onEdit o selectedItem no definido:', { onEdit: !!onEdit, selectedItem: !!selectedItem })
       }
       setShowEditModal(false)
     } catch (error) {
-      console.error('Error al editar:', error)
+      console.error('❌ Error en handleEditSubmit:', error)
+      // NO re-throw el error aquí para evitar el doble mensaje
     } finally {
       setIsSubmitting(false)
     }
@@ -174,11 +229,11 @@ const TableContainer = ({config, data = [], onAdd, onEdit, onDelete, onExport, i
         }} onPageChange={handlePageChange} onPageSizeChange={handlePageSizeChange} onSort={handleSort} onEdit={config.actions?.canEdit ? handleEdit : undefined} onDelete={config.actions?.canDelete ? handleDelete : undefined} onView={handleView} sortBy={sortBy} sortOrder={sortOrder}/>
       {/* Modal de Agregar */}
       {showAddModal && (
-        <FormModal isOpen={showAddModal} onClose={() => setShowAddModal(false)} onSubmit={handleAddSubmit} title={`Agregar ${config.title?.slice(0) || 'Elemento'}`} fields={processedFormFields} isLoading={isSubmitting}/>
+        <FormModal isOpen={showAddModal} onClose={() => setShowAddModal(false)} onSubmit={handleAddSubmit} title={`Agregar ${config.title?.slice(0) || 'Elemento'}`} fields={processedFormFields} isLoading={isSubmitting} customersData={customersData} articlesData={articlesData} artPiecesData={artPiecesData} ordersData={ordersData}/>
       )}
       {/* Modal de Editar */}
       {showEditModal && selectedItem && (
-        <FormModal isOpen={showEditModal} onClose={() => setShowEditModal(false)} onSubmit={handleEditSubmit} title={`Editar ${config.title?.slice(0) || 'Elemento'}`} fields={processedFormFields} initialData={selectedItem} isLoading={isSubmitting}/>
+        <FormModal isOpen={showEditModal} onClose={() => setShowEditModal(false)} onSubmit={handleEditSubmit} title={`Editar ${config.title?.slice(0) || 'Elemento'}`} fields={processedFormFields} initialData={selectedItem} isLoading={isSubmitting} customersData={customersData} articlesData={articlesData} artPiecesData={artPiecesData} ordersData={ordersData}/>
       )}
       {/* Modal de Confirmar Eliminacion */}
       {showDeleteModal && selectedItem && (

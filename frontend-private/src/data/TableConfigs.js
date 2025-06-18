@@ -22,8 +22,8 @@ export const articlesConfig = {
     { name: 'description', type: 'textarea', label: 'Descripción', required: true, placeholder: 'Describe el artículo...', rows: 3 },
     { name: 'image', type: 'file', label: 'Imagen', accept: 'image/*', placeholder: 'Seleccionar imagen' },
     { name: 'stock', type: 'number', label: 'Stock', required: true, placeholder: '0', min: 0 },
-    { name: 'categoryId', type: 'select', label: 'Categoría', required: true, options: 'categories' }, // Indicador especial, se llena dinamicamente
-    { name: 'supplierId', type: 'select', label: 'Proveedor', required: true, options: 'suppliers' }, // Indicador especial, se llena dinamicamente
+    { name: 'categoryId', type: 'select', label: 'Categoría', required: true, options: 'categories' },
+    { name: 'supplierId', type: 'select', label: 'Proveedor', required: true, options: 'suppliers' },
     { name: 'discount', type: 'number', label: 'Descuento (%)', placeholder: '0', min: 0, max: 100 }
   ]
 }
@@ -132,17 +132,17 @@ export const employeesConfig = {
     { name: 'isVerified', type: 'checkbox', label: 'Empleado Verificado', checkboxLabel: 'Marcar como verificado' }
   ]
 }
-// Aqui estan los modelos que hacen falta, algunos requieren que le metamos mano, yo indicare con comentarios
 // Configuracion para Piezas de Arte
 export const artPiecesConfig = {
-  title: "Piezas de arte",
+  title: "Piezas de Arte",
   columns: [
     { key: 'artPieceName', label: 'Nombre', sortable: true, searchable: true },
     { key: 'price', label: 'Precio', sortable: true, type: 'currency' },
     { key: 'description', label: 'Descripción', searchable: true },
     { key: 'categoryId', label: 'Categoría', sortable: true },
-    { key: 'artist', label: 'Artista', sortable: true },
-    { key: 'discount', label: 'Descuento', sortable: true, type: 'number' }
+    { key: 'artist', label: 'Artista', sortable: true, searchable: true },
+    { key: 'discount', label: 'Descuento (%)', sortable: true, type: 'number' },
+    { key: 'createdAt', label: 'Fecha de Creación', sortable: true, type: 'date' }
   ],
   actions: {
     canAdd: true,
@@ -151,23 +151,24 @@ export const artPiecesConfig = {
     canExport: true
   },
   formFields: [
-    { name: 'articleName', type: 'text', label: 'Nombre de la pieza de arte', required: true, placeholder: 'Ej: Small life forms III' },
+    { name: 'artPieceName', type: 'text', label: 'Nombre de la Pieza de Arte', required: true, placeholder: 'Ej: Small Life Forms III' },
     { name: 'price', type: 'number', label: 'Precio', required: true, placeholder: '0.00', min: 0, step: 0.01 },
     { name: 'description', type: 'textarea', label: 'Descripción', required: true, placeholder: 'Describe la obra...', rows: 3 },
     { name: 'image', type: 'file', label: 'Imagen', accept: 'image/*', placeholder: 'Seleccionar imagen' },
-    { name: 'categoryId', type: 'select', label: 'Categoría', required: true, options: 'categories' }, // Indicador especial, se llena dinamicamente
-    { name: 'artist', type: 'text', label: 'Artista', required: true },
-    { name: 'discount', type: 'number', label: 'Descuento (%)', placeholder: '10', min: 0, max: 100 }
+    { name: 'categoryId', type: 'select', label: 'Categoría', required: true, options: 'categories' },
+    { name: 'artist', type: 'text', label: 'Artista', required: true, placeholder: 'Nombre del artista' },
+    { name: 'discount', type: 'number', label: 'Descuento (%)', placeholder: '0', min: 0, max: 100 }
   ]
 }
 // Configuracion para Ventas
 export const salesConfig = {
   title: "Ventas",
   columns: [
-    { key: 'orderId', label: 'Orden', sortable: true, searchable: true },
-    { key: 'paymentMethod', label: 'Método de pago', sortable: true },
+    { key: 'orderId', label: 'ID Pedido', sortable: true, searchable: true },
+    { key: 'paymentMethod', label: 'Método de Pago', sortable: true, searchable: true },
     { key: 'address', label: 'Dirección', searchable: true },
-    { key: 'status', label: 'Estado', sortable: true }
+    { key: 'status', label: 'Estado', sortable: true, type: 'badge' },
+    { key: 'createdAt', label: 'Fecha de Venta', sortable: true, type: 'date' }
   ],
   actions: {
     canAdd: true,
@@ -176,20 +177,31 @@ export const salesConfig = {
     canExport: true
   },
   formFields: [
-    { name: 'orderId', type: 'select', label: 'Orden', required: true, options: 'orders' }, // Indicador especial, se llena dinamicamente
-    { name: 'paymentMethod', type: 'select', label: 'Método de pago', required: true, options: 'paymentMethods' }, // Indicador especial, se llena dinamicamente con datos de data.js (ya que serían opciones preexistentes)
-    { name: 'address', type: 'text', label: 'Dirección', required: true, placeholder: 'Calle Principal 123, Col. Centro, Ciudad de México' },
-    { name: 'status', type: 'select', label: 'Estado', required: true, placeholder: 'states' } // Indicador especial, se llena dinamicamente (con estados pre establecidos???)
+    { name: 'orderId', type: 'select', label: 'Pedido', required: true, options: 'orders' },
+    { name: 'paymentMethod', type: 'select', label: 'Método de Pago', required: true, options: [
+      { value: 'efectivo', label: 'Efectivo' },
+      { value: 'tarjeta_credito', label: 'Tarjeta de Crédito' },
+      { value: 'tarjeta_debito', label: 'Tarjeta de Débito' },
+      { value: 'transferencia', label: 'Transferencia Bancaria' },
+      { value: 'paypal', label: 'PayPal' }
+    ]},
+    { name: 'address', type: 'textarea', label: 'Dirección de Entrega', required: true, placeholder: 'Dirección completa de entrega...', rows: 2 },
+    { name: 'status', type: 'select', label: 'Estado', required: true, options: [
+      { value: 'Sold', label: 'Vendido' },
+      { value: 'Pending sale', label: 'Venta Pendiente' }
+    ]}
   ]
 }
 // Configuracion para Reseñas
 export const reviewsConfig = {
   title: "Reseñas",
   columns: [
-    { key: 'rating', label: 'Calificación', sortable: true, searchable: true }, // Quisiera que se mostrara por estrellas (incluyendo decimales)
-    { key: 'comment', label: 'Comentario', sortable: true },
-    { key: 'itemId', label: 'Producto', searchable: true }, // Este campo depende de itemType de `backend`
-    { key: 'customerId', label: 'Cliente', sortable: true }
+    { key: 'rating', label: 'Calificación', sortable: true, type: 'number' },
+    { key: 'comment', label: 'Comentario', searchable: true },
+    { key: 'itemType', label: 'Tipo de Producto', sortable: true, type: 'badge' },
+    { key: 'itemId', label: 'Producto', searchable: true },
+    { key: 'customerId', label: 'Cliente', sortable: true },
+    { key: 'createdAt', label: 'Fecha', sortable: true, type: 'date' }
   ],
   actions: {
     canAdd: true,
@@ -198,20 +210,25 @@ export const reviewsConfig = {
     canExport: true
   },
   formFields: [
-    { name: 'rating', type: 'number', label: 'Calificación', required: true, placeholder: '4', min: 1, max: 5 }, // Ahorita esta como number, pero no se si se puede hacer como estrella de 1 a 5
-    { name: 'comment', type: 'textarea', label: 'Comentario', required: true, placeholder: 'Escribe un comentario...', rows: 5 }, 
-    { name: 'itemId', type: 'select', label: 'Producto', required: true, options: 'itemType' }, // Indicador especial???? (Revisar backend)
-    { name: 'customerId', type: 'select', label: 'Cliente', required: true, options: 'customers' } // Indicador especial, se llena dinamicamente
+    { name: 'rating', type: 'number', label: 'Calificación (1-5)', required: true, placeholder: '5', min: 1, max: 5 },
+    { name: 'comment', type: 'textarea', label: 'Comentario', required: true, placeholder: 'Escribe un comentario...', rows: 4 },
+    { name: 'itemType', type: 'select', label: 'Tipo de Producto', required: true, options: [
+      { value: 'Article', label: 'Artículo' },
+      { value: 'ArtPiece', label: 'Pieza de Arte' }
+    ]},
+    { name: 'itemId', type: 'select', label: 'Producto', required: true, options: 'items' }, // Se llenará dinámicamente según itemType
+    { name: 'customerId', type: 'select', label: 'Cliente', required: true, options: 'customers' }
   ]
 }
 // Configuracion para pedidos
 export const ordersConfig = {
-  title: "Ventas",
+  title: "Pedidos",
   columns: [
     { key: 'customerId', label: 'Cliente', sortable: true, searchable: true },
-    { key: 'items', label: 'Productos', sortable: true }, // Este es el array confuso de backend
-    { key: 'total', label: 'Total', searchable: true },
-    { key: 'status', label: 'Estado', sortable: true }
+    { key: 'items', label: 'Productos', searchable: false, type: 'items-count' },
+    { key: 'total', label: 'Total', sortable: true, type: 'currency' },
+    { key: 'status', label: 'Estado', sortable: true, type: 'badge' },
+    { key: 'createdAt', label: 'Fecha de Pedido', sortable: true, type: 'date' }
   ],
   actions: {
     canAdd: true,
@@ -220,9 +237,15 @@ export const ordersConfig = {
     canExport: true
   },
   formFields: [
-    { name: 'customerId', type: 'select', label: 'Cliente', required: true, options: 'customers' }, // Indicador especial, se llena dinamicamente
-    { name: 'items', type: 'select', label: 'Información del producto', required: true, options: ['articles', 'artpieces'] }, // Indicador especial??? Lo he dejado así provisionalmente (ver backend)
-    { name: 'total', type: 'text', label: 'Total', required: true, placeholder: 'Total' }, // Autollenable con el campo anterior (quizas)
-    { name: 'status', type: 'select', label: 'Estado', required: true, placeholder: 'states' } // Indicador especial, se llena dinamicamente (con estados pre establecidos???)
+    { name: 'customerId', type: 'select', label: 'Cliente', required: true, options: 'customers' },
+    { name: 'items', type: 'items', label: 'Productos del Pedido', required: true, fullWidth: true },
+    { name: 'total', type: 'number', label: 'Total', required: false, placeholder: '0.00', min: 0, step: 0.01, helperText: 'Se calcula automáticamente basado en los productos' },
+    { name: 'status', type: 'select', label: 'Estado', required: true, options: [
+      { value: 'Pendiente', label: 'Pendiente' },
+      { value: 'En proceso', label: 'En Proceso' },
+      { value: 'Entregado', label: 'Entregado' },
+      { value: 'Enviado', label: 'Enviado' },
+      { value: 'Cancelado', label: 'Cancelado' }
+    ]}
   ]
 }

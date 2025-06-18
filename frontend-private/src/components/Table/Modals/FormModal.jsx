@@ -1,13 +1,15 @@
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import BaseModal from './BaseModal'
+import ItemsSelector from './ItemSelector'
 import { Save, X, Upload, Eye, EyeOff } from 'lucide-react'
 import { useState } from 'react'
 
-const FormModal = ({isOpen, onClose, onSubmit, title, fields, initialData = {}, isLoading = false, submitButtonText = 'Guardar'}) => {
+const FormModal = ({isOpen, onClose, onSubmit, title, fields, initialData = {}, isLoading = false, submitButtonText = 'Guardar', customersData, articlesData, artPiecesData, ordersData}) => {
   const [showPasswords, setShowPasswords] = useState({})
+  const [dynamicOptions, setDynamicOptions] = useState({})
   // Configurar react-hook-form
-  const { register, handleSubmit, formState: { errors }, reset, watch } = useForm({
+  const { register, handleSubmit, formState: { errors }, reset, watch, setValue } = useForm({
     mode: 'onChange', // Validar en tiempo real
     defaultValues: {}
   })
@@ -33,6 +35,28 @@ const FormModal = ({isOpen, onClose, onSubmit, title, fields, initialData = {}, 
       setShowPasswords({})
     }
   }, [isOpen]) // Solo depende de isOpen - NUNCA fields o initialData
+  // Manejar cambios en el tipo de item seleccionado para mostrar opciones dinámicas
+  useEffect(() => {
+    // Manejar opciones dinámicas para reseñas
+    const watchedItemType = watch('itemType')
+    if (watchedItemType) {
+      const newOptions = {}
+      
+      if (watchedItemType === 'Article' && articlesData?.articles) {
+        newOptions.itemId = articlesData.articles.map(article => ({
+          value: article._id,
+          label: article.articleName
+        }))
+      } else if (watchedItemType === 'ArtPiece' && artPiecesData?.artPieces) {
+        newOptions.itemId = artPiecesData.artPieces.map(artPiece => ({
+          value: artPiece._id,
+          label: artPiece.artPieceName
+        }))
+      }
+      
+      setDynamicOptions(newOptions)
+    }
+  }, [watch('itemType'), articlesData?.articles, artPiecesData?.artPieces])
   // Manejar envio del formulario
   const onFormSubmit = (data) => {
     console.log('✅ === FORM ENVIADO CON REACT HOOK FORM ===')
@@ -101,10 +125,16 @@ const FormModal = ({isOpen, onClose, onSubmit, title, fields, initialData = {}, 
           <textarea {...register(field.name, validation)} placeholder={field.placeholder} rows={field.rows || 3} className={`${baseInputClasses} resize-none`} disabled={isLoading}/>
         )
       case 'select':
+        // Usar opciones dinámicas si existen, sino usar las opciones del campo
+        let selectOptions = dynamicOptions[field.name] || field.options || []
+        // Asegurarse de que selectOptions sea un array
+        if (!Array.isArray(selectOptions)) {
+          selectOptions = []
+        }
         return (
           <select {...register(field.name, validation)} className={baseInputClasses} disabled={isLoading}>
             <option value="">Seleccionar {field.label}</option>
-            {field.options?.map(option => (
+            {selectOptions.map(option => (
               <option key={option.value} value={option.value}>
                 {option.label}
               </option>
@@ -145,6 +175,18 @@ const FormModal = ({isOpen, onClose, onSubmit, title, fields, initialData = {}, 
       case 'number':
         return (
           <input {...register(field.name, validation)} type="number" placeholder={field.placeholder} className={baseInputClasses} disabled={isLoading} min={field.min} max={field.max} step={field.step || 'any'}/>
+        )
+      case 'items':
+        return (
+          <ItemsSelector value={watch(field.name) || []}
+            onChange={(items) => {
+              // Usar setValue directamente del hook useForm
+              setValue(field.name, items, { shouldValidate: true })
+            }}
+            onTotalChange={(total) => {
+              // Actualizar el total automáticamente
+              setValue('total', total, { shouldValidate: true })
+            }} articlesData={articlesData} artPiecesData={artPiecesData} disabled={isLoading}/>
         )
       default:
         return (
@@ -212,5 +254,4 @@ const FormModal = ({isOpen, onClose, onSubmit, title, fields, initialData = {}, 
     </BaseModal>
   )
 }
-
 export default FormModal

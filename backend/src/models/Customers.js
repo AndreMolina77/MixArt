@@ -38,6 +38,14 @@ const customersSchema = new Schema ({
     isVerified:{
         type: Boolean,
         require: true
+    },
+    appwriteUserId: {
+        type: String,
+        unique: true,
+        sparse: true 
     }
-});
+}, {
+    timestamps: true, 
+    strict: false
+})
 export default model ("Customer", customersSchema, "Customer");

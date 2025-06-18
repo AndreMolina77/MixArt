@@ -45,6 +45,11 @@ const employeesSchema = new Schema(
         isVerified: {
             type: Boolean,
             require: true
+        },
+        appwriteUserId: {
+            type: String,
+            unique: true,
+            sparse: true // Permite que sea opcional
         }
 
     },

@@ -6,6 +6,7 @@ import customersModel from "../models/Customers.js"
 import bcryptjs from "bcryptjs"
 import jsonwebtoken from "jsonwebtoken"
 import { config } from "../utils/config.js"
+import Employees from "../models/Employees.js"
 //POST (CREATE)
 loginController.login = async (req, res) => {
     const {email, password} = req.body
@@ -118,5 +119,91 @@ loginController.login = async (req, res) => {
         console.log("❌ Error en login:", error)
         res.status(500).json({message: "Error interno del servidor"})
     }
+}
+// NUEVO: Inicio de sesion con Google
+loginController.googleLogin = async (req, res) => {
+    try {
+    const { email, name, appwriteUserId, isVerified } = req.body;
+
+    if (!email || !appwriteUserId) {
+      return res.status(400).json({ message: 'Email y AppWrite User ID son requeridos' });
+    }
+    // Buscar si el usuario ya existe en la base de datos
+    let user = await customersModel.findOne({ email });
+
+    if (!user) {
+      // Verificar si es un empleado
+      user = await Employees.findOne({ email });
+      if (!user) {
+        if (email === 'thehillsami@gmail.com') { // Email con el que fue creado el usuario de prueba
+          user = new Employee({
+            name: name.split(' ')[0] || 'Admin',
+            lastName: name.split(' ')[1] || 'Google',
+            username: email.split('@')[0],
+            email,
+            password: 'google-auth-' + appwriteUserId, // Password temporal
+            phoneNumber: '0000-0000', // Temporal
+            userType: 'admin', 
+            issNumber: '00000000000', // Temporal
+            isVerified: true,
+            appwriteUserId
+          });
+        } else {
+          // Crear como cliente nuevo
+          user = new Customer({
+            name: name.split(' ')[0] || 'Usuario',
+            lastName: name.split(' ')[1] || 'Google',
+            username: email.split('@')[0],
+            email,
+            password: 'google-auth-' + appwriteUserId, // Password temporal
+            phoneNumber: '0000-0000', // Temporal
+            issNumber: '00000000000', // Temporal
+            isVerified: isVerified || true,
+            appwriteUserId
+          });
+        }
+        await user.save()
+      }
+    } else {
+      // Actualizar appwriteUserId si no existe
+      if (!user.appwriteUserId) {
+        user.appwriteUserId = appwriteUserId
+        await user.save()
+      }
+    }
+    // Crear token JWT
+    const token = jsonwebtoken.sign(
+      { 
+        id: user._id, 
+        email: user.email, 
+        userType: user.userType || 'customer',
+        appwriteUserId 
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    )
+    // Configurar cookie
+    res.cookie('authToken', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 dias
+    })
+    res.status(200).json({
+      message: 'Autenticación exitosa',
+      user: {
+        id: user._id,
+        name: user.name,
+        lastName: user.lastName,
+        email: user.email,
+        userType: user.userType || 'customer',
+        isVerified: user.isVerified,
+        appwriteUserId: user.appwriteUserId
+      }
+    })
+  } catch (error) {
+    console.error('Error en Google Auth:', error)
+    res.status(500).json({ message: 'Error interno del servidor', error: error.message })
+  }
 }
 export default loginController

@@ -179,16 +179,16 @@ export const salesConfig = {
   formFields: [
     { name: 'orderId', type: 'select', label: 'Pedido', required: true, options: 'orders' },
     { name: 'paymentMethod', type: 'select', label: 'Método de Pago', required: true, options: [
-      { value: 'efectivo', label: 'Efectivo' },
-      { value: 'tarjeta_credito', label: 'Tarjeta de Crédito' },
-      { value: 'tarjeta_debito', label: 'Tarjeta de Débito' },
-      { value: 'transferencia', label: 'Transferencia Bancaria' },
-      { value: 'paypal', label: 'PayPal' }
+      { value: 'Cash', label: 'Efectivo' },
+      { value: 'Credit Card', label: 'Tarjeta de Crédito' },
+      { value: 'Debit Card', label: 'Tarjeta de Débito' },
+      { value: 'Transfer', label: 'Transferencia Bancaria' },
+      { value: 'PayPal', label: 'PayPal' }
     ]},
     { name: 'address', type: 'textarea', label: 'Dirección de Entrega', required: true, placeholder: 'Dirección completa de entrega...', rows: 2 },
     { name: 'status', type: 'select', label: 'Estado', required: true, options: [
-      { value: 'Sold', label: 'Vendido' },
-      { value: 'Pending sale', label: 'Venta Pendiente' }
+      { value: 'Vendido', label: 'Vendido' },
+      { value: 'Venta Pendiente', label: 'Venta Pendiente' }
     ]}
   ]
 }

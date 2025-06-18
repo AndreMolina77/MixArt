@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
 import { AuthProvider } from './context/AuthContext'
+import GoogleAuthCallback from './pages/GoogleAuthCallback'
 import ProtectedRoute from './components/Auth/ProtectedRoute'
 import FirstTimeUser from './pages/FirstTimeUser'
 import Login from './pages/Login'
@@ -38,6 +39,8 @@ function App() {
           {/* Rutas públicas */}
           <Route path="/" element={<FirstTimeUser />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/auth/google/success" element={<GoogleAuthCallback />} />
+          <Route path="/auth/google/failure" element={<GoogleAuthCallback />} />
           {/* Rutas protegidas */}
           <Route  path="/main" element={<ProtectedRoute><MainPage/></ProtectedRoute>} />  
           <Route path="*" element={<Navigate to="/" replace />} />

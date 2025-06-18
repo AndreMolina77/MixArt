@@ -17,7 +17,7 @@ import {Schema, model} from "mongoose";
     status: {
         type: String,
         require: true,
-        enum: ['Sold', 'Pending sale'], default: 'Pending sale'
+        enum: ['Vendido', 'Venta Pendiente'], default: 'Venta Pendiente'
     }
 }, {
     timestamps: true,

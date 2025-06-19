@@ -20,6 +20,13 @@ const useDataOrders = () => {
       const response = await fetch(API, {
         credentials: "include"
       })
+      // Si es 403 (sin permisos), no mostrar error
+      if (response.status === 403) {
+        console.log("⚠️ Sin permisos para pedidos - usuario no autorizado")
+        setOrders([])
+        setLoading(false)
+        return
+      }
       if (!response.ok) {
         throw new Error("Hubo un error al obtener los pedidos")
       }
@@ -28,7 +35,10 @@ const useDataOrders = () => {
       setLoading(false)
     } catch (error) {
       console.error("Error al obtener pedidos:", error)
-      toast.error("Error al cargar pedidos")
+      // Solo mostrar toast si NO es error de permisos
+      if (!error.message.includes("403") && !error.message.includes("sin permisos")) {
+        toast.error("Error al cargar pedidos")
+      }
       setLoading(false)
     }
   }

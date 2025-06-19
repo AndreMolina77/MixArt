@@ -1,7 +1,6 @@
 import TableActions from './TableActions'
 
-const TableHeader = ({ 
-  title, subtitle, searchValue, onSearch, actions = {}, onAdd, onExport, onFilter, onRefresh, addButtonText, addButtonIcon, customActions = [], isLoading = false, className = ""}) => {
+const TableHeader = ({ title, subtitle, searchValue, onSearch, actions = {}, onAdd, onExport, onFilter, onRefresh, addButtonText, addButtonIcon, customActions = [], isLoading = false, className = ""}) => {
   return (
     <div className={`mb-6 ${className}`}>
       {/* Titulo y subtitulo */}

@@ -15,6 +15,13 @@ const useDataCategories = () => {
       const response = await fetch(API, {
         credentials: "include"
       })
+      // Si es 403 (sin permisos), no mostrar error
+      if (response.status === 403) {
+        console.log("⚠️ Sin permisos para categorías - usuario no autorizado")
+        setCategories([])
+        setLoading(false)
+        return
+      }
       if (!response.ok) {
         throw new Error("Hubo un error al obtener las categorías")
       }
@@ -23,7 +30,10 @@ const useDataCategories = () => {
       setLoading(false)
     } catch (error) {
       console.error("Error al obtener categorías:", error)
-      toast.error("Error al cargar categorías")
+      // Solo mostrar toast si NO es error de permisos
+      if (!error.message.includes("403") && !error.message.includes("sin permisos")) {
+        toast.error("Error al cargar categorías")
+      }
       setLoading(false)
     }
   }

@@ -51,11 +51,10 @@ const employeesSchema = new Schema(
             unique: true,
             sparse: true // Permite que sea opcional
         }
-
     },
     {
         timestamps: true,
         strict: false,
       }
 )
-export default model ("Employee", employeesSchema, "Employee");
+export default model ("Employee", employeesSchema, "Employee")

@@ -9,27 +9,28 @@ signupController.registerEmployee = async (req, res) => {
     const {name, lastName, username, email,  password, phoneNumber, userType, issNumber, isVerified} = req.body
 
     try {
-        //Verificación de si el empleado ya existe
+        // Verificacion de si el empleado ya existe
         const employeeExist = await employeesModel.findOne({email})
-        //Si existe un empleado, entonces se va a responder con un mensaje de error
+        // Si existe un empleado, entonces se va a responder con un mensaje de error
         if(employeeExist){
             return res.json({message: "El empleado ya existe"})
         }
-        //Encriptacion de contraseña
+        // Encriptacion de contraseña
         const hashedPassword = await bcryptjs.hash(password, 10)
         const newUser = new employeesModel({name, lastName, username, email,  password: hashedPassword, phoneNumber, userType, issNumber, isVerified: isVerified || false})
 
         await newUser.save()
-        //TOKEN
+        // TOKEN
         jsonwebtoken.sign({id: newUser._id, userType}, config.JWT.secret, { expiresIn: config.JWT.expiresIn}, (err, token) => {
             if(err) console.log("error")
             res.cookie("authToken", token)
             res.json({message: "Registro exitoso"})
         })
-        res.json({message: "Empleado registrado"})
+        // CORREGIR: Solo un response
+        res.status(201).json({ message: "Empleado registrado exitosamente", employee: { id: newUser._id, name: newUser.name, lastName: newUser.lastName, email: newUser.email, userType: newUser.userType }})
     } catch (error) {
         console.log("error", error)
         res.json({message: "Error al registrar el empleado", error: error.message})
     }
 }
-export default signupController
+export default signupController 

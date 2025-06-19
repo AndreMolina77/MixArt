@@ -38,15 +38,15 @@ app.use("/api/recoveryPassword", recoveryPasswordRoutes)
 // Ruta especial para validar token (acepta cualquier tipo de usuario válido)
 app.use("/api/validateAuthToken", validateAuthTokenRoutes)
 
-// Rutas que SÍ requieren login (protegidas)
+// Rutas que SÍ requieren login (protegidas) - PERMISOS CORREGIDOS:
 app.use("/api/articles", validateAuthToken(["admin", "vendedor"]), articlesRoutes)
-app.use("/api/employees", validateAuthToken(["admin"]), employeesRoutes)
-app.use("/api/artpieces", validateAuthToken(["admin", "artista"]), artpiecesRoutes)
+app.use("/api/employees", validateAuthToken(["admin"]), employeesRoutes) // Solo admin
+app.use("/api/artpieces", validateAuthToken(["admin", "artista", "vendedor"]), artpiecesRoutes) // Vendedor agregado
 app.use("/api/categories", validateAuthToken(["admin", "artista", "vendedor"]), categoriesRoutes)
 app.use("/api/customers", validateAuthToken(["admin", "vendedor"]), customersRoutes)
 app.use("/api/orders", validateAuthToken(["admin", "vendedor", "customer"]), ordersRoutes)
-app.use("/api/reviews", validateAuthToken(["admin", "vendedor", "customer"]), reviewsRoutes)
+app.use("/api/reviews", validateAuthToken(["admin", "vendedor", "customer", "artista"]), reviewsRoutes) // Artista agregado
 app.use("/api/sales", validateAuthToken(["admin", "vendedor"]), salesRoutes)
-app.use("/api/suppliers", validateAuthToken(["admin"]), suppliersRoutes)
+app.use("/api/suppliers", validateAuthToken(["admin", "vendedor"]), suppliersRoutes) // Vendedor agregado
 
 export default app;

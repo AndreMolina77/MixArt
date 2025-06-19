@@ -5,32 +5,28 @@ import Sidebar from '../components/Dashboard/Sidebar'
 import Header from '../components/Dashboard/Header'
 import Dashboard from '../components/Dashboard/Dashboard'
 import TableContainer from '../components/Table/TableContainer'
-// Importar todos los hooks
-import useDataSuppliers from '../hooks/SuppliersHooks/useDataSuppliers'
-import useDataEmployees from '../hooks/EmployeesHooks/useDataEmployees'
-import useDataCustomers from '../hooks/CustomersHooks/useDataCustomers'
-import useDataArticles from '../hooks/ArticlesHooks/useDataArticles'
-import useDataCategories from '../hooks/CategoriesHooks/useDataCategories'
-import useDataArtPieces from '../hooks/ArtPiecesHooks/useDataArtPieces'
-import useDataOrders from '../hooks/OrdersHooks/useDataOrders'
-import useDataReviews from '../hooks/ReviewsHooks/useDataReviews'
-import useDataSales from '../hooks/SalesHooks/useDataSales'
+import RegisterEmployee from './Signup.jsx'
+import { useConditionalData } from '../hooks/MainHook/useConditionalData.js'
 // Importar configuraciones de tablas
 import { articlesConfig, categoriesConfig, suppliersConfig, customersConfig, employeesConfig, artPiecesConfig, ordersConfig, reviewsConfig, salesConfig } from '../data/TableConfigs.js'
 
 const MainPage = () => {
   const { user, logout, API } = useAuth()
   const [currentView, setCurrentView] = useState('dashboard')
-  // Inicializar todos los hooks
-  const suppliersData = useDataSuppliers()
-  const employeesData = useDataEmployees()
-  const customersData = useDataCustomers()
-  const articlesData = useDataArticles()
-  const categoriesData = useDataCategories()
-  const artPiecesData = useDataArtPieces()
-  const ordersData = useDataOrders()
-  const reviewsData = useDataReviews()
-  const salesData = useDataSales()
+  const [showRegisterEmployee, setShowRegisterEmployee] = useState(false)
+  // Usar el hook condicional - TODOS los hooks se ejecutan siempre
+  const {
+    suppliersData,
+    employeesData,
+    customersData,
+    articlesData,
+    categoriesData,
+    artPiecesData,
+    ordersData,
+    reviewsData,
+    salesData,
+    canAccess
+  } = useConditionalData()
 
   const handleLogout = async () => {
     await logout()
@@ -39,6 +35,35 @@ const MainPage = () => {
   const handleExport = (format, data) => {
     console.log(`Exportando ${data?.length || 0} elementos en formato ${format}`)
     // In progress
+  }
+  // Agregar función para verificar permisos
+  const hasPermission = (view) => {
+    if (!user?.userType) return false;
+    
+    const permissions = {
+      'admin': [ 'dashboard', 'search', 'artpieces', 'articles', 'employees', 'categories', 'customers', 'orders', 'reviews', 'sales', 'suppliers' ],
+      'vendedor': [ 'dashboard', 'search', 'artpieces', 'articles', 'categories', 'customers', 'orders', 'reviews', 'sales', 'suppliers' ], // Vendedor NO puede ver employees
+      'artista': [ 'dashboard', 'search', 'artpieces', 'categories',  'orders', 'reviews', 'sales' ], // Artista NO puede ver articles, employees, customers, suppliers
+      'customer': [ 'dashboard', 'orders', 'reviews' ]
+    }
+    const userPermissions = permissions[user.userType] || []
+    console.log(`🔍 Checking permission for ${view}, user type: ${user.userType}, has permission: ${userPermissions.includes(view)}`)
+    
+    return userPermissions.includes(view) 
+  }
+  // Funciones para manejar el registro:
+  const handleShowRegisterEmployee = () => {
+    setShowRegisterEmployee(true)
+  }
+  const handleBackToMain = () => {
+    setShowRegisterEmployee(false)
+  }
+  const handleRegistrationSuccess = () => {
+    setShowRegisterEmployee(false)
+    // Refrescar datos si es necesario
+    if (currentView === 'employees') {
+      employeesData.fetchEmployees()
+    }
   }
   // FIX: Handlers directos que NO usan setters
   const getHandlersForView = () => {
@@ -49,8 +74,7 @@ const MainPage = () => {
           loading: suppliersData.loading,
           onAdd: async (data) => {
             console.log('🚀 === SUPPLIERS ADD ===')
-            console.log('📦 Data recibido:', data)
-            
+            console.log('📦 Data recibido:', data)  
             try {
               const response = await fetch(`${API}/suppliers`, {
                 method: "POST",
@@ -73,7 +97,6 @@ const MainPage = () => {
           onEdit: async (id, data) => {
             console.log('🔧 === SUPPLIERS EDIT ===')
             console.log('ID:', id, 'Data:', data)
-            
             try {
               const response = await fetch(`${API}/suppliers/${id}`, {
                 method: "PUT",
@@ -101,8 +124,7 @@ const MainPage = () => {
           loading: employeesData.loading,
           onAdd: async (data) => {
             console.log('🚀 === EMPLOYEES ADD ===')
-            console.log('📦 Data recibido:', data)
-            
+            console.log('📦 Data recibido:', data)   
             try {
               const response = await fetch(`${API}/employees`, {
                 method: "POST",
@@ -434,7 +456,6 @@ const MainPage = () => {
             console.log('🔧 === ORDERS EDIT EN MAINPAGE ===')
             console.log('ID:', id)
             console.log('Data recibido:', data)
-            
             try {
               // Validar que los datos estén correctos
               if (!data.customerId || !data.items || !Array.isArray(data.items) || data.items.length === 0) {
@@ -583,7 +604,30 @@ const MainPage = () => {
         }
     }
   }
+  console.log("🐛 DEBUG MainPage - User:", user);
+  console.log("🐛 DEBUG MainPage - Current view:", currentView);
+  console.log("🐛 DEBUG MainPage - Has permission:", hasPermission(currentView));
   const renderContent = () => {
+    // Si esta mostrando registro de empleado
+    if (showRegisterEmployee) {
+      return (
+        <RegisterEmployee onBack={handleBackToMain} onSuccess={handleRegistrationSuccess}/>
+      )
+    }
+    // Verificar permisos antes de renderizar
+    if (!hasPermission(currentView)) {
+      console.log("❌ No permission for view:", currentView, "User type:", user?.userType);
+      return (
+        <div className="p-6 bg-white min-h-screen font-[Alexandria] flex items-center justify-center">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-red-600 mb-4">Acceso Denegado</h1>
+            <p className="text-gray-600">No tienes permisos para acceder a esta sección.</p>
+            <p className="text-sm text-gray-500 mt-2">Tu rol: {user?.userType}</p>
+            <p className="text-sm text-gray-500">Sección: {currentView}</p>
+          </div>
+        </div>
+      );
+    }
     switch (currentView) {
       case 'dashboard':
         return <Dashboard/>
@@ -619,7 +663,16 @@ const MainPage = () => {
         return (
           <div className="p-6 bg-white min-h-screen">
             <div className="max-w-7xl mx-auto">
-              <TableContainer config={employeesConfig} data={employeesHandler.data} onAdd={employeesHandler.onAdd} onEdit={employeesHandler.onEdit} onDelete={employeesHandler.onDelete} onExport={handleExport} isLoading={employeesHandler.loading}/>
+              {/* AGREGAR ESTE BOTÓN ANTES DEL TableContainer */}
+              <div className="mb-4 flex justify-end">
+                <button onClick={handleShowRegisterEmployee} className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white text-sm font-medium rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-200 shadow-sm hover:shadow-md">
+                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                  </svg>
+                  Registro Completo de Empleado
+                </button>
+              </div>
+              <TableContainer config={employeesConfig} data={employeesHandler.data} onAdd={employeesHandler.onAdd} onEdit={employeesHandler.onEdit} onDelete={employeesHandler.onDelete} onExport={handleExport} isLoading={employeesHandler.loading} onRegister={handleShowRegisterEmployee}/>
             </div>
           </div>
         )

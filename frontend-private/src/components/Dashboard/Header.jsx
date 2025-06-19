@@ -5,24 +5,30 @@ const Header = () => {
   const { user } = useAuth();
   // Funcion para obtener el nombre a mostrar
   const getDisplayName = () => {
-    if (!user?.email) return 'Usuario'
+    if (!user) return 'Usuario'
+    // Si tiene name, usarlo
+    if (user.name) {
+      return user.name
+    }
     // Si es el email del admin, mostrar "Admin"
     if (user.email === 'thehillsami@gmail.com') {
       return 'Admin'
     }
-    // Para otros usuarios, extraer el nombre del email (parte antes del @)
+    // Para otros usuarios, extraer el nombre del email
     const emailName = user.email.split('@')[0]
-    // Capitalizar primera letra
     return emailName.charAt(0).toUpperCase() + emailName.slice(1)
   }
-  // Funcion para obtener el rol/título
   const getUserRole = () => {
-    if (!user?.email) return 'Empleado'
-  
-    if (user.email === 'thehillsami@gmail.com') {
-      return 'Administrador'
+    if (!user) return 'Empleado'
+    // Mapear userType a texto legible
+    const roleMap = {
+      'admin': 'Administrador',
+      'vendedor': 'Vendedor',
+      'artista': 'Artista',
+      'customer': 'Cliente'
     }
-    // En progreso
+    
+    return roleMap[user.userType] || 'Empleado'
   }
   return (
     <div className="bg-[#E0DCC6] px-6 py-4 flex items-center justify-between font-[Alexandria] border-b border-[#7A6E6E]/10 shadow-sm">

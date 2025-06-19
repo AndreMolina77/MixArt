@@ -17,16 +17,10 @@ const GoogleAuthButton = ({ onSuccess, disabled = false }) => {
       setLocalLoading(false)
     }
   }
-  
   const buttonDisabled = disabled || isLoading || localLoading
 
   return (
-    <button 
-      type="button" 
-      onClick={handleGoogleLogin} 
-      disabled={buttonDisabled}
-      className="w-full h-12 flex items-center justify-center gap-2 border-2 border-[#E07A5F] rounded-md py-2 text-[#7A6E6E] font-[Alexandria] hover:bg-[#fbeeea] transition disabled:opacity-50 disabled:cursor-not-allowed"
-    >
+    <button type="button" onClick={handleGoogleLogin} disabled={buttonDisabled} className="w-full h-12 flex items-center justify-center gap-2 border-2 border-[#E07A5F] rounded-md py-2 text-[#7A6E6E] font-[Alexandria] hover:bg-[#fbeeea] transition disabled:opacity-50 disabled:cursor-not-allowed">
       {localLoading ? (
         <div className="w-5 h-5 border-2 border-gray-300 border-t-[#E07A5F] rounded-full animate-spin"></div>
       ) : (
@@ -36,5 +30,4 @@ const GoogleAuthButton = ({ onSuccess, disabled = false }) => {
     </button>
   )
 }
-
 export default GoogleAuthButton

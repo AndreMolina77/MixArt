@@ -6,7 +6,6 @@ import customersModel from "../models/Customers.js"
 import bcryptjs from "bcryptjs"
 import jsonwebtoken from "jsonwebtoken"
 import { config } from "../utils/config.js"
-import Employees from "../models/Employees.js"
 //POST (CREATE)
 loginController.login = async (req, res) => {
     const {email, password} = req.body
@@ -57,7 +56,7 @@ loginController.login = async (req, res) => {
         userFound = await loginModel.findOne({email})
         if (userFound) {
             console.log("👤 Usuario encontrado en empleados")
-            userType = userFound.userType
+            userType = userFound.userType // Esto debe ser "vendedor" o "artista"
             console.log("👔 Tipo de usuario:", userType)
         } else {
             // Si no se encuentra en empleados, buscar en clientes
@@ -73,7 +72,6 @@ loginController.login = async (req, res) => {
             console.log("❌ Usuario no encontrado")
             return res.status(401).json({message: "El usuario no existe"})
         }
-
         // Verificar contraseña para usuarios no-admin
         console.log("🔐 Verificando contraseña...")
         const isMatch = await bcryptjs.compare(password, userFound.password)
@@ -81,17 +79,16 @@ loginController.login = async (req, res) => {
             console.log("❌ Contraseña incorrecta")
             return res.status(401).json({message: "Contraseña incorrecta"})
         }
-
         console.log("✅ Contraseña correcta")
 
-        // IMPORTANTE: Por ahora, solo permitir admin hasta que haya registro de empleados
+        /* // IMPORTANTE: Por ahora, solo permitir admin hasta que haya registro de empleados
         console.log("⚠️ VALIDACIÓN TEMPORAL: Solo admin permitido")
         return res.status(403).json({
             message: "Acceso restringido. Solo administradores pueden acceder en esta versión."
         })
 
         // TODO: Descomentar cuando se implemente registro de empleados
-        /*
+        /* */
         //TOKEN para empleados/clientes
         jsonwebtoken.sign(
             {id: userFound._id, userType}, 
@@ -102,19 +99,16 @@ loginController.login = async (req, res) => {
                     console.log("❌ Error generando token:", err)
                     return res.status(500).json({message: "Error interno del servidor"})
                 }
-                
                 res.cookie("authToken", token, {
                     httpOnly: true,
                     secure: process.env.NODE_ENV === 'production',
                     sameSite: 'lax',
                     maxAge: 24 * 60 * 60 * 1000 // 24 horas
                 })
-                
                 console.log("🍪 Token generado y cookie establecida")
                 res.json({message: "Inicio de sesión exitoso"})
             }
         )
-        */
     } catch (error) {
         console.log("❌ Error en login:", error)
         res.status(500).json({message: "Error interno del servidor"})
@@ -123,87 +117,74 @@ loginController.login = async (req, res) => {
 // NUEVO: Inicio de sesion con Google
 loginController.googleLogin = async (req, res) => {
     try {
-    const { email, name, appwriteUserId, isVerified } = req.body;
+        const { email, name, appwriteUserId, isVerified } = req.body;
 
-    if (!email || !appwriteUserId) {
-      return res.status(400).json({ message: 'Email y AppWrite User ID son requeridos' });
-    }
-    // Buscar si el usuario ya existe en la base de datos
-    let user = await customersModel.findOne({ email });
-
-    if (!user) {
-      // Verificar si es un empleado
-      user = await Employees.findOne({ email });
-      if (!user) {
-        if (email === 'thehillsami@gmail.com') { // Email con el que fue creado el usuario de prueba
-          user = new Employee({
-            name: name.split(' ')[0] || 'Admin',
-            lastName: name.split(' ')[1] || 'Google',
-            username: email.split('@')[0],
-            email,
-            password: 'google-auth-' + appwriteUserId, // Password temporal
-            phoneNumber: '0000-0000', // Temporal
-            userType: 'admin', 
-            issNumber: '00000000000', // Temporal
-            isVerified: true,
-            appwriteUserId
-          });
-        } else {
-          // Crear como cliente nuevo
-          user = new Customer({
-            name: name.split(' ')[0] || 'Usuario',
-            lastName: name.split(' ')[1] || 'Google',
-            username: email.split('@')[0],
-            email,
-            password: 'google-auth-' + appwriteUserId, // Password temporal
-            phoneNumber: '0000-0000', // Temporal
-            issNumber: '00000000000', // Temporal
-            isVerified: isVerified || true,
-            appwriteUserId
-          });
+        if (!email || !appwriteUserId) {
+            return res.status(400).json({ message: 'Email y AppWrite User ID son requeridos' })
         }
-        await user.save()
-      }
-    } else {
-      // Actualizar appwriteUserId si no existe
-      if (!user.appwriteUserId) {
-        user.appwriteUserId = appwriteUserId
-        await user.save()
-      }
+        let user
+        let userType
+        console.log(`🔍 Verificando usuario Google: ${email}`)
+        // Verificar si es el admin
+        if (email === config.CREDENTIALS.email) {
+            console.log("✅ LOGIN GOOGLE ADMIN EXITOSO")
+            userType = "admin"
+            user = {
+                _id: "admin", 
+                email: email, 
+                name: name.split(' ')[0] || 'Admin',
+                lastName: name.split(' ')[1] || '',
+                userType: "admin"
+            }
+        } else {
+            // Buscar en empleados primero
+            user = await loginModel.findOne({ email });
+            if (user) {
+                console.log("👤 Usuario encontrado en empleados")
+                userType = user.userType
+            } else {
+                // Si no se encuentra en empleados, buscar en clientes
+                user = await customersModel.findOne({ email });
+                if (user) {
+                    console.log("👤 Usuario encontrado en clientes")
+                    userType = "customer"
+                } else {
+                    // Usuario no registrado - rechazar acceso
+                    console.log("❌ Usuario no autorizado:", email)
+                    return res.status(403).json({ 
+                        message: 'Usuario no autorizado. Contacta al administrador para obtener acceso.' 
+                    })
+                    /* MISTAKEN: Los clientes NO van a poder iniciar sesion con Google por temas de tiempo // Si no existe, crear como customer por defecto
+                    console.log("👤 Creando nuevo cliente con Google")
+                    user = new customersModel({
+                        name: name.split(' ')[0] || 'Usuario',
+                        lastName: name.split(' ')[1] || 'Google',
+                        username: email.split('@')[0],
+                        email,
+                        password: 'google-auth-' + appwriteUserId, // Password temporal
+                        phoneNumber: '0000-0000', // Temporal
+                        issNumber: '00000000000', // Temporal
+                        isVerified: isVerified || true,
+                        appwriteUserId
+                    });
+                    await user.save();
+                    userType = "customer" */
+                }
+            }
+        }
+        // Si llegamos aqui, el usuario está autorizado
+        console.log(`✅ Usuario autorizado: ${email} como ${userType}`)
+        // Crear token JWT
+        const token = jsonwebtoken.sign({ id: user._id, email: user.email, userType: userType, appwriteUserId }, config.JWT.secret,{ expiresIn: config.JWT.expiresIn })
+        // Configurar cookie
+        res.cookie('authToken', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax', maxAge: 24 * 60 * 60 * 1000 })
+        res.status(200).json({
+            message: 'Autenticación exitosa',
+            user: { id: user._id, name: user.name, lastName: user.lastName, email: user.email, userType: userType, isVerified: user.isVerified || isVerified, appwriteUserId: user.appwriteUserId || appwriteUserId }
+        })
+    } catch (error) {
+        console.error('Error en Google Auth:', error)
+        res.status(500).json({ message: 'Error interno del servidor', error: error.message })
     }
-    // Crear token JWT
-    const token = jsonwebtoken.sign(
-      { 
-        id: user._id, 
-        email: user.email, 
-        userType: user.userType || 'customer',
-        appwriteUserId 
-      },
-      process.env.JWT_SECRET,
-      { expiresIn: '7d' }
-    )
-    // Configurar cookie
-    res.cookie('authToken', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 dias
-    })
-    res.status(200).json({
-      message: 'Autenticación exitosa',
-      user: {
-        id: user._id,
-        name: user.name,
-        lastName: user.lastName,
-        email: user.email,
-        userType: user.userType || 'customer',
-        isVerified: user.isVerified,
-        appwriteUserId: user.appwriteUserId
-      }
-    })
-  } catch (error) {
-    console.error('Error en Google Auth:', error)
-    res.status(500).json({ message: 'Error interno del servidor', error: error.message })
-  }
 }
 export default loginController

@@ -6,7 +6,9 @@ import Header from '../components/Dashboard/Header'
 import Dashboard from '../components/Dashboard/Dashboard'
 import TableContainer from '../components/Table/TableContainer'
 import RegisterEmployee from './Signup.jsx'
+import GlobalSearch from '../components/Search/GlobalSearch.jsx'
 import { useConditionalData } from '../hooks/MainHook/useConditionalData.js'
+import { handleExport } from '../utils/exportUtils.js'
 // Importar configuraciones de tablas
 import { articlesConfig, categoriesConfig, suppliersConfig, customersConfig, employeesConfig, artPiecesConfig, ordersConfig, reviewsConfig, salesConfig } from '../data/TableConfigs.js'
 
@@ -32,13 +34,27 @@ const MainPage = () => {
     await logout()
   }
   // Funcion handleExport
-  const handleExport = (format, data) => {
-    console.log(`Exportando ${data?.length || 0} elementos en formato ${format}`)
-    // In progress
+  const handleDataExport = (format, data, sectionName) => {
+    console.log(`Exportando ${data?.length || 0} elementos de ${sectionName} en formato ${format}`)
+    
+    if (!data || data.length === 0) {
+      toast.error('No hay datos para exportar')
+      return
+    }
+    try {
+      const filename = `${sectionName.toLowerCase().replace(/\s+/g, '_')}`
+      const title = `Reporte de ${sectionName} - MixArt`
+      
+      handleExport(format, data, filename, title)
+      toast.success(`Exportación de ${sectionName} iniciada en formato ${format.toUpperCase()}`)
+    } catch (error) {
+      console.error('Error al exportar:', error)
+      toast.error('Error al exportar los datos')
+    }
   }
-  // Agregar función para verificar permisos
+  // Agregar funcion para verificar permisos
   const hasPermission = (view) => {
-    if (!user?.userType) return false;
+    if (!user?.userType) return false
     
     const permissions = {
       'admin': [ 'dashboard', 'search', 'artpieces', 'articles', 'employees', 'categories', 'customers', 'orders', 'reviews', 'sales', 'suppliers' ],
@@ -632,20 +648,13 @@ const MainPage = () => {
       case 'dashboard':
         return <Dashboard/>
       case 'search':
-        return (
-          <div className="p-6 bg-white min-h-screen font-[Alexandria]">
-            <div className="max-w-7xl mx-auto">
-              <h1 className="text-3xl font-bold text-gray-800 mb-4">Buscar</h1>
-              <p className="text-gray-600">Función de búsqueda en desarrollo...</p>
-            </div>
-          </div>
-        )
+        return <GlobalSearch/>
       case 'artpieces':
         const artPiecesHandler = getHandlersForView()
         return (
           <div className="p-6 bg-white min-h-screen">
             <div className="max-w-7xl mx-auto">
-              <TableContainer  config={artPiecesConfig} data={artPiecesHandler.data} onAdd={artPiecesHandler.onAdd} onEdit={artPiecesHandler.onEdit} onDelete={artPiecesHandler.onDelete} onExport={handleExport} isLoading={artPiecesHandler.loading} categoriesData={categoriesData}/>
+              <TableContainer  config={artPiecesConfig} data={artPiecesHandler.data} onAdd={artPiecesHandler.onAdd} onEdit={artPiecesHandler.onEdit} onDelete={artPiecesHandler.onDelete} onExport={(format, data) => handleDataExport(format, data, 'Piezas de Arte')} isLoading={artPiecesHandler.loading} categoriesData={categoriesData}/>
             </div>
           </div>
         )
@@ -654,7 +663,7 @@ const MainPage = () => {
         return (
           <div className="p-6 bg-white min-h-screen">
             <div className="max-w-7xl mx-auto">
-              <TableContainer config={articlesConfig} data={articlesHandler.data} onAdd={articlesHandler.onAdd}  onEdit={articlesHandler.onEdit} onDelete={articlesHandler.onDelete} onExport={handleExport} isLoading={articlesHandler.loading} categoriesData={categoriesData} suppliersData={suppliersData}/>
+              <TableContainer config={articlesConfig} data={articlesHandler.data} onAdd={articlesHandler.onAdd}  onEdit={articlesHandler.onEdit} onDelete={articlesHandler.onDelete} onExport={(format, data) => handleDataExport(format, data, 'Artículos')} isLoading={articlesHandler.loading} categoriesData={categoriesData} suppliersData={suppliersData}/>
             </div>
           </div>
         )
@@ -672,7 +681,7 @@ const MainPage = () => {
                   Registro Completo de Empleado
                 </button>
               </div>
-              <TableContainer config={employeesConfig} data={employeesHandler.data} onAdd={employeesHandler.onAdd} onEdit={employeesHandler.onEdit} onDelete={employeesHandler.onDelete} onExport={handleExport} isLoading={employeesHandler.loading} onRegister={handleShowRegisterEmployee}/>
+              <TableContainer config={employeesConfig} data={employeesHandler.data} onAdd={employeesHandler.onAdd} onEdit={employeesHandler.onEdit} onDelete={employeesHandler.onDelete} onExport={(format, data) => handleDataExport(format, data, 'Empleados')} isLoading={employeesHandler.loading} onRegister={handleShowRegisterEmployee}/>
             </div>
           </div>
         )
@@ -681,7 +690,7 @@ const MainPage = () => {
         return (
           <div className="p-6 bg-white min-h-screen">
             <div className="max-w-7xl mx-auto">
-              <TableContainer config={categoriesConfig} data={categoriesHandler.data} onAdd={categoriesHandler.onAdd} onEdit={categoriesHandler.onEdit} onDelete={categoriesHandler.onDelete} onExport={handleExport} isLoading={categoriesHandler.loading}/>
+              <TableContainer config={categoriesConfig} data={categoriesHandler.data} onAdd={categoriesHandler.onAdd} onEdit={categoriesHandler.onEdit} onDelete={categoriesHandler.onDelete} onExport={(format, data) => handleDataExport(format, data, 'Categorías')} isLoading={categoriesHandler.loading}/>
             </div>
           </div>
         )
@@ -690,7 +699,7 @@ const MainPage = () => {
         return (
           <div className="p-6 bg-white min-h-screen">
             <div className="max-w-7xl mx-auto">
-              <TableContainer config={customersConfig} data={customersHandler.data} onAdd={customersHandler.onAdd} onEdit={customersHandler.onEdit} onDelete={customersHandler.onDelete} onExport={handleExport} isLoading={customersHandler.loading}/>
+              <TableContainer config={customersConfig} data={customersHandler.data} onAdd={customersHandler.onAdd} onEdit={customersHandler.onEdit} onDelete={customersHandler.onDelete} onExport={(format, data) => handleDataExport(format, data, 'Clientes')} isLoading={customersHandler.loading}/>
             </div>
           </div>
         )
@@ -702,7 +711,7 @@ const MainPage = () => {
         return (
           <div className="p-6 bg-white min-h-screen">
             <div className="max-w-7xl mx-auto">
-              <TableContainer config={ordersConfig} data={ordersHandler.data} onAdd={ordersHandler.onAdd} onEdit={ordersHandler.onEdit} onDelete={ordersHandler.onDelete} onExport={handleExport} isLoading={ordersHandler.loading} customersData={customersData} articlesData={articlesData} artPiecesData={artPiecesData}/>
+              <TableContainer config={ordersConfig} data={ordersHandler.data} onAdd={ordersHandler.onAdd} onEdit={ordersHandler.onEdit} onDelete={ordersHandler.onDelete} onExport={(format, data) => handleDataExport(format, data, 'Pedidos')} isLoading={ordersHandler.loading} customersData={customersData} articlesData={articlesData} artPiecesData={artPiecesData}/>
             </div>
           </div>
         )
@@ -711,7 +720,7 @@ const MainPage = () => {
         return (
           <div className="p-6 bg-white min-h-screen">
             <div className="max-w-7xl mx-auto">
-              <TableContainer config={reviewsConfig} data={reviewsHandler.data} onAdd={reviewsHandler.onAdd} onEdit={reviewsHandler.onEdit} onDelete={reviewsHandler.onDelete}  onExport={handleExport} isLoading={reviewsHandler.loading} customersData={customersData} articlesData={articlesData} artPiecesData={artPiecesData}/>
+              <TableContainer config={reviewsConfig} data={reviewsHandler.data} onAdd={reviewsHandler.onAdd} onEdit={reviewsHandler.onEdit} onDelete={reviewsHandler.onDelete}  onExport={(format, data) => handleDataExport(format, data, 'Reseñas')} isLoading={reviewsHandler.loading} customersData={customersData} articlesData={articlesData} artPiecesData={artPiecesData}/>
             </div>
           </div>
         )
@@ -720,7 +729,7 @@ const MainPage = () => {
         return (
           <div className="p-6 bg-white min-h-screen font-[Alexandria]">
             <div className="max-w-7xl mx-auto">
-              <TableContainer config={salesConfig} data={salesHandlers.data} onAdd={salesHandlers.onAdd} onEdit={salesHandlers.onEdit} onDelete={salesHandlers.onDelete} onExport={handleExport} isLoading={salesHandlers.loading} ordersData={ordersData}/>
+              <TableContainer config={salesConfig} data={salesHandlers.data} onAdd={salesHandlers.onAdd} onEdit={salesHandlers.onEdit} onDelete={salesHandlers.onDelete} onExport={(format, data) => handleDataExport(format, data, 'Ventas')} isLoading={salesHandlers.loading} ordersData={ordersData}/>
             </div>
           </div>
         )
@@ -729,7 +738,7 @@ const MainPage = () => {
         return (
           <div className="p-6 bg-white min-h-screen">
             <div className="max-w-7xl mx-auto">
-              <TableContainer config={suppliersConfig} data={suppliersHandlers.data} onAdd={suppliersHandlers.onAdd} onEdit={suppliersHandlers.onEdit} onDelete={suppliersHandlers.onDelete} onExport={handleExport} isLoading={suppliersHandlers.loading}/>
+              <TableContainer config={suppliersConfig} data={suppliersHandlers.data} onAdd={suppliersHandlers.onAdd} onEdit={suppliersHandlers.onEdit} onDelete={suppliersHandlers.onDelete} onExport={(format, data) => handleDataExport(format, data, 'Proveedores')} isLoading={suppliersHandlers.loading}/>
             </div>
           </div>
         )

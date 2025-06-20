@@ -66,23 +66,98 @@ const TableContainer = ({config, data = [], onAdd, onEdit, onDelete, onExport, i
       return field
     })
   }, [config.formFields, categoriesData?.categories, suppliersData?.suppliers, customersData?.customers, ordersData?.orders])
+  // Función mejorada para obtener valor de búsqueda de un objeto
+  const getSearchableValue = (item, column) => {
+    const value = item[column.key]
+    // Si no hay valor, retornar string vacío
+    if (value === null || value === undefined) return ''
+    // Manejar objetos anidados (como categorías, proveedores, clientes)
+    if (value && typeof value === 'object') {
+      // Para clientes: buscar en nombre completo y email
+      if (column.key === 'customerId' && value.name && value.lastName) {
+        return `${value.name} ${value.lastName} ${value.email || ''} ${value.username || ''}`.toLowerCase()
+      }
+      // Para categorías
+      if (value.categoryName) return value.categoryName.toLowerCase()
+      // Para proveedores
+      if (value.supplierName) return `${value.supplierName} ${value.email || ''}`.toLowerCase()
+      // Para otros objetos con name
+      if (value.name) return value.name.toLowerCase()
+      if (value.username) return value.username.toLowerCase()
+      // Si tiene _id, incluirlo también
+      return `${value._id || ''} ${JSON.stringify(value)}`.toLowerCase()
+    }
+    // Manejar arrays (como items en pedidos)
+    if (Array.isArray(value)) {
+      // Buscar dentro de los elementos del array
+      return value.map(item => {
+        if (typeof item === 'object') {
+          return Object.values(item).join(' ')
+        }
+        return item
+      }).join(' ').toLowerCase()
+    }
+    // Manejar fechas
+    if (column.key.includes('At') || column.key.includes('Date')) {
+      try {
+        const dateStr = new Date(value).toLocaleDateString('es-ES')
+        return `${value} ${dateStr}`.toLowerCase()
+      } catch {
+        return value.toString().toLowerCase()
+      }
+    }
+    // Manejar booleanos
+    if (typeof value === 'boolean') {
+      return value ? 'sí yes true verificado activo' : 'no false sin verificar inactivo'
+    }
+    // Para valores normales, convertir a string
+    return value.toString().toLowerCase()
+  }
   // Filtrar y ordenar datos
   const filteredAndSortedData = useMemo(() => {
     let filtered = data
     // Aplicar búsqueda
-    if (searchValue) {
-      const searchableColumns = config.columns.filter(col => col.searchable)
-      filtered = data.filter(item =>
-        searchableColumns.some(col =>
-          String(item[col.key] || '').toLowerCase().includes(searchValue.toLowerCase())
-        )
-      )
+    if (searchValue && searchValue.trim()) {
+      const searchLower = searchValue.toLowerCase().trim()
+      const searchTerms = searchLower.split(' ').filter(term => term.length > 0)
+      
+      filtered = data.filter(item => {
+        // Obtener todas las columnas que permiten búsqueda
+        const searchableColumns = config.columns.filter(col => col.searchable !== false)
+        // Crear un texto único con todos los valores buscables del item
+        const searchableText = searchableColumns.map(col => 
+          getSearchableValue(item, col)
+        ).join(' ').toLowerCase()
+        // Verificar que TODOS los términos de búsqueda estén presentes
+        return searchTerms.every(term => searchableText.includes(term))
+      })
     }
     // Aplicar ordenamiento
     if (sortBy) {
       filtered = [...filtered].sort((a, b) => {
-        const aVal = a[sortBy]
-        const bVal = b[sortBy]
+        let aVal = a[sortBy]
+        let bVal = b[sortBy]
+        // Manejar objetos anidados para ordenamiento
+        if (aVal && typeof aVal === 'object') {
+          if (aVal.categoryName) aVal = aVal.categoryName
+          else if (aVal.supplierName) aVal = aVal.supplierName
+          else if (aVal.name && aVal.lastName) aVal = `${aVal.name} ${aVal.lastName}`
+          else if (aVal.name) aVal = aVal.name
+          else aVal = aVal._id || ''
+        }
+        if (bVal && typeof bVal === 'object') {
+          if (bVal.categoryName) bVal = bVal.categoryName
+          else if (bVal.supplierName) bVal = bVal.supplierName
+          else if (bVal.name && bVal.lastName) bVal = `${bVal.name} ${bVal.lastName}`
+          else if (bVal.name) bVal = bVal.name
+          else bVal = bVal._id || ''
+        }
+        // Manejar valores nulos
+        if (aVal === null || aVal === undefined) aVal = ''
+        if (bVal === null || bVal === undefined) bVal = ''
+        // Convertir a string para comparacion
+        aVal = aVal.toString().toLowerCase()
+        bVal = bVal.toString().toLowerCase()
         
         if (aVal === bVal) return 0
         const result = aVal > bVal ? 1 : -1
@@ -213,7 +288,11 @@ const TableContainer = ({config, data = [], onAdd, onEdit, onDelete, onExport, i
     }
   }
   const handleRefresh = () => {
-    // Por ahora solo refrescar la pagina
+    // Limpiar filtros y recargar
+    setSearchValue('')
+    setSortBy(null)
+    setSortOrder('asc')
+    setCurrentPage(1)
     window.location.reload()
   }
   return (

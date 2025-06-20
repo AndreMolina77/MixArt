@@ -27,7 +27,6 @@ const DataTable = ({data = [], columns = [], isLoading = false,
   }
   const renderCellContent = (item, column) => {
     const value = item[column.key]
-    console.log(`Renderizando celda ${column.key}:`, value, typeof value)
     
     switch (column.type) {
       case 'badge':
@@ -47,7 +46,9 @@ const DataTable = ({data = [], columns = [], isLoading = false,
           'false': 'bg-red-100 text-red-800',
           'vendedor': 'bg-purple-100 text-purple-800',
           'artista': 'bg-orange-100 text-orange-800',
-          'customer': 'bg-blue-100 text-blue-800'
+          'customer': 'bg-blue-100 text-blue-800',
+          'vendido': 'bg-green-100 text-green-800',
+          'venta pendiente': 'bg-yellow-100 text-yellow-800'
         }
         let displayText = value
         if (typeof value === 'boolean') {
@@ -70,7 +71,7 @@ const DataTable = ({data = [], columns = [], isLoading = false,
       case 'date':
         if (!value) return '-'
         try {
-          return new Date(value).toLocaleDateString()
+          return new Date(value).toLocaleDateString('es-ES')
         } catch (error) {
           return value?.toString() || '-'
         }
@@ -85,7 +86,7 @@ const DataTable = ({data = [], columns = [], isLoading = false,
           </div>
         )
       default:
-        // CORREGIDO: Manejar objetos populados y clientes
+        // Manejar objetos populados y clientes
         if (value && typeof value === 'object') {
           // Para clientes: mostrar nombre completo
           if (column.key === 'customerId' && value.name && value.lastName) {
@@ -123,7 +124,7 @@ const DataTable = ({data = [], columns = [], isLoading = false,
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
               {columns.map((column) => (
-                <th key={column.key} className={`px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-[Alexandria] ${column.sortable ? 'cursor-pointer hover:bg-gray-100 select-none' : ''}`} onClick={() => handleSort(column.key)}>
+                <th key={column.key} className={`px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-[Alexandria] ${ column.sortable ? 'cursor-pointer hover:bg-gray-100 select-none' : '' }`} onClick={() => handleSort(column.key)}>
                   <div className="flex items-center gap-1">
                     {column.label}
                     {column.sortable && renderSortIcon(column.key)}
@@ -191,9 +192,8 @@ const DataTable = ({data = [], columns = [], isLoading = false,
               {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
                 const pageNum = Math.max(1, pagination.page - 2) + i
                 if (pageNum > totalPages) return null
-        
                 return (
-                  <button key={pageNum} onClick={() => onPageChange?.(pageNum)} className={`px-3 py-1 text-sm rounded font-[Alexandria] transition-colors ${pageNum === pagination.page  ? 'bg-[#E07A5F] text-white' : 'text-gray-700 hover:bg-gray-100' }`}>
+                  <button key={pageNum} onClick={() => onPageChange?.(pageNum)} className={`px-3 py-1 text-sm rounded font-[Alexandria] transition-colors ${ pageNum === pagination.page ? 'bg-[#E07A5F] text-white' : 'text-gray-700 hover:bg-gray-100'}`}>
                     {pageNum}
                   </button>
                 )

@@ -57,8 +57,16 @@ const Header = () => {
           </div>
           {/* Avatar */}
           <div className="relative group cursor-pointer">
-            <button className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center hover:shadow-lg transition-all duration-200 transform hover:scale-105 group-hover:from-blue-600 group-hover:to-blue-700">
-              <User className="w-5 h-5 text-white" />
+            <button className="w-10 h-10 rounded-full flex items-center justify-center hover:shadow-lg transition-all duration-200 transform hover:scale-105 overflow-hidden">
+              {user?.profilePic ? (
+                <img src={user.profilePic} alt="Perfil" className="w-full h-full object-cover rounded-full" onError={(e) => {
+                    e.target.style.display = 'none'
+                    e.target.nextSibling.style.display = 'flex'
+                  }} />
+              ) : null}
+              <div className={`w-full h-full bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-semibold ${user?.profilePic ? 'hidden' : 'flex'}`} style={{ display: user?.profilePic ? 'none' : 'flex' }}>
+                {getDisplayName().charAt(0).toUpperCase()}
+              </div>
             </button>
           </div>
         </div>

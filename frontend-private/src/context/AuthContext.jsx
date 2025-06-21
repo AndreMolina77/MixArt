@@ -35,16 +35,54 @@ export const AuthProvider = ({ children }) => {
         credentials: "include",
         headers: { 'Content-Type': 'application/json' }
       })
+      console.log("📡 userInfoResponse status:", userInfoResponse.status)
+      console.log("📡 userInfoResponse ok:", userInfoResponse.ok)
       if (userInfoResponse.ok) {
         const userInfo = await userInfoResponse.json()
+        // Obtener datos completos del usuario para incluir profilePic
+        let completeUserData = {}
         console.log("👤 User info from server:", userInfo)
         
-        const userData = { 
+        let userData = { 
           email, 
           userType: userInfo.userType,
-          userId: userInfo.userId
+          userId: userInfo.userId,
+          id: userInfo.userId,  
+          name: userInfo.name, 
+          lastName: userInfo.lastName,
+          profilePic: '' 
         }
-        
+        // Para usuarios no-admin, obtener datos completos incluyendo profilePic
+        if (userInfo.userType !== 'admin') {
+          try {
+            let userDataEndpoint = ''
+            if (userInfo.userType === 'customer') {
+              userDataEndpoint = `${API}/customers/${userInfo.userId}`
+            } else {
+              userDataEndpoint = `${API}/employees/${userInfo.userId}`
+            }
+            console.log("🔍 Fetching complete user data from:", userDataEndpoint)
+            
+            const userDataResponse = await fetch(userDataEndpoint, {
+              credentials: 'include'
+            })
+            if (userDataResponse.ok) {
+              const completeUserData = await userDataResponse.json()
+              console.log("👤 Complete user data with profilePic:", completeUserData.profilePic)
+              // Actualizar userData con datos completos
+              userData = {
+                ...userData,
+                name: completeUserData.name,
+                lastName: completeUserData.lastName,
+                profilePic: completeUserData.profilePic || '',
+                phoneNumber: completeUserData.phoneNumber || ''
+              }
+            }
+          } catch (error) {
+            console.log("Error obteniendo datos completos en login:", error)
+          }
+        }
+        console.log("👤 userData final con profilePic:", userData)
         localStorage.setItem("user", JSON.stringify(userData))
         setUser(userData)
         setAuthCookie(true) // Indicador de que hay cookie valida
@@ -123,8 +161,47 @@ export const AuthProvider = ({ children }) => {
           console.log("📡 Validation response status:", response.status)
           if (response.ok) {
             console.log("✅ Session valid - restoring user")
+            const validationData = await response.json()
+            console.log("📦 Validation data:", validationData)
+            const savedUserData = JSON.parse(savedUser)
+            // Obtener datos completos incluyendo profilePic
+            let completeUserData = savedUserData
+            if (validationData.userType !== 'admin') {
+              try {
+                let userDataEndpoint = ''
+                if (validationData.userType === 'customer') {
+                  userDataEndpoint = `${API}/customers/${validationData.userId}`
+                } else {
+                  userDataEndpoint = `${API}/employees/${validationData.userId}`
+                }
+                console.log("🔍 Fetching complete user data from:", userDataEndpoint)
+                
+                const userDataResponse = await fetch(userDataEndpoint, {
+                  credentials: 'include'
+                })
+                if (userDataResponse.ok) {
+                  const freshUserData = await userDataResponse.json()
+                  console.log("👤 Fresh user data with profilePic:", freshUserData.profilePic)
+                  
+                  completeUserData = {
+                    ...savedUserData,
+                    name: freshUserData.name,
+                    lastName: freshUserData.lastName,
+                    profilePic: freshUserData.profilePic || '',
+                    phoneNumber: freshUserData.phoneNumber,
+                    id: validationData.userId,
+                    userType: validationData.userType
+                  }
+                }
+              } catch (error) {
+                console.log("Error obteniendo datos completos:", error)
+              }
+            }
+            console.log("👤 Final user data:", completeUserData)
+            // Actualizar localStorage con datos frescos
+            localStorage.setItem("user", JSON.stringify(completeUserData))
             // Sesión válida, restaurar usuario
-            setUser(JSON.parse(savedUser))
+            setUser(completeUserData)
             setAuthCookie(true) // Indicador de que hay cookie válida
           } else {
             console.log("❌ Session invalid - cleaning local data")
@@ -150,7 +227,7 @@ export const AuthProvider = ({ children }) => {
     checkAuth()
   }, []) // Array vacio - solo ejecutar una vez al montar
   return (
-    <AuthContext.Provider value={{ user, Login, GoogleLogin, logout, authCookie, setAuthCookie, API, isLoading }}>
+    <AuthContext.Provider value={{ user, Login, GoogleLogin, logout, authCookie, setAuthCookie, setUser, API, isLoading }}>
       {children}
     </AuthContext.Provider>
   )

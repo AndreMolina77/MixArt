@@ -13,10 +13,10 @@ const Sidebar = ({ currentView, setCurrentView, onLogout }) => {
     if (!user?.userType) return [];
     
     const permissions = {
-      'admin': [ 'dashboard', 'search', 'artpieces', 'articles', 'employees', 'categories', 'customers', 'orders', 'reviews', 'sales', 'suppliers' ],
-      'vendedor': [ 'dashboard', 'search', 'artpieces', 'articles', 'categories', 'customers', 'orders', 'reviews', 'sales', 'suppliers' ],
-      'artista': [ 'dashboard', 'search', 'artpieces', 'categories', 'orders', 'reviews', 'sales' ],
-      'customer': [ 'dashboard', 'orders', 'reviews' ]
+      'admin': [ 'dashboard', 'search', 'artpieces', 'articles', 'employees', 'categories', 'customers', 'orders', 'reviews', 'sales', 'suppliers', 'settings' ],
+      'vendedor': [ 'dashboard', 'search', 'artpieces', 'articles', 'categories', 'customers', 'orders', 'reviews', 'sales', 'suppliers', 'settings' ],
+      'artista': [ 'dashboard', 'search', 'artpieces', 'categories', 'orders', 'reviews', 'sales', 'settings' ],
+      'customer': [ 'dashboard', 'orders', 'reviews', 'settings' ]
     }
     const allowedViews = permissions[user.userType] || []
     return menuItems.filter(item => allowedViews.includes(item.id))
@@ -80,11 +80,7 @@ const Sidebar = ({ currentView, setCurrentView, onLogout }) => {
       {/* Footer Section - Centrado */}
       <div className={`border-t border-white/60 ${isCollapsed ? 'w-8 mx-auto' : 'mx-4'}`}></div>
       <div className="py-3">
-        <div className={`
-          flex items-center mx-2 mb-1 rounded-lg cursor-pointer 
-          hover:bg-white/10 hover:translate-x-1 transition-all duration-200 group
-          ${isCollapsed ? 'justify-center py-3 px-0' : 'py-3 px-4'}
-        `}>
+        <div className={`flex items-center mx-2 mb-1 rounded-lg cursor-pointer hover:bg-white/10 hover:translate-x-1 transition-all duration-200 group ${isCollapsed ? 'justify-center py-3 px-0' : 'py-3 px-4'}`} onClick={() => handleMenuClick('settings')}>
           <div className="p-2 rounded-lg text-white group-hover:bg-white/20 transition-colors duration-200">
             <Settings size={20} className="flex-shrink-0" />
           </div>

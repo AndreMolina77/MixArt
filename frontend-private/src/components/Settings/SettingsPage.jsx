@@ -1,10 +1,10 @@
 import { useState, useRef } from 'react'
 import { useAuth } from '../../hooks/useAuth'
 import { toast } from 'react-hot-toast'
-import { User, Camera, Mail, Phone, Shield, Palette, Moon, Sun, Bell, Save, Upload, Eye, EyeOff } from 'lucide-react'
+import { User, Camera, Mail, Phone, Shield, Palette, Moon, Sun, Bell, Save, Eye, EyeOff } from 'lucide-react'
 
 const SettingsPage = () => {
-  const { user, API } = useAuth()
+  const { user, API, setUser } = useAuth()
   const fileInputRef = useRef(null)
   // Estados para la informacion del perfil
   const [profileData, setProfileData] = useState({
@@ -55,10 +55,12 @@ const SettingsPage = () => {
       formData.append('profilePic', file)
       // Determinar el endpoint según el tipo de usuario
       let endpoint = ''
-      if (user.userType === 'customer') {
-        endpoint = `${API}/customers/${user.userId || user.id}`
+      if (user.userType === 'admin') {
+        endpoint = `http://localhost:4000/api/admin/profile`
+      } else if (user.userType === 'customer') {
+        endpoint = `${API}/customers/${user.id}`
       } else {
-        endpoint = `${API}/employees/${user.userId || user.id}`
+        endpoint = `${API}/employees/${user.id}`
       }
       const response = await fetch(endpoint, {
         method: 'PUT',
@@ -68,10 +70,41 @@ const SettingsPage = () => {
       if (!response.ok) {
         throw new Error('Error al subir la imagen')
       }
-      // Crear URL temporal para mostrar la imagen
-      const imageUrl = URL.createObjectURL(file)
-      setProfileData(prev => ({ ...prev, profilePic: imageUrl }))
-      
+      // NUEVA LÓGICA - Manejar response correctamente:
+      if (user.userType === 'admin') {
+        // Para admin, leer la respuesta del servidor
+        const responseData = await response.json()
+        console.log("📸 Admin response data:", responseData)
+        // Actualizar con datos de la respuesta
+        const newProfilePic = responseData.user?.profilePic || ''
+        setProfileData(prev => ({ ...prev, profilePic: newProfilePic }))
+        
+        const updatedUser = { ...user, profilePic: newProfilePic }
+        localStorage.setItem("user", JSON.stringify(updatedUser))
+        setUser(updatedUser)
+      } else {
+        // Para empleados y clientes, NO leer response aqui, hacer fetch separado
+        await response.text() // Consumir el response para evitar problemas
+        // Hacer fetch separado para obtener datos actualizados
+        let userDataEndpoint = ''
+        if (user.userType === 'customer') {
+          userDataEndpoint = `${API}/customers/${user.id}`
+        } else {
+          userDataEndpoint = `${API}/employees/${user.id}`
+        }
+        const userDataResponse = await fetch(userDataEndpoint, {
+          credentials: 'include'
+        })
+        if (userDataResponse.ok) {
+          const freshUserData = await userDataResponse.json()
+          console.log("📸 Fresh user data:", freshUserData.profilePic)
+          
+          setProfileData(prev => ({ ...prev, profilePic: freshUserData.profilePic }))
+          const updatedUser = { ...user, profilePic: freshUserData.profilePic }
+          localStorage.setItem("user", JSON.stringify(updatedUser))
+          setUser(updatedUser)
+        }
+      }
       toast.success('Foto de perfil actualizada correctamente')
     } catch (error) {
       console.error('Error al subir imagen:', error)
@@ -89,29 +122,42 @@ const SettingsPage = () => {
         toast.error('Por favor completa todos los campos obligatorios')
         return
       }
-      const updateData = {
-        name: profileData.name,
-        lastName: profileData.lastName,
-        email: profileData.email,
-        phoneNumber: profileData.phoneNumber
-      }
       // Determinar el endpoint según el tipo de usuario
       let endpoint = ''
-      if (user.userType === 'customer') {
-        endpoint = `${API}/customers/${user.userId || user.id}`
+      if (user.userType === 'admin') {
+        endpoint = `${API.replace('/api', '')}/api/admin/profile`
+      } else if (user.userType === 'customer') {
+        endpoint = `${API}/customers/${user.id}`
       } else {
-        endpoint = `${API}/employees/${user.userId || user.id}`
+        endpoint = `${API}/employees/${user.id}`
       }
+      console.log('🔧 Endpoint final:', endpoint)
+      console.log('🔧 User ID:', user.id)
       const response = await fetch(endpoint, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
         },
         credentials: 'include',
-        body: JSON.stringify(updateData)
+        body: JSON.stringify({name: profileData.name,
+        lastName: profileData.lastName,
+        email: profileData.email,
+        phoneNumber: profileData.phoneNumber})
       })
       if (!response.ok) {
         throw new Error('Error al actualizar el perfil')
+      }
+      if (user.userType === 'admin') {
+        const responseData = await response.json()
+        // Actualizar contexto con datos de la respuesta
+        const updatedUser = { 
+          ...user, 
+          name: profileData.name,
+          lastName: profileData.lastName,
+          profilePic: responseData.user?.profilePic || user.profilePic
+        }
+        localStorage.setItem("user", JSON.stringify(updatedUser))
+        setUser(updatedUser)
       }
       toast.success('Perfil actualizado correctamente')
     } catch (error) {
@@ -138,23 +184,40 @@ const SettingsPage = () => {
         return
       }
       setIsLoading(true)
-      // Por simplicidad, solo actualiza la nueva contraseña
-      // Ahora quiero implementar validacion de contraseña actual 
-      const updateData = { password: passwordData.newPassword }
-      
+      // Validar contraseña actual con el servidor
       let endpoint = ''
-      if (user.userType === 'customer') {
-        endpoint = `${API}/customers/${user.userId || user.id}`
+      let body = {}
+
+      if (user.userType === 'admin') {
+        endpoint = `${API.replace('/api', '')}/api/admin/profile/password`
+        body = {
+          currentPassword: passwordData.currentPassword,
+          newPassword: passwordData.newPassword
+        }
       } else {
-        endpoint = `${API}/employees/${user.userId || user.id}`
+        // Validar contraseña actual primero para no-admin
+        const validateResponse = await fetch(`${API.replace('/api', '')}/api/validatePassword`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ currentPassword: passwordData.currentPassword })
+        })
+        if (!validateResponse.ok) {
+          toast.error('Contraseña actual incorrecta')
+          return
+        }
+        if (user.userType === 'customer') {
+          endpoint = `${API}/customers/${user.userId || user.id}`
+        } else {
+          endpoint = `${API}/employees/${user.userId || user.id}`
+        }
+        body = { password: passwordData.newPassword }
       }
       const response = await fetch(endpoint, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify(updateData)
+        body: JSON.stringify(body)
       })
       if (!response.ok) {
         throw new Error('Error al cambiar la contraseña')
@@ -206,14 +269,24 @@ const SettingsPage = () => {
               {/* Foto de perfil */}
               <div className="flex items-center space-x-6 mb-8">
                 <div className="relative">
-                  <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#E07A5F] to-[#F4A261] flex items-center justify-center text-white text-2xl font-bold shadow-lg">
+                  <div className="w-24 h-24 rounded-full overflow-hidden shadow-lg border-4 border-white">
                     {profileData.profilePic ? (
-                      <img src={profileData.profilePic} alt="Perfil" className="w-24 h-24 rounded-full object-cover"/>) : (
-                      `${profileData.name?.charAt(0) || user?.name?.charAt(0) || 'U'}${profileData.lastName?.charAt(0) || user?.lastName?.charAt(0) || ''}`
-                    )}
+                      <img src={profileData.profilePic} alt="Perfil" className="w-full h-full object-cover"
+                       onError={(e) => {
+                          e.target.style.display = 'none'
+                          e.target.nextSibling.style.display = 'flex'
+                        }}/>
+                    ) : null}
+                    <div className={`w-full h-full bg-gradient-to-br from-[#E07A5F] to-[#F4A261] flex items-center justify-center text-white text-2xl font-bold ${profileData.profilePic ? 'hidden' : 'flex'}`} style={{ display: profileData.profilePic ? 'none' : 'flex' }}>
+                      {`${profileData.name?.charAt(0) || user?.name?.charAt(0) || 'U'}${profileData.lastName?.charAt(0) || user?.lastName?.charAt(0) || ''}`}
+                    </div>
                   </div>
-                  <button onClick={() => fileInputRef.current?.click()} disabled={isLoading} className="absolute -bottom-2 -right-2 bg-[#E07A5F] text-white p-2 rounded-full hover:bg-[#D26B50] transition-colors shadow-lg disabled:opacity-50">
-                    <Camera className="w-4 h-4" />
+                  <button onClick={() => fileInputRef.current?.click()} disabled={isLoading} className="absolute -bottom-2 -right-2 bg-[#E07A5F] text-white p-2 rounded-full hover:bg-[#D26B50] transition-colors shadow-lg disabled:opacity-50 group">
+                    {isLoading ? (
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"/>
+                    ) : (
+                      <Camera className="w-4 h-4 group-hover:scale-110 transition-transform"/>
+                    )}
                   </button>
                   <input ref={fileInputRef} type="file" accept="image/*" onChange={handleImageUpload} className="hidden"/>
                 </div>
@@ -251,18 +324,20 @@ const SettingsPage = () => {
                   </label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                    <input type="email" value={profileData.email} onChange={(e) => setProfileData(prev => ({ ...prev, email: e.target.value }))} className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E07A5F] focus:border-transparent" placeholder="tu@email.com"/>
+                    <input type="email" value={profileData.email} onChange={(e) => setProfileData(prev => ({ ...prev, email: e.target.value }))} className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E07A5F] focus:border-transparent" placeholder="tu@email.com" disabled={user.userType === 'admin'}/>
                   </div>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-[#7A6E6E] mb-2">
-                    Teléfono
-                  </label>
-                  <div className="relative">
-                    <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                    <input type="tel" value={profileData.phoneNumber} onChange={(e) => setProfileData(prev => ({ ...prev, phoneNumber: e.target.value }))} className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E07A5F] focus:border-transparent" placeholder="0000-0000"/>
-                  </div>
-                </div>
+                {/* MOSTRAR TELÉFONO SOLO SI NO ES ADMIN */}
+                {user.userType !== 'admin' && (
+                  <div>
+                    <label className="block text-sm font-medium text-[#7A6E6E] mb-2">
+                      Teléfono
+                    </label>
+                    <div className="relative">
+                      <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                      <input type="tel" value={profileData.phoneNumber} onChange={(e) => setProfileData(prev => ({ ...prev, phoneNumber: e.target.value }))} className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E07A5F] focus:border-transparent" placeholder="0000-0000"/>
+                    </div>
+                  </div> )}
               </div>
               <button onClick={handleProfileUpdate} disabled={isLoading} className="flex items-center space-x-2 bg-[#E07A5F] text-white px-6 py-3 rounded-lg hover:bg-[#D26B50] transition-colors disabled:opacity-50">
                 <Save className="w-4 h-4" />

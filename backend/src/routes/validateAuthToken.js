@@ -8,7 +8,11 @@ router.post("/", validateAuthToken(["admin", "vendedor", "artista", "customer"])
   res.status(200).json({ 
     message: "Token válido", 
     valid: true,
-    userType: req.userType || 'unknown'
+    userType: req.userType || 'unknown',
+    userId: req.userId,
+    email: req.userEmail,
+    name: req.userName,  
+    lastName: req.userLastName 
   })
 })
 export default router

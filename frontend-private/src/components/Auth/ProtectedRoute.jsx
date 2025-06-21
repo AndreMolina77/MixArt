@@ -13,7 +13,8 @@ const ProtectedRoute = ({ children }) => {
   useEffect(() => {
     const validateAuth = async () => {
       console.log("🔐 === PROTECTED ROUTE VALIDATION ===")
-      console.log("👤 User:", user)
+      console.log("👤 User from context:", user)
+      console.log("👤 User userType:", user?.userType)
       console.log("🍪 Auth Cookie:", authCookie)
 
       // Si no hay usuario ni token, redirigir inmediatamente

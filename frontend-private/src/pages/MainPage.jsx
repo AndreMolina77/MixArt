@@ -6,6 +6,7 @@ import Header from '../components/Dashboard/Header'
 import Dashboard from '../components/Dashboard/Dashboard'
 import TableContainer from '../components/Table/TableContainer'
 import RegisterEmployee from './Signup.jsx'
+import SettingsPage from '../components/Settings/SettingsPage'
 import GlobalSearch from '../components/Search/GlobalSearch.jsx'
 import { useConditionalData } from '../hooks/MainHook/useConditionalData.js'
 import { handleExport } from '../utils/exportUtils.js'
@@ -57,10 +58,10 @@ const MainPage = () => {
     if (!user?.userType) return false
     
     const permissions = {
-      'admin': [ 'dashboard', 'search', 'artpieces', 'articles', 'employees', 'categories', 'customers', 'orders', 'reviews', 'sales', 'suppliers' ],
-      'vendedor': [ 'dashboard', 'search', 'artpieces', 'articles', 'categories', 'customers', 'orders', 'reviews', 'sales', 'suppliers' ], // Vendedor NO puede ver employees
-      'artista': [ 'dashboard', 'search', 'artpieces', 'categories',  'orders', 'reviews', 'sales' ], // Artista NO puede ver articles, employees, customers, suppliers
-      'customer': [ 'dashboard', 'orders', 'reviews' ]
+      'admin': [ 'dashboard', 'search', 'artpieces', 'articles', 'employees', 'categories', 'customers', 'orders', 'reviews', 'sales', 'suppliers', 'settings' ],
+      'vendedor': [ 'dashboard', 'search', 'artpieces', 'articles', 'categories', 'customers', 'orders', 'reviews', 'sales', 'suppliers', 'settings' ], // Vendedor NO puede ver employees
+      'artista': [ 'dashboard', 'search', 'artpieces', 'categories',  'orders', 'reviews', 'sales', 'settings' ], // Artista NO puede ver articles, employees, customers, suppliers
+      'customer': [ 'dashboard', 'orders', 'reviews', 'settings' ]
     }
     const userPermissions = permissions[user.userType] || []
     console.log(`🔍 Checking permission for ${view}, user type: ${user.userType}, has permission: ${userPermissions.includes(view)}`)
@@ -742,6 +743,8 @@ const MainPage = () => {
             </div>
           </div>
         )
+      case 'settings':
+        return <SettingsPage/>
       default: 
         return <Dashboard/>
     }

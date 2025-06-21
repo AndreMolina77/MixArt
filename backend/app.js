@@ -17,6 +17,8 @@ import signupRoutes from "./src/routes/signup.js"
 import signupCustomerRoutes from "./src/routes/signupCustomer.js"
 import recoveryPasswordRoutes from "./src/routes/recoveryPassword.js"
 import validateAuthTokenRoutes from "./src/routes/validateAuthToken.js"
+import validatePasswordRoutes from "./src/routes/validatepassword.js"
+import adminProfileRoutes from "./src/routes/adminProfile.js"
 import { validateAuthToken } from "./src/middlewares/validateAuthToken.js"
 
 dotenv.config()
@@ -27,20 +29,19 @@ app.use(cors({
   origin: "http://localhost:5173", 
   credentials: true
 }))
-
 // Rutas que NO requieren login
 app.use("/api/login", loginRoutes)
 app.use("/api/logout", logoutRoutes)
 app.use("/api/signup", signupRoutes)
 app.use("/api/signupCustomer", signupCustomerRoutes)
 app.use("/api/recoveryPassword", recoveryPasswordRoutes)
-
+app.use("/api/validatePassword", validatePasswordRoutes)
 // Ruta especial para validar token (acepta cualquier tipo de usuario válido)
 app.use("/api/validateAuthToken", validateAuthTokenRoutes)
-
 // Rutas que SÍ requieren login (protegidas) - PERMISOS CORREGIDOS:
 app.use("/api/articles", validateAuthToken(["admin", "vendedor"]), articlesRoutes)
-app.use("/api/employees", validateAuthToken(["admin"]), employeesRoutes) // Solo admin
+app.use("/api/employees", validateAuthToken(["admin", "vendedor", "artista"]), employeesRoutes)
+app.use("/api/admin/profile", validateAuthToken(["admin"]), adminProfileRoutes) // Solo admin
 app.use("/api/artpieces", validateAuthToken(["admin", "artista", "vendedor"]), artpiecesRoutes) // Vendedor agregado
 app.use("/api/categories", validateAuthToken(["admin", "artista", "vendedor"]), categoriesRoutes)
 app.use("/api/customers", validateAuthToken(["admin", "vendedor"]), customersRoutes)
@@ -49,4 +50,4 @@ app.use("/api/reviews", validateAuthToken(["admin", "vendedor", "customer", "art
 app.use("/api/sales", validateAuthToken(["admin", "vendedor"]), salesRoutes)
 app.use("/api/suppliers", validateAuthToken(["admin", "vendedor"]), suppliersRoutes) // Vendedor agregado
 
-export default app;
+export default app

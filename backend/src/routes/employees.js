@@ -1,16 +1,18 @@
 import express from "express";
+import multer from "multer";
 
 const router = express.Router();
+const upload = multer({dest: "public/"})
 
-import artistController from "../controllers/employeesController.js";
-router
+import employeesController from "../controllers/employeesController.js";
+
 router
   .route("/")
-  .get(artistController.getEmployees)
-  .post(artistController.postEmployee);
+  .get(employeesController.getEmployees)
+  .post(employeesController.postEmployee);
 router
   .route("/:id")
-  .get(artistController.getEmployee)
-  .put(artistController.putEmployee)
-  .delete(artistController.deleteEmployee);
+  .get(employeesController.getEmployee)
+  .put(upload.single("profilePic"), employeesController.putEmployee)
+  .delete(employeesController.deleteEmployee);
 export default router;

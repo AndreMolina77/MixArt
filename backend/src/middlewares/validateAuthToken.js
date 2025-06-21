@@ -17,12 +17,12 @@ export const validateAuthToken = (allowedUserTypes = []) => {
                     code: "NO_TOKEN"
                 })
             }
-
             const decodedToken = jsonwebtoken.verify(authToken, config.JWT.secret)
             console.log("🔓 Token decoded successfully")
             console.log("👤 User ID:", decodedToken.id)
             console.log("👔 User type:", decodedToken.userType)
-            
+            console.log("🎯 Allowed user types:", allowedUserTypes)  // AGREGAR ESTO
+            console.log("✅ Is user type allowed?", allowedUserTypes.includes(decodedToken.userType))  // AGREGAR ESTO
             // SOLO verificar permisos si se especificaron tipos permitidos
             if (allowedUserTypes.length > 0 && !allowedUserTypes.includes(decodedToken.userType)) {
                 console.log("❌ User type not allowed")
@@ -39,7 +39,14 @@ export const validateAuthToken = (allowedUserTypes = []) => {
             req.userId = decodedToken.id
             req.userType = decodedToken.userType
             req.userEmail = decodedToken.email
-            
+            req.userName = decodedToken.name      // AGREGAR ESTO
+            req.userLastName = decodedToken.lastName  // AGREGAR ESTO
+            // Para la respuesta, incluir userId
+            res.locals.tokenData = {
+                userId: decodedToken.id,
+                userType: decodedToken.userType,
+                email: decodedToken.email
+            }               
             next()
         } catch (error) {
             console.log("❌ Token validation error:", error.message)

@@ -11,6 +11,6 @@ const menuItems = [
   { icon: ShoppingCart, label: 'Pedidos', id: 'orders' },
   { icon: Star, label: 'Reseñas', id: 'reviews' },
   { icon: TrendingUp, label: 'Ventas', id: 'sales' },
-  { icon: Truck, label: 'Proveedores', id: 'suppliers' }
+  { icon: Truck, label: 'Proveedores', id: 'suppliers' },
 ]
 export default menuItems

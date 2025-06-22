@@ -38,6 +38,7 @@ app.use("/api/recoveryPassword", recoveryPasswordRoutes)
 app.use("/api/validatePassword", validatePasswordRoutes)
 // Ruta especial para validar token (acepta cualquier tipo de usuario válido)
 app.use("/api/validateAuthToken", validateAuthTokenRoutes)
+app.use("/api/admin/profile", adminProfileRoutes) // Esta será pública para /data-public
 // Rutas que SÍ requieren login (protegidas) - PERMISOS CORREGIDOS:
 app.use("/api/articles", validateAuthToken(["admin", "vendedor"]), articlesRoutes)
 app.use("/api/employees", validateAuthToken(["admin", "vendedor", "artista"]), employeesRoutes)

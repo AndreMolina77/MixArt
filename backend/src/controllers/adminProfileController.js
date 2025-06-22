@@ -10,6 +10,51 @@ cloudinary.config({
     api_key: config.CLOUDINARY.API_KEY,
     api_secret: config.CLOUDINARY.API_SECRET
 })
+// Obtener datos de admin SIN autenticacion (para login)
+adminProfileController.getProfilePublic = async (req, res) => {
+    try {
+        console.log("🔍 Getting admin profile public data...")
+        console.log("📧 Looking for email:", config.CREDENTIALS.email)
+        
+        const adminUser = await adminModel.findOne({ email: config.CREDENTIALS.email })
+        console.log("👑 Admin user found:", adminUser)
+        
+        if (!adminUser) {
+            // Si no existe el admin, crearlo
+            console.log("👑 Creating new admin user...")
+            const newAdmin = new adminModel({
+                name: "Admin",
+                lastName: "MixArt", 
+                email: config.CREDENTIALS.email,
+                profilePic: ""
+            })
+            await newAdmin.save()
+            console.log("👑 New admin created:", newAdmin)
+            return res.json(newAdmin)
+        }
+        res.json(adminUser)
+    } catch (error) {
+        console.error("❌ Error in getProfilePublic:", error)
+        res.status(500).json({ message: "Error del servidor" })
+    }
+}
+// Obtener datos de admin
+adminProfileController.getProfile = async (req, res) => {
+    try {
+        const adminUser = await adminModel.findOne({ email: config.CREDENTIALS.email })
+        
+        if (!adminUser) {
+            // Si no existe, crearlo
+            const newAdmin = new adminModel({ name: "Admin", lastName: "MixArt", email: config.CREDENTIALS.email, profilePic: "" })
+            await newAdmin.save()
+            return res.json(newAdmin)
+        }
+        res.json(adminUser)
+    } catch (error) {
+        console.error("Error:", error)
+        res.status(500).json({ message: "Error del servidor" })
+    }
+}
 // Actualizar perfil de admin
 adminProfileController.updateProfile = async (req, res) => {
     try {

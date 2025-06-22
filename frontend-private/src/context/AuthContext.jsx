@@ -39,8 +39,6 @@ export const AuthProvider = ({ children }) => {
       console.log("📡 userInfoResponse ok:", userInfoResponse.ok)
       if (userInfoResponse.ok) {
         const userInfo = await userInfoResponse.json()
-        // Obtener datos completos del usuario para incluir profilePic
-        let completeUserData = {}
         console.log("👤 User info from server:", userInfo)
         
         let userData = { 
@@ -52,36 +50,37 @@ export const AuthProvider = ({ children }) => {
           lastName: userInfo.lastName,
           profilePic: '' 
         }
-        // Para usuarios no-admin, obtener datos completos incluyendo profilePic
-        if (userInfo.userType !== 'admin') {
-          try {
-            let userDataEndpoint = ''
-            if (userInfo.userType === 'customer') {
-              userDataEndpoint = `${API}/customers/${userInfo.userId}`
-            } else {
-              userDataEndpoint = `${API}/employees/${userInfo.userId}`
-            }
-            console.log("🔍 Fetching complete user data from:", userDataEndpoint)
-            
-            const userDataResponse = await fetch(userDataEndpoint, {
-              credentials: 'include'
-            })
-            if (userDataResponse.ok) {
-              const completeUserData = await userDataResponse.json()
-              console.log("👤 Complete user data with profilePic:", completeUserData.profilePic)
-              // Actualizar userData con datos completos
-              userData = {
-                ...userData,
-                name: completeUserData.name,
-                lastName: completeUserData.lastName,
-                profilePic: completeUserData.profilePic || '',
-                phoneNumber: completeUserData.phoneNumber || ''
-              }
-            }
-          } catch (error) {
-            console.log("Error obteniendo datos completos en login:", error)
+       // AGREGAR: Para TODOS los usuarios (incluyendo admin), obtener datos completos
+      try {
+        let userDataEndpoint = ''
+        if (userInfo.userType === 'admin') {
+          userDataEndpoint = `${API}/admin/profile/data-public`
+        } else if (userInfo.userType === 'customer') {
+          userDataEndpoint = `${API}/customers/${userInfo.userId}`
+        } else {
+          userDataEndpoint = `${API}/employees/${userInfo.userId}`
+        }
+        console.log("🔍 Fetching complete user data from:", userDataEndpoint)
+        
+        const userDataResponse = await fetch(userDataEndpoint, {
+          ...(userInfo.userType !== 'admin' && { credentials: 'include' })
+        })
+        if (userDataResponse.ok) {
+          const completeUserData = await userDataResponse.json()
+          console.log("👤 Complete user data with profilePic:", completeUserData.profilePic)
+          // Actualizar userData con datos completos
+          userData = {
+            ...userData,
+            name: completeUserData.name || userData.name,
+            lastName: completeUserData.lastName || userData.lastName,
+            profilePic: completeUserData.profilePic || '',
+            phoneNumber: completeUserData.phoneNumber || '',
+            id: userInfo.userType === 'admin' ? 'admin' : userInfo.userId
           }
         }
+      } catch (error) {
+        console.log("Error obteniendo datos completos en login:", error)
+      }
         console.log("👤 userData final con profilePic:", userData)
         localStorage.setItem("user", JSON.stringify(userData))
         setUser(userData)
@@ -166,7 +165,26 @@ export const AuthProvider = ({ children }) => {
             const savedUserData = JSON.parse(savedUser)
             // Obtener datos completos incluyendo profilePic
             let completeUserData = savedUserData
-            if (validationData.userType !== 'admin') {
+            if (validationData.userType === 'admin') {
+              try {
+                const adminDataResponse = await fetch(`${API}/admin/profile/data`, {
+                  credentials: 'include'  // CON credentials aquí
+                })
+                if (adminDataResponse.ok) {
+                  const adminInfo = await adminDataResponse.json()
+                  completeUserData = {
+                    ...savedUserData,
+                    name: adminInfo.name || "Admin",
+                    lastName: adminInfo.lastName || "MixArt",
+                    profilePic: adminInfo.profilePic || "",
+                    id: "admin",
+                    userType: "admin"
+                  }
+                }
+              } catch (error) {
+                console.log("Error obteniendo datos de admin en checkAuth:", error)
+              }
+            } else if (validationData.userType !== 'admin') {
               try {
                 let userDataEndpoint = ''
                 if (validationData.userType === 'customer') {

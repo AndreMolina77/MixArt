@@ -8,6 +8,7 @@ import adminModel from "../models/Admin.js"
 import bcryptjs from "bcryptjs"
 import jsonwebtoken from "jsonwebtoken"
 import { config } from "../utils/config.js"
+import { API } from "../utils/api.js"
 //POST (CREATE)
 loginController.login = async (req, res) => {
     const {email, password} = req.body
@@ -19,41 +20,60 @@ loginController.login = async (req, res) => {
         console.log("🔐 === INICIO LOGIN ===")
         console.log("📧 Email recibido:", email)
         console.log("🔑 Password recibido:", password ? "[PRESENTE]" : "[AUSENTE]")
-        
+
+        console.log("🔍 No es admin, verificando otros usuarios...")
         //Tipos de usuario: admin, empleados, clientes
         if (email === config.CREDENTIALS.email && password === config.CREDENTIALS.password) {
             console.log("✅ LOGIN ADMIN EXITOSO")
-            // AGREGAR: Crear/obtener admin de BD
-            let adminUser = await adminModel.findOne({ email: config.CREDENTIALS.email })
-            if (!adminUser) {
-                // Crear admin si no existe
-                adminUser = new adminModel({ name: "Admin", lastName: "MixArt", email: config.CREDENTIALS.email, profilePic: ""})
-                await adminUser.save()
-                console.log("👑 Admin user created in database")
-            }
-            userType = "admin"
-            userFound = { _id: adminUser._id, email: config.CREDENTIALS.email, name: adminUser.name, lastName: adminUser.lastName, profilePic: adminUser.profilePic }
-            //TOKEN para admin
-            jsonwebtoken.sign(
-                { id: "admin", email: config.CREDENTIALS.email, userType: "admin", name: "Admin", lastName: "MixArt" }, 
-                config.JWT.secret, 
-                { expiresIn: config.JWT.expiresIn}, 
-                (err, token) => {
-                    if(err) {
-                        console.log("❌ Error generando token:", err)
-                        return res.status(500).json({message: "Error interno del servidor"})
+            try {
+                // AGREGAR: Crear/obtener admin de BD
+                const adminDataResponse = await fetch(`${API}/admin/profile/data`, {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' }
+                })
+                let adminData = { name: "Admin", lastName: "MixArt", profilePic: "" }
+                
+                if (adminDataResponse.ok) {
+                    const adminInfo = await adminDataResponse.json()
+                    adminData = {
+                        name: adminInfo.name || "Admin",
+                        lastName: adminInfo.lastName || "MixArt", 
+                        profilePic: adminInfo.profilePic || ""
                     }
-                    res.cookie("authToken", token, {
-                        httpOnly: true,
-                        secure: process.env.NODE_ENV === 'production',
-                        sameSite: 'lax',
-                        maxAge: 24 * 60 * 60 * 1000 // 24 horas
-                    })
-                    console.log("🍪 Token generado y cookie establecida para admin")
-                    res.json({message: "Inicio de sesión exitoso"})
+                    console.log("👑 Admin data from BD:", adminData)
                 }
-            )
-            return
+                userType = "admin"
+                userFound = {
+                    _id: "admin", 
+                    email: config.CREDENTIALS.email,
+                    ...adminData
+                }
+                //TOKEN para admin
+                jsonwebtoken.sign( { id: "admin", email: config.CREDENTIALS.email, userType: "admin", ...adminData }, 
+                    config.JWT.secret, 
+                    { expiresIn: config.JWT.expiresIn}, 
+                    (err, token) => {
+                        if(err) {
+                            console.log("❌ Error generando token:", err)
+                            return res.status(500).json({message: "Error interno del servidor"})
+                        }
+                        res.cookie("authToken", token, {
+                            httpOnly: true,
+                            secure: process.env.NODE_ENV === 'production',
+                            sameSite: 'lax',
+                            maxAge: 24 * 60 * 60 * 1000 // 24 horas
+                        })
+                        console.log("🍪 Token generado y cookie establecida para admin")
+                        res.json({message: "Inicio de sesión exitoso"})
+                    }
+                )
+                return
+            } catch (error) {
+                console.log("Error obteniendo datos de admin:", error)
+                // Continuar con datos por defecto si hay error     
+
+            }
         } 
         // Si no es admin, verificar credenciales incorrectas inmediatamente
         console.log("🔍 No es admin, verificando otros usuarios...")

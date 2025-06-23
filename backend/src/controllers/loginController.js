@@ -11,7 +11,7 @@ import { config } from "../utils/config.js"
 import { API } from "../utils/api.js"
 //POST (CREATE)
 loginController.login = async (req, res) => {
-    const {email, password} = req.body
+    const {email, password, rememberMe} = req.body
 
     try {
         let userFound //Se guarda el usuario encontrado
@@ -52,7 +52,7 @@ loginController.login = async (req, res) => {
                 //TOKEN para admin
                 jsonwebtoken.sign( { id: "admin", email: config.CREDENTIALS.email, userType: "admin", ...adminData }, 
                     config.JWT.secret, 
-                    { expiresIn: config.JWT.expiresIn}, 
+                    { expiresIn: rememberMe ? "30d" : config.JWT.expiresIn }, // 30 dias si recordarme, sino el tiempo normal
                     (err, token) => {
                         if(err) {
                             console.log("❌ Error generando token:", err)
@@ -62,7 +62,7 @@ loginController.login = async (req, res) => {
                             httpOnly: true,
                             secure: process.env.NODE_ENV === 'production',
                             sameSite: 'lax',
-                            maxAge: 24 * 60 * 60 * 1000 // 24 horas
+                            maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000 // 30 dias vs 24 horas
                         })
                         console.log("🍪 Token generado y cookie establecida para admin")
                         res.json({message: "Inicio de sesión exitoso"})
@@ -72,7 +72,6 @@ loginController.login = async (req, res) => {
             } catch (error) {
                 console.log("Error obteniendo datos de admin:", error)
                 // Continuar con datos por defecto si hay error     
-
             }
         } 
         // Si no es admin, verificar credenciales incorrectas inmediatamente
@@ -113,7 +112,7 @@ loginController.login = async (req, res) => {
         jsonwebtoken.sign(
             {id: userFound._id, userType, email: userFound.email, name: userFound.name, lastName: userFound.lastName}, 
             config.JWT.secret, 
-            { expiresIn: config.JWT.expiresIn}, 
+            { expiresIn: rememberMe ? "30d" : config.JWT.expiresIn }, // 30 dias si recordarme, sino el tiempo normal
             (err, token) => {
                 if(err) {
                     console.log("❌ Error generando token:", err)
@@ -123,7 +122,7 @@ loginController.login = async (req, res) => {
                     httpOnly: true,
                     secure: process.env.NODE_ENV === 'production',
                     sameSite: 'lax',
-                    maxAge: 24 * 60 * 60 * 1000 // 24 horas
+                    maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000 // 30 dias vs 24 horas
                 })
                 console.log("🍪 Token generado y cookie establecida")
                 res.json({message: "Inicio de sesión exitoso"})
@@ -195,7 +194,9 @@ loginController.googleLogin = async (req, res) => {
         // Si llegamos aqui, el usuario está autorizado
         console.log(`✅ Usuario autorizado: ${email} como ${userType}`)
         // Crear token JWT
-        const token = jsonwebtoken.sign({ id: user._id, email: user.email, userType: userType, appwriteUserId }, config.JWT.secret,{ expiresIn: config.JWT.expiresIn })
+        const token = jsonwebtoken.sign({ id: user._id, email: user.email, userType: userType, appwriteUserId }, 
+            { expiresIn: rememberMe ? "30d" : config.JWT.expiresIn }, // 30 dias si recordarme, sino el tiempo normal
+        )
         // Configurar cookie
         res.cookie('authToken', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax', maxAge: 24 * 60 * 60 * 1000 })
         res.status(200).json({

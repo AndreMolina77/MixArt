@@ -37,7 +37,7 @@ const Login = () => {
     }
     setIsLoading(true)
     try {
-      const result = await authLogin(email, password)
+      const result = await authLogin(email, password, rememberMe)
     
       if (result.success) {
         toast.success('¡Inicio de sesión exitoso!')
@@ -114,7 +114,7 @@ const Login = () => {
                   <input type="checkbox" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} className="w-4 h-4 text-[#E07A5F] bg-[#EBFEF5] border-[#81B29A] rounded focus:ring-[#E07A5F] focus:ring-2"/>
                   <span className="ml-2 text-sm text-[#7A6E6E]">Recordarme</span>
                 </label>
-                <button type="button" className="text-sm text-[#7A6E6E] underline hover:text-[#5c5252] transition">
+                <button type="button" onClick={() => navigate('/forgot-password')} className="text-sm text-[#7A6E6E] underline hover:text-[#5c5252] transition">
                   ¿Olvidaste tu contraseña?
                 </button>
               </div>
@@ -162,7 +162,7 @@ const Login = () => {
                 <input type="checkbox" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} className="w-3 h-3 text-[#E07A5F] bg-[#EBFEF5] border-[#81B29A] rounded"/>
                 <span className="ml-1 text-[#7A6E6E]">Recordarme</span>
               </label>
-              <button type="button" className="text-[#7A6E6E] underline hover:text-[#5c5252] transition">
+              <button type="button" onClick={() => navigate('/forgot-password')} className="text-[#7A6E6E] underline hover:text-[#5c5252] transition">
                 ¿Olvidaste tu contraseña?
               </button>
             </div>

@@ -7,7 +7,7 @@ export const AuthProvider = ({ children }) => {
   const [authCookie, setAuthCookie] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
 
-  const Login = async (email, password) => {
+  const Login = async (email, password, rememberMe = false) => {
     try {
       console.log("🔐 === AUTH CONTEXT LOGIN ===")
       console.log("📧 Email:", email)
@@ -15,7 +15,7 @@ export const AuthProvider = ({ children }) => {
       const response = await fetch(`${API}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, rememberMe }),
         credentials: "include" // Para incluir cookies en la peticion
       })
       console.log("📡 Login response status:", response.status)

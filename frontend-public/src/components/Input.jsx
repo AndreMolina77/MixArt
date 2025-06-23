@@ -1,5 +1,3 @@
-import React from 'react'
-
 const TextInput = ({text}) => {
   return (
     <div className="flex flex-col w-full">

@@ -1,4 +1,3 @@
-import React from 'react'
 import ProductCard from '../components/productcard.jsx'
 import TransparentButton from '../components/transparentbutton.jsx'
 import SmallLifeForms from '../assets/slfiii.png'

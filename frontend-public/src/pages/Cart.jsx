@@ -1,4 +1,3 @@
-import React from 'react'
 import Breadcrumbs from '../components/breadcrumbs.jsx'
 import Button from '../components/button.jsx'
 import TransparentButton from '../components/transparentbutton.jsx'

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 
 import { FaStore, FaDollarSign, FaUsers, FaMoneyBillWave, FaTruck, FaHeadset, FaShieldAlt, FaTwitter, FaInstagram, FaLinkedin } from 'react-icons/fa'
 import aboutImage from '../assets/about.png'

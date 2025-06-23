@@ -1,4 +1,3 @@
-import React from 'react'
 import { FiTrash2, FiShoppingCart, FiHeart, FiEye } from 'react-icons/fi'
 import { FaStar } from 'react-icons/fa'
 import { NavLink } from 'react-router-dom'

@@ -9,8 +9,8 @@ import ReturnsList from '../components/returns.jsx'
 import PurchasesList from '../components/purchases.jsx'
 import { useAccountContext } from '../components/accountcontext.jsx'
 import WelcomeUser from '../components/welcomeuser.jsx'
-import WishlistComponent from '../components/wishlistcomponent.jsx'
-import Reviews from '../components/reviews.jsx'
+import WishlistComponent from '../components/WishListComponent.jsx'
+import Reviews from '../components/Reviews.jsx'
 
 const MyAccount = () => {
   const { setHighlightedOrder } = useAccountContext()

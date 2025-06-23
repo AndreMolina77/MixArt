@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { FiHeart, FiMinus, FiPlus, FiTruck, FiRefreshCw, FiCheck } from 'react-icons/fi'
 import Breadcrumbs from '../components/breadcrumbs.jsx'
 import Button from '../components/button.jsx'

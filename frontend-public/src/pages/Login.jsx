@@ -1,4 +1,3 @@
-import React from 'react'
 import TextInput from '../components/input.jsx'
 import PasswordInput from '../components/passwordinput.jsx'
 import GoogleButton from '../components/googlebutton.jsx'

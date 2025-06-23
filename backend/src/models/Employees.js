@@ -50,6 +50,10 @@ const employeesSchema = new Schema(
             type: String,
             unique: true,
             sparse: true // Permite que sea opcional
+        }, 
+        emailNotifications: { 
+            type: Boolean, 
+            default: false 
         }
     },
     {

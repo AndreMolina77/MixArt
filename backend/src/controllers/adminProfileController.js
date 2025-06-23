@@ -112,4 +112,26 @@ adminProfileController.changePassword = async (req, res) => {
         res.status(500).json({ message: "Error del servidor al cambiar contraseña" })
     }
 }
+// Actualizar notificaciones de email para admin
+adminProfileController.updateNotifications = async (req, res) => {
+    try {
+        const { emailNotifications } = req.body
+        
+        const updatedAdmin = await adminModel.findOneAndUpdate(
+            { email: config.CREDENTIALS.email },
+            { emailNotifications: emailNotifications },
+            { new: true }
+        )
+        if (!updatedAdmin) {
+            return res.status(404).json({ message: "Admin no encontrado" })
+        }
+        res.json({ 
+            message: "Preferencias de notificación actualizadas",
+            emailNotifications: updatedAdmin.emailNotifications
+        })
+    } catch (error) {
+        console.error("Error:", error)
+        res.status(500).json({ message: "Error del servidor" })
+    }
+}
 export default adminProfileController

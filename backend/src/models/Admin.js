@@ -5,7 +5,8 @@ const adminSchema = new Schema({
     lastName: { type: String, required: true }, 
     email: { type: String, required: true, unique: true },
     profilePic: { type: String, default: '' },
-    userType: { type: String, default: 'admin' }
+    userType: { type: String, default: 'admin' },
+    emailNotifications: { type: Boolean, default: false }
 }, {
     timestamps: true,
     strict: false

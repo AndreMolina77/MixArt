@@ -34,3 +34,86 @@ input::-ms-reveal {
 .scrollbar-track-transparent::-webkit-scrollbar-track {
     background: transparent;
 }
+/* Modo oscuro universal */
+.dark {
+  color-scheme: dark;
+}
+
+.dark body {
+  background-color: #1a1a1a;
+  color: #ffffff !important;
+}
+
+.dark .bg-white {
+  background-color: #2d2d2d !important;
+  color: #ffffff !important;
+}
+
+.dark .text-gray-900,
+.dark .text-gray-800,
+.dark .text-gray-700,
+.dark .text-gray-600,
+.dark .text-gray-500 {
+  color: #ffffff !important;
+}
+
+.dark .border-gray-200,
+.dark .border-gray-300 {
+  border-color: #404040 !important;
+}
+
+.dark .bg-gray-50 {
+  background-color: #252525 !important;
+  color: #ffffff !important;
+}
+
+/* Hover en filas de tabla - texto negro cuando se hace hover */
+.dark tr:hover {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
+.dark tr:hover td {
+  color: #000000 !important;
+}
+
+.dark tr:hover .text-white,
+.dark tr:hover .text-gray-900,
+.dark tr:hover .text-gray-800,
+.dark tr:hover .text-gray-700,
+.dark tr:hover .text-gray-600,
+.dark tr:hover .text-gray-500 {
+  color: #000000 !important;
+}
+/* TODOS los textos blancos */
+.dark * {
+  color: #ffffff !important;
+}
+
+/* Dropdowns, selects e inputs en modo oscuro */
+.dark select,
+.dark input,
+.dark textarea {
+  background-color: #374151 !important;
+  color: #ffffff !important;
+  border-color: #4B5563 !important;
+}
+
+.dark option {
+  background-color: #374151 !important;
+  color: #ffffff !important;
+}
+
+/* Hover en filas de tabla - TODO negro cuando se hace hover */
+.dark tr:hover,
+.dark tr:hover * {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
+/* Botones y elementos interactivos mantienen sus colores originales */
+.dark button,
+.dark .bg-\[#E07A5F\],
+.dark .text-\[#E07A5F\] {
+  color: inherit !important;
+}

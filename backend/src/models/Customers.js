@@ -43,6 +43,10 @@ const customersSchema = new Schema ({
         type: String,
         unique: true,
         sparse: true 
+    },
+    emailNotifications: { 
+        type: Boolean, 
+        default: false 
     }
 }, {
     timestamps: true, 

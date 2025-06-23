@@ -14,7 +14,8 @@ export const articlesConfig = {
     canAdd: true,
     canEdit: true,
     canDelete: true,
-    canExport: true
+    canExport: true,
+    canView: true
   },
   formFields: [
     { name: 'articleName', type: 'text', label: 'Nombre del Artículo', required: true, placeholder: 'Ej: Pintura Acrílica Roja' },
@@ -39,7 +40,8 @@ export const categoriesConfig = {
     canAdd: true,
     canEdit: true,
     canDelete: true,
-    canExport: true
+    canExport: true,
+    canView: true
   },
   formFields: [
     { name: 'categoryName', type: 'text', label: 'Nombre de la Categoría', required: true, placeholder: 'Ej: Pinturas' },
@@ -60,7 +62,8 @@ export const suppliersConfig = {
     canAdd: true,
     canEdit: true,
     canDelete: true,
-    canExport: true
+    canExport: true,
+    canView: true
   },
   formFields: [
     { name: 'supplierName', type: 'text', label: 'Nombre del Proveedor', required: true, placeholder: 'Ej: Pinturas Salvadoreñas S.A.' },
@@ -85,7 +88,8 @@ export const customersConfig = {
     canAdd: true,
     canEdit: true,
     canDelete: true,
-    canExport: true
+    canExport: true,
+    canView: true
   },
   formFields: [
     { name: 'name', type: 'text', label: 'Nombre', required: true, placeholder: 'Juan' },
@@ -115,7 +119,8 @@ export const employeesConfig = {
     canAdd: true,
     canEdit: true,
     canDelete: true,
-    canExport: true
+    canExport: true,
+    canView: true
   },
   formFields: [
     { name: 'name', type: 'text', label: 'Nombre', required: true, placeholder: 'María' },
@@ -148,7 +153,8 @@ export const artPiecesConfig = {
     canAdd: true,
     canEdit: true,
     canDelete: true,
-    canExport: true
+    canExport: true,
+    canView: true
   },
   formFields: [
     { name: 'artPieceName', type: 'text', label: 'Nombre de la Pieza de Arte', required: true, placeholder: 'Ej: Small Life Forms III' },
@@ -174,7 +180,8 @@ export const salesConfig = {
     canAdd: true,
     canEdit: true,
     canDelete: true,
-    canExport: true
+    canExport: true,
+    canView: true
   },
   formFields: [
     { name: 'orderId', type: 'select', label: 'Pedido', required: true, options: 'orders' },
@@ -207,7 +214,8 @@ export const reviewsConfig = {
     canAdd: true,
     canEdit: true,
     canDelete: true,
-    canExport: true
+    canExport: true,
+    canView: true
   },
   formFields: [
     { name: 'rating', type: 'number', label: 'Calificación (1-5)', required: true, placeholder: '5', min: 1, max: 5 },
@@ -234,7 +242,8 @@ export const ordersConfig = {
     canAdd: true,
     canEdit: true,
     canDelete: true,
-    canExport: true
+    canExport: true,
+    canView: true
   },
   formFields: [
     { name: 'customerId', type: 'select', label: 'Cliente', required: true, options: 'customers' },

@@ -3,8 +3,9 @@ import TableHeader from './TableHeader'
 import DataTable from './DataTable'
 import FormModal from './Modals/FormModal'
 import ConfirmModal from './Modals/ConfirmModal'
+import DetailModal from './Modals/DetailModal'
 
-const TableContainer = ({config, data = [], onAdd, onEdit, onDelete, onExport, isLoading = false, className = "", categoriesData, suppliersData, customersData, articlesData, artPiecesData, ordersData}) => {
+const TableContainer = ({config, data = [], onAdd, onEdit, onDelete, onExport, onView, isLoading = false, className = "", categoriesData, suppliersData, customersData, articlesData, artPiecesData, ordersData}) => {
   const [searchValue, setSearchValue] = useState("")
   const [sortBy, setSortBy] = useState(null)
   const [sortOrder, setSortOrder] = useState('asc')
@@ -15,6 +16,8 @@ const TableContainer = ({config, data = [], onAdd, onEdit, onDelete, onExport, i
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [selectedItem, setSelectedItem] = useState(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [showDetailModal, setShowDetailModal] = useState(false)
+  const [detailModalType, setDetailModalType] = useState('generic')
   // Procesar campos con opciones dinamicas
   const processedFormFields = useMemo(() => {
     return config.formFields.map(field => {
@@ -219,8 +222,28 @@ const TableContainer = ({config, data = [], onAdd, onEdit, onDelete, onExport, i
     setShowDeleteModal(true)
   }
   const handleView = (item) => {
-    console.log('Ver item:', item)
-    // Logica de vista in progress
+    console.log('👀 Ver item:', item)
+    setSelectedItem(item)
+    // Determinar el tipo basado en la configuración actual
+    let modalType = 'generic'
+    if (config.title) {
+      modalType = config.title.toLowerCase().replace(/\s+/g, '').replace('ías', 'ies')
+      // Mapear algunos nombres específicos
+      const typeMapping = {
+        'artículos': 'articles',
+        'categorías': 'categories', 
+        'piezasdearte': 'artpieces',
+        'empleados': 'employees',
+        'clientes': 'customers',
+        'proveedores': 'suppliers',
+        'pedidos': 'orders',
+        'reseñas': 'reviews',
+        'ventas': 'sales'
+      }
+      modalType = typeMapping[modalType] || modalType
+    }
+    setDetailModalType(modalType)
+    setShowDetailModal(true)
   }
   const handleAddSubmit = async (formData) => {
     console.log('🏗️ === DEBUG TABLECONTAINER - HANDLE ADD SUBMIT ===')
@@ -317,6 +340,10 @@ const TableContainer = ({config, data = [], onAdd, onEdit, onDelete, onExport, i
       {/* Modal de Confirmar Eliminacion */}
       {showDeleteModal && selectedItem && (
         <ConfirmModal isOpen={showDeleteModal} onClose={() => setShowDeleteModal(false)} onConfirm={handleDeleteConfirm} title="Confirmar eliminación" message={`¿Estás seguro de que quieres eliminar este elemento? Esta acción no se puede deshacer.`} confirmText="Eliminar" cancelText="Cancelar" type="danger" isLoading={isSubmitting}/>
+      )}
+      {/* Modal de Detalles */}
+      {showDetailModal && selectedItem && (
+        <DetailModal isOpen={showDetailModal} onClose={() => setShowDetailModal(false)} data={selectedItem} title={`Detalles de ${config.title?.slice(0, -1) || 'Elemento'}`} type={detailModalType}/>
       )}
     </div>
   )

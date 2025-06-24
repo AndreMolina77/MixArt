@@ -1,6 +1,5 @@
-import React from 'react'
 import Background from '../assets/background.webp'
-import Breadcrumbs from '../components/breadcrumbs.jsx'
+import Breadcrumbs from '../components/Handlers/BreadCrumbs'
 
 const Contact = () => {
     return (

@@ -1,5 +1,4 @@
-import Breadcrumbs from '../components/breadcrumbs.jsx'
-
+import Breadcrumbs from "../components/Handlers/BreadCrumbs"
 const PrivacyPolicy = () => {
   return (
     <div className="min-h-screen flex items-center justify-center">

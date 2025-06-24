@@ -1,16 +1,16 @@
 import { useState, useEffect }from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import Breadcrumbs from '../components/breadcrumbs.jsx'
-import Form from '../components/form.jsx'
-import AddressBookList from '../components/addressbook.jsx'
-import PaymentMethodsList from '../components/paymentmethods.jsx'
-import CancellationsList from '../components/cancellations.jsx'
-import ReturnsList from '../components/returns.jsx'
-import PurchasesList from '../components/purchases.jsx'
-import { useAccountContext } from '../components/accountcontext.jsx'
-import WelcomeUser from '../components/welcomeuser.jsx'
-import WishlistComponent from '../components/WishListComponent.jsx'
-import Reviews from '../components/Reviews.jsx'
+import Breadcrumbs from '../components/Handlers/BreadCrumbs.jsx'
+import Form from '../components/AccountViews/Form.jsx'
+import AddressBookList from '../components/AccountViews/AddressBook.jsx'
+import PaymentMethodsList from '../components/AccountViews/PaymentMethods.jsx'
+import CancellationsList from '../components/AccountViews/Cancellations.jsx'
+import ReturnsList from '../components/AccountViews/Cancellations.jsx'
+import PurchasesList from '../components/AccountViews/Purchases.jsx'
+import { useAccountContext } from '../context/AccountContext.jsx'
+import WelcomeUser from '../components/Handlers/WelcomeUser.jsx'
+import WishlistComponent from '../components/AccountViews/WishListComponent.jsx'
+import Reviews from '../components/AccountViews/Reviews.jsx'
 
 const MyAccount = () => {
   const { setHighlightedOrder } = useAccountContext()
@@ -20,20 +20,10 @@ const MyAccount = () => {
   useEffect(() => {
     const rawHash = location.hash.substring(1)
     const decodedHash = decodeURIComponent(rawHash)
-    if (decodedHash  && [
-      'perfil',
-      'direcciones',
-      'pago',
-      'devoluciones',
-      'cancelaciones',
-      'reseñas',
-      'compras',
-      'deseos'
-    ].includes(decodedHash)) {
+    if (decodedHash  && [ 'perfil', 'direcciones', 'pago', 'devoluciones', 'cancelaciones', 'reseñas', 'compras', 'deseos' ].includes(decodedHash)) {
       setActiveSection(decodedHash)
     }
   }, [location])
-
   useEffect(() => {
     navigate(`#${activeSection}`, { replace: true })
   }, [activeSection, navigate])

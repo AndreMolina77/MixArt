@@ -1,9 +1,9 @@
 import Breadcrumbs from '../components/breadcrumbs.jsx'
-import Button from '../components/button.jsx'
-import TransparentButton from '../components/transparentbutton.jsx'
+import Button from '../components/Buttons/Button.jsx'
+import TransparentButton from '../components/Buttons/TransparentButton.jsx'
 import SmallLifeForms from '../assets/slfiii.png'
 import InTheRain from '../assets/itrii.png'
-import QuantityInput from '../components/quantityinput.jsx'
+import QuantityInput from '../components/Inputs/QuantityInput.jsx'
 
 const Cart = () => {
   return (

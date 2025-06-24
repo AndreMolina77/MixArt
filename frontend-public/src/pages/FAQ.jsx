@@ -1,5 +1,5 @@
 import React from 'react'
-import Breadcrumbs from '../components/breadcrumbs.jsx'
+import Breadcrumbs from '../components/Handlers/BreadCrumbs'
 
 const FAQ = () => {
   const faqs = [

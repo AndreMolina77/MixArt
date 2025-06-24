@@ -1,8 +1,8 @@
-import TextInput from '../components/input.jsx'
-import PasswordInput from '../components/passwordinput.jsx'
-import GoogleButton from '../components/googlebutton.jsx'
+import TextInput from '../components/Inputs/Input.jsx'
+import PasswordInput from '../components/Inputs/PasswordInput.jsx'
+import GoogleButton from '../components/Buttons/GoogleButton.jsx'
 import cartImage from '../assets/cart-image.jpeg'
-import Button from '../components/button.jsx'
+import Button from '../components/Buttons/Button.jsx'
 
 const Signup = () => {
   return (

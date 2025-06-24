@@ -1,4 +1,4 @@
-import ProductCard from '../components/productcard.jsx'
+import ProductCard from '../components/Cards/ProductCard.jsx'
 import TransparentButton from '../components/transparentbutton.jsx'
 import SmallLifeForms from '../assets/slfiii.png'
 import MorningRain from '../assets/mriii.png'

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useAccountContext } from './accountcontext.jsx'
+import { useAccountContext } from '../../context/AccountContext.jsx'
 
 const PurchasesList = ({setActiveSection }) => {
     const { highlightedOrder, setHighlightedOrder } = useAccountContext()

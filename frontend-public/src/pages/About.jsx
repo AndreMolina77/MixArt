@@ -5,7 +5,7 @@ import aboutImage from '../assets/about.png'
 import team1 from '../assets/team1.png'
 import team2 from '../assets/team2.png'
 import team3 from '../assets/team3.png'
-import Breadcrumbs from '../components/breadcrumbs.jsx'
+import Breadcrumbs from '../components/Handlers/BreadCrumbs'
 
 const About = () => {
   const [selectedFrame, setSelectedFrame] = useState(1)

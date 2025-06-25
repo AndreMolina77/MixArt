@@ -9,6 +9,7 @@ router
   .route("/")
   .get(artPiecesController.getArtPieces)
   .post(upload.single("image"), artPiecesController.postArtPieces);
+router.get("/public", artPiecesController.getPublicArtPieces)
 router
   .route("/:id")
   .get(artPiecesController.getArtPiece)

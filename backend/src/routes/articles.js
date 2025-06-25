@@ -9,6 +9,7 @@ router
   .route("/")
   .get(articlesController.getArticles)
   .post(upload.single("image"), articlesController.postArticles);
+router.get("/public", articlesController.getPublicArticles)
 router
   .route("/:id")
   .get(articlesController.getArticle)

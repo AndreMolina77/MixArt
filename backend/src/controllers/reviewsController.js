@@ -19,6 +19,11 @@ reviewsController.getreview = async (req, res) => {
     const reviews = await reviewsModel.find().populate('itemId').populate('customerId');
     res.json(reviews);
 };
+//Read (Get)
+reviewsController.getPublicReview = async (req, res) => {
+    const reviews = await reviewsModel.find().populate('itemId').populate('customerId');
+    res.json(reviews);
+};
 //Update (Put)
 reviewsController.putreview = async (req,res) => {
     const{rating, comment, itemType, itemId, customerId} = req.body;

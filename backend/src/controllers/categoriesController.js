@@ -14,6 +14,11 @@ categoriesController.getcategories = async (req, res) => {
     const categories = await categoriesModel.find()
     res.json(categories);
 };
+//Read (Get)
+categoriesController.getPublicCategories = async (req, res) => {
+    const categories = await categoriesModel.find()
+    res.json(categories);
+};
 //Update (Put)
 categoriesController.putcategories = async (req, res) => {
     const{categoryName, description} = req.body;

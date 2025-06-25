@@ -31,6 +31,11 @@ articlesController.getArticles = async (req, res) => {
     const articles = await articlesModel.find().populate('categoryId').populate('supplierId');
     res.json(articles);
 };
+//Public read (get)
+articlesController.getPublicArticles = async (req, res) => {
+    const articles = await articlesModel.find().populate('categoryId', 'name').select('-supplierId -__v');
+    res.json(articles);
+}
 //Update (Put)
 articlesController.putArticles = async (req, res) => {
     const { articleName, price, description, stock, categoryId, supplierId, discount } = req.body

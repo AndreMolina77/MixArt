@@ -1,4 +1,4 @@
-import Breadcrumbs from '../components/breadcrumbs.jsx'
+import Breadcrumbs from '../components/Handlers/BreadCrumbs.jsx'
 import Button from '../components/Buttons/Button.jsx'
 import TransparentButton from '../components/Buttons/TransparentButton.jsx'
 import SmallLifeForms from '../assets/slfiii.png'

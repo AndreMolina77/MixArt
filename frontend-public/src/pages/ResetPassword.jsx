@@ -1,19 +1,30 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PasswordInput from '../components/Inputs/PasswordInput.jsx';
 import Button from '../components/Buttons/Button.jsx';
 import cartImage from '../assets/cart-image.jpeg';
+import { useState } from 'react';
+import { useAuth } from '../hooks/useAuth';
 
 const ResetPassword = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const { changePassword } = useAuth();
+  const [passwords, setPasswords] = useState({ newPassword: '', confirmPassword: '' });
 
-  const handlePasswordReset = () => {
-    // Aquí iría la lógica para actualizar la contraseña
-    // Después de actualizar, redirigimos al login
-    navigate('/login');
+  const handlePasswordReset = async () => {
+   if (passwords.newPassword !== passwords.confirmPassword) {
+      alert('Las contraseñas no coinciden');
+      return;
+    }
+    const result = await changePassword(passwords.newPassword);
+    if (result.success) {
+      navigate('/login');
+    } else {
+      alert(result.message);
+    }
   };
-
   return (
     <div className="min-h-screen flex font-[Alexandria] text-[#7A6E6E]">
       <div className="w-1/2 bg-[#CBE4E8] flex items-center justify-center p-6">
@@ -25,13 +36,16 @@ const ResetPassword = () => {
           <p className="text-sm">Crea una nueva contraseña para tu cuenta</p>
           <PasswordInput 
             text="Nueva contraseña" 
+            value={passwords.newPassword}
+            onChange={(e) => setPasswords({...passwords, newPassword: e.target.value})}
             showPassword={showPassword}
           />
           <PasswordInput 
             text="Confirmar contraseña" 
+            value={passwords.newPassword}
+            onChange={(e) => setPasswords({...passwords, newPassword: e.target.value})}
             showPassword={showPassword}
           />
-          
           <div className="flex items-center">
             <input 
               type="checkbox" 
@@ -44,12 +58,10 @@ const ResetPassword = () => {
               Mostrar contraseñas
             </label>
           </div>
-          
           <Button 
             Text={"Actualizar contraseña"}
             onClick={handlePasswordReset}
           />
-          
           <p className="text-sm text-center">
             ¿Recordaste tu contraseña?{" "}
             <button 

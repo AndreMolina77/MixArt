@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { FaEye, FaEyeSlash } from 'react-icons/fa'
 
-const PasswordInput = ({ text }) => {
+const PasswordInput = ({ text, name, value, onChange, ...Props}) => {
   const [show, setShow] = useState(false)
 
   return (

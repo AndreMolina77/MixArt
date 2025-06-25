@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import AfterRain from '../assets/ariii.png'
-import Charlotte from '../assets/charlotte.png'
+import AfterRain from '../../assets/ariii.png'
+import Charlotte from '../../assets/charlotte.png'
 
 const Reviews = () => {
   const [searchTerm, setSearchTerm] = useState('')

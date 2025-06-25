@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import { FaHeart, FaShoppingCart, FaUser, FaSearch, FaTimes, FaStar, FaSignOutAlt, FaBars } from 'react-icons/fa'
 
 const useClickOutside = (handler) => {
@@ -22,6 +22,8 @@ const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const dropdownRef = useClickOutside(() => setActiveDropdown(null))
+  const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState('');
 
   const navItems = [
     { label: 'Inicio', path: '/' },
@@ -39,6 +41,14 @@ const Navbar = () => {
   const toggleDropdown = (menu) => {
     setActiveDropdown(activeDropdown === menu ? null : menu)
   }
+  // Función para manejar la búsqueda
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchTerm.trim()) {
+      navigate(`/buscar?q=${encodeURIComponent(searchTerm)}`);
+      setIsSearchOpen(false);
+    }
+  };
   return (
     <nav className="w-full bg-[#F4F1DE] border-b border-[#7A6E6E]/50 px-6 py-4">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
@@ -60,10 +70,12 @@ const Navbar = () => {
           ))}
         </div>
         <div className="hidden md:flex items-center gap-6">
-          <div className="flex items-center bg-[#EBFEF5] border border-[#81B29A] rounded-lg px-3 py-1.5">
-            <input type="text" placeholder="¿Qué estás buscando?" className="bg-transparent outline-none text-sm text-[#7A6E6E] font-[Alexandria] w-50 placeholder:text-[#7A6E6E]/70"/>
-            <FaSearch className="ml-2 text-[#7A6E6E]/80" />
-          </div>
+          <form onSubmit={handleSearch} className="flex items-center bg-[#EBFEF5] border border-[#81B29A] rounded-lg px-3 py-1.5">
+            <input type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="¿Qué estás buscando?" className="bg-transparent outline-none text-sm text-[#7A6E6E] font-[Alexandria] w-50 placeholder:text-[#7A6E6E]/70"/>
+            <button type="submit">
+              <FaSearch className="ml-2 text-[#7A6E6E]/80 hover:text-[#E07A5F] cursor-pointer" />
+            </button>
+          </form>
           <div className="flex gap-4 text-[#7A6E6E]" ref={dropdownRef}>
             <div className="relative">
               <FaHeart className="text-xl hover:text-[#E07A5F] cursor-pointer" onClick={() => toggleDropdown('wishlist')}/>

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import ImageCarousel1 from '../assets/imagencarrusel1.png'
 import { ChevronRight } from 'lucide-react'
 import { FaArrowLeft, FaArrowRight,  FaTruck, FaHeadset, FaShieldAlt } from 'react-icons/fa'
@@ -34,12 +35,17 @@ import AbandonedDreams from '../assets/ab.png'
 import MountainPrint from '../assets/mp.png'
 import Jacket from '../assets/jacket.png'
 import FeaturedProductsGrid from '../components/Main/FeaturedProductsGrid.jsx'
+import QuickViewModal from '../components/Modals/QuickViewModal.jsx';
+
 
 const Home = () => {
   const [activeSlide, setActiveSlide] = useState(3)
   const [currentProductIndex, setCurrentProductIndex] = useState(0)
   const [currentCategoryIndex, setCategoryProductIndex] = useState(0)
-  
+  const navigate = useNavigate()
+  const [quickViewProduct, setQuickViewProduct] = useState(null);
+  const [wishlistItems, setWishlistItems] = useState([]);
+
   const categories = [
     { name: 'Pinturas', hasSubmenu: true },
     { name: 'Materiales', hasSubmenu: true },
@@ -113,6 +119,16 @@ const Home = () => {
     { number: '59', label: 'Minutos' },
     { number: '35', label: 'Segundos' }
   ]
+  const handleQuickView = (product) => {
+    setQuickViewProduct(product);
+  };
+  const closeQuickView = () => {
+    setQuickViewProduct(null);
+  };
+  const handleAddToWishlist = (product) => {
+    setWishlistItems(prev => [...prev, product]);
+    // Aqui hay que escoger si guardar en localStorage o en backend
+  };
   return (
     <div className="flex flex-col bg-[#F4F1DE]">
       <div className="flex">
@@ -193,11 +209,11 @@ const Home = () => {
           </div>
           <div className="flex gap-4 mb-8 overflow-hidden">
             {products.slice(currentProductIndex, currentProductIndex + 4).map(product => (
-              <ProductCard key={product.id} Discount={product.Discount} ImageSrc={product.ImageSrc} ProductName={product.ProductName} Price={product.Price} FormerPrice={product.FormerPrice} ShowView={product.ShowView} ShowWishlist={product.ShowWishList} Rating={product.Rating} ReviewCount={product.ReviewCount}/>
+              <ProductCard key={product.id} Discount={product.Discount} ImageSrc={product.ImageSrc} ProductName={product.ProductName} Price={product.Price} FormerPrice={product.FormerPrice} ShowView={product.ShowView} ShowWishlist={product.ShowWishList} Rating={product.Rating} ReviewCount={product.ReviewCount} onQuickView={handleQuickView}/>
             ))}
           </div>
           <div className="flex justify-center mt-6 max-w-[300px] mx-auto">
-            <Button Text="Ver todos los productos"/>
+            <Button Text="Ver todos los productos" to={'/catalogo'}/>
           </div>
         </div>
       </div>
@@ -244,11 +260,11 @@ const Home = () => {
           </div>
           <div className="flex justify-between items-center mb-8">
             <h1 className="text-4xl text-[#7A6E6E] font-[Alexandria] font-medium">Productos más vendidos</h1>
-            <div className="w-64"><Button Text="Ver todos los productos"/></div>
+            <div className="w-64"><Button Text="Ver todos los productos" to={'/catalogo'}/></div>
           </div>
           <div className="flex gap-4 mb-8 overflow-hidden">
             {bestProducts.slice(currentProductIndex, currentProductIndex + 4).map(bestProducts => (
-              <ProductCard key={bestProducts.id} Discount={bestProducts.Discount} ImageSrc={bestProducts.ImageSrc} ProductName={bestProducts.ProductName} Price={bestProducts.Price} FormerPrice={bestProducts.FormerPrice} ShowView={bestProducts.ShowView} ShowWishlist={bestProducts.ShowWishList} Rating={bestProducts.Rating} ReviewCount={bestProducts.ReviewCount}/>
+              <ProductCard key={bestProducts.id} Discount={bestProducts.Discount} ImageSrc={bestProducts.ImageSrc} ProductName={bestProducts.ProductName} Price={bestProducts.Price} FormerPrice={bestProducts.FormerPrice} ShowView={bestProducts.ShowView} ShowWishlist={bestProducts.ShowWishList} Rating={bestProducts.Rating} ReviewCount={bestProducts.ReviewCount} onQuickView={handleQuickView}/>
             ))}
           </div>
         </div>
@@ -267,7 +283,7 @@ const Home = () => {
               ))}
             </div>
             <div className="max-w-xs">
-              <Button Text="¡Compra ahora!" customClass="bg-[#81B29A] border-[#81B29A] hover:text-[#81B29A]"/>
+              <Button Text="¡Compra ahora!" to={'/catalogo'} customClass="bg-[#81B29A] border-[#81B29A] hover:text-[#81B29A]"/>
             </div>
           </div>
           <div className="w-full lg:w-1/2 flex justify-center">
@@ -294,7 +310,7 @@ const Home = () => {
           </div>
           <div className="grid grid-cols-4 gap-4 mb-8">
             {exploreProducts.slice(currentProductIndex, currentProductIndex + 8).map(exploreProducts => (
-              <ProductCard key={exploreProducts.id} Discount={exploreProducts.Discount} ImageSrc={exploreProducts.ImageSrc} ProductName={exploreProducts.ProductName} Price={exploreProducts.Price} FormerPrice={exploreProducts.FormerPrice} ShowView={exploreProducts.ShowView} IsNew={exploreProducts.IsNew} ShowWishlist={exploreProducts.ShowWishList} Rating={exploreProducts.Rating} ReviewCount={exploreProducts.ReviewCount}/>
+              <ProductCard key={exploreProducts.id} Discount={exploreProducts.Discount} ImageSrc={exploreProducts.ImageSrc} ProductName={exploreProducts.ProductName} Price={exploreProducts.Price} FormerPrice={exploreProducts.FormerPrice} ShowView={exploreProducts.ShowView} IsNew={exploreProducts.IsNew} ShowWishlist={exploreProducts.ShowWishList} Rating={exploreProducts.Rating} ReviewCount={exploreProducts.ReviewCount} onQuickView={handleQuickView}/>
             ))}
           </div>
           <div className="flex justify-center mt-6 max-w-[300px] mx-auto">
@@ -328,6 +344,10 @@ const Home = () => {
           )
         })}
       </div>
+      {/* Modal */}
+      {quickViewProduct && (
+        <QuickViewModal product={quickViewProduct} onClose={closeQuickView} onAddToWishlist={handleAddToWishlist}/>
+      )}
     </div>
   )
 }

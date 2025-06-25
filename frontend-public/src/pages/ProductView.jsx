@@ -1,14 +1,14 @@
 import { useState } from 'react'
 import { FiHeart, FiMinus, FiPlus, FiTruck, FiRefreshCw, FiCheck, FiStar, FiUser } from 'react-icons/fi'
-import Breadcrumbs from '../components/breadcrumbs.jsx'
-import Button from '../components/button.jsx'
+import Breadcrumbs from '../components/Handlers/BreadCrumbs.jsx'
+import Button from '../components/Buttons/Button.jsx'
 import SmallLifeForms from '../assets/slfiii.png'
 import Ocean from '../assets/ocean.png'
 import IntheRain from '../assets/itrii.png'
 import Charlotte from '../assets/charlotte.png'
 import Image1 from '../assets/missing-part-1.png'
 import Image2 from '../assets/missing-part-2.png'
-import ProductCard from '../components/productcard.jsx'
+import ProductCard from '../components/Cards/ProductCard.jsx'
 
 const ProductDetailPage = () => {
   const [quantity, setQuantity] = useState(2)

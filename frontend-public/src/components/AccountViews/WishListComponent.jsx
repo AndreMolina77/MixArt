@@ -1,9 +1,9 @@
-import ProductCard from '../productcard.jsx'
-import TransparentButton from '../components/transparentbutton.jsx'
-import SmallLifeForms from '../assets/slfiii.png'
-import MorningRain from '../assets/mriii.png'
-import AfterRain from '../assets/ariii.png'
-import Larkspur from '../assets/larkspur.png'
+import ProductCard from '../Cards/ProductCard.jsx'
+import TransparentButton from '../../components/transparentbutton.jsx'
+import SmallLifeForms from '../../assets/slfiii.png'
+import MorningRain from '../../assets/mriii.png'
+import AfterRain from '../../assets/ariii.png'
+import Larkspur from '../../assets/larkspur.png'
 
 const WishlistComponent = () => {
     const wishlistProducts = [

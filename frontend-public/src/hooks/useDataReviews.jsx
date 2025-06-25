@@ -43,7 +43,7 @@ const usePublicReviews = (itemId) => {
           rating,
           comment,
           itemId, // ID del producto/artículo
-          itemType: "article" // o "artPiece" según corresponda
+          itemType: "article" || "artPiece" 
         }),
       });
 

@@ -40,5 +40,36 @@ customersController.getCustomer = async (req, res) => {
     const customer = await customersModel.findById(req.params.id)
     res.json(customer)
 }
-
+// ACTUALIZACION DE PERFIL
+customersController.updateProfile = async (req, res) => {
+    // Solo permite actualizar campos no sensibles
+  const { name, lastName, email, address } = req.body;
+  try {
+    const updatedCustomer = await customersModel.findByIdAndUpdate(
+      req.user.id, // ID del cliente autenticado
+      { $set: { name, lastName, email, address } },
+      { new: true, select: '-password' }
+    );
+    res.json(updatedCustomer);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+// ACTUALIZACION DE CONTRASEÑA POR MEDIO DE PATCH
+customersController.changePassword = async (req, res) => {
+    const { currentPassword, newPassword } = req.body;
+  try {
+    const customer = await customersModel.findById(req.user.id);
+    // Verificar contraseña actual
+    const isMatch = await bcrypt.compare(currentPassword, customer.password);
+    if (!isMatch) throw new Error('Contraseña actual incorrecta');
+    
+    // Actualizar contraseña
+    customer.password = newPassword;
+    await customer.save();
+    res.json({ message: 'Contraseña actualizada' });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+}
 export default customersController;

@@ -7,7 +7,10 @@ router
   .route("/")
   .get(reviewsController.getreview)
   .post(reviewsController.postreview);
-router.get("/public", reviewsController.getPublicReview)
+router
+  .route("/public")
+  .get(reviewsController.getPublicReview)
+  .post(reviewsController.postpublicreview);
 router
   .route("/:id")
   .get(reviewsController.getreviews)

@@ -1,5 +1,3 @@
-
-
 const reviewsController = {};
 
 import reviewsModel from "../models/Reviews.js";
@@ -13,6 +11,16 @@ reviewsController.postreview = async (req, res) => {
     }
     const newReview = new reviewsModel({rating, comment, itemType, itemId, customerId})
 
+    await newReview.save();
+    res.status(201).json({ message: "Review creada con éxito"});
+};
+// Create (Post)
+reviewsController.postpublicreview = async (req, res) => {
+    const{rating, comment, itemType, itemId, customerId} = req.body;
+    if (itemType !== 'Article' && itemType !== 'ArtPiece') {
+        return res.status(400).json({ message: "contentType debe ser 'Article' o 'ArtPiece'" });
+    }
+    const newReview = new reviewsModel({rating, comment, itemType, itemId, customerId})
     await newReview.save();
     res.status(201).json({ message: "Review creada con éxito"});
 };

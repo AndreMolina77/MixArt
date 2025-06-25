@@ -26,7 +26,7 @@ const app = express()
 app.use(express.json())
 app.use(cookieParser())
 app.use(cors({
-  origin: "http://localhost:5173", 
+  origin: ["http://localhost:5174", "http://localhost:5173"],
   credentials: true
 }))
 // Rutas que NO requieren login
@@ -39,6 +39,10 @@ app.use("/api/validatePassword", validatePasswordRoutes)
 // Rutas de la tienda pública que NO requieren Login
 app.use("/api/public/articles", articlesRoutes);
 app.use("/api/public/categories", categoriesRoutes);
+app.use("/api/public/artpieces", artpiecesRoutes);
+app.use("/api/public/reviews", reviewsRoutes);
+app.use("/api/public/suppliers", suppliersRoutes);
+app.use("/api/public/customers", customersRoutes);
 
 // Ruta especial para validar token (acepta cualquier tipo de usuario válido)
 app.use("/api/validateAuthToken", validateAuthTokenRoutes)

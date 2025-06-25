@@ -7,6 +7,10 @@ import Footer from './components/Main/Footer.jsx'
 import AnnouncementBar from './components/Main/AnnouncementBar.jsx'
 import Loader from './components/Misc/Loader.jsx'
 import { AccountProvider } from './context/AccountContext.jsx'
+// NUEVO: Importar AuthProvider y ProtectedRoute
+import { AuthProvider } from './context/AuthContext.jsx'
+import ProtectedRoute from './components/Auth/ProtectedRoute.jsx'
+
 // Importaciones diferidas con lazy
 const Home = lazy(() => import('./pages/Home.jsx'));
 const Terms = lazy(() => import('./pages/termsconditions.jsx'));
@@ -38,62 +42,75 @@ const GlobalLoading = () => (
 const App = () => {
   return (
     <>
-      <AccountProvider>
-        <div className="App">
-          <Toaster 
-            position="top-right"
-            toastOptions={{
-              duration: 4000,
-              style: {
-                background: '#EBFEF5',
-                color: '#7A6E6E',
-                border: '1px solid #81B29A',
-                fontFamily: 'Alexandria'
-              },
-              success: {
-                iconTheme: {
-                  primary: '#E07A5F',
-                  secondary: '#EBFEF5'
+      {/* NUEVO: AuthProvider envuelve todo */}
+      <AuthProvider>
+        <AccountProvider>
+          <div className="App">
+            <Toaster 
+              position="top-right"
+              toastOptions={{
+                duration: 4000,
+                style: {
+                  background: '#EBFEF5',
+                  color: '#7A6E6E',
+                  border: '1px solid #81B29A',
+                  fontFamily: 'Alexandria'
                 },
-              },
-              error: {
-                iconTheme: {
-                  primary: '#EF4444',
-                  secondary: '#EBFEF5'
+                success: {
+                  iconTheme: {
+                    primary: '#E07A5F',
+                    secondary: '#EBFEF5'
+                  },
+                },
+                error: {
+                  iconTheme: {
+                    primary: '#EF4444',
+                    secondary: '#EBFEF5'
+                  }
                 }
-              }
-            }}
-          />
-          <Navbar/>
-          <AnnouncementBar/>
-          <Suspense fallback={<GlobalLoading />}>
-            <Routes>
-              <Route path="/" element={<Home/>}/>
-              <Route path="/terminos-y-condiciones" element={<Terms/>}/>
-              <Route path="/politica-de-privacidad" element={<PrivacyPolicy/>}/>
-              <Route path="/faq" element={<FAQ/>}/>
-              <Route path="/registro" element={<Signup/>}/>
-              <Route path="/login" element={<Login/>}/>
-              <Route path="/contactanos" element={<Contact/>}/>
-              <Route path="/acerca-de" element={<About/>}/>
-              <Route path="/mi-cuenta" element={<MyAccount/>}/>
-              <Route path="/carrito" element={<Cart/>}/>
-              <Route path="/carrito/checkout" element={<Checkout/>}/>
-              <Route path="/lista-deseos" element={<Wishlist/>}/>
-              <Route path="/catalogo" element={<CatalogPage/>}/>
-              <Route path="/finalizar" element={<OrderConfirmation/>}/>
-              {/* Rutas mejoradas para productos */}
-              <Route path="/producto/:productId" element={<ProductDetailPage/>}/>
-              {/* Nuevas rutas para recuperación de contraseña */}
-              <Route path="/recuperar-contrasena" element={<ForgotPassword />} />
-              <Route path="/verificar-codigo" element={<VerifyCode />} />
-              <Route path="/restablecer-contrasena" element={<ResetPassword />} />
-              <Route path="*" element={<NotFoundPage />} />
-            </Routes>
-          </Suspense>
-          <Footer/>
-        </div>
-      </AccountProvider>
+              }}
+            />
+            <Navbar/>
+            <AnnouncementBar/>
+            <Suspense fallback={<GlobalLoading />}>
+              <Routes>
+                <Route path="/" element={<Home/>}/>
+                <Route path="/terminos-y-condiciones" element={<Terms/>}/>
+                <Route path="/politica-de-privacidad" element={<PrivacyPolicy/>}/>
+                <Route path="/faq" element={<FAQ/>}/>
+                <Route path="/registro" element={<Signup/>}/>
+                <Route path="/login" element={<Login/>}/>
+                <Route path="/contactanos" element={<Contact/>}/>
+                <Route path="/acerca-de" element={<About/>}/>
+                {/* MyAccount protegido */}
+                <Route path="/mi-cuenta" element={
+                  <ProtectedRoute>
+                    <MyAccount/>
+                  </ProtectedRoute>
+                }/>
+                <Route path="/carrito" element={<Cart/>}/>
+                <Route path="/carrito/checkout" element={<Checkout/>}/>
+                <Route path="/lista-deseos" element={<Wishlist/>}/>
+                <Route path="/catalogo" element={<CatalogPage/>}/>
+                {/* OrderConfirmation protegido */}
+                <Route path="/finalizar" element={
+                  <ProtectedRoute>
+                    <OrderConfirmation/>
+                  </ProtectedRoute>
+                }/>
+                {/* Rutas mejoradas para productos */}
+                <Route path="/producto/:productId" element={<ProductDetailPage/>}/>
+                {/* Nuevas rutas para recuperación de contraseña */}
+                <Route path="/recuperar-contrasena" element={<ForgotPassword />} />
+                <Route path="/verificar-codigo" element={<VerifyCode />} />
+                <Route path="/restablecer-contrasena" element={<ResetPassword />} />
+                <Route path="*" element={<NotFoundPage />} />
+              </Routes>
+            </Suspense>
+            <Footer/>
+          </div>
+        </AccountProvider>
+      </AuthProvider>
     </>
   )
 }

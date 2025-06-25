@@ -1,3 +1,5 @@
+
+
 const reviewsController = {};
 
 import reviewsModel from "../models/Reviews.js";
@@ -16,6 +18,11 @@ reviewsController.postreview = async (req, res) => {
 };
 //Read (Get)
 reviewsController.getreview = async (req, res) => {
+    const reviews = await reviewsModel.find().populate('itemId').populate('customerId');
+    res.json(reviews);
+};
+//Read (Get)
+reviewsController.getPublicReview = async (req, res) => {
     const reviews = await reviewsModel.find().populate('itemId').populate('customerId');
     res.json(reviews);
 };

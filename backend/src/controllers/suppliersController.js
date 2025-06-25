@@ -99,7 +99,15 @@ suppliersController.getSuppliers = async (req, res) => {
         })
     }
 }
-
+// GET
+suppliersController.getPublicSuppliers = async (req, res) => {
+    try {
+        const suppliers = await suppliersModel.find()
+        res.json(suppliers)
+    } catch (error) {
+        res.status(500).json({ message: "Error al obtener proveedores", error: error.message })
+    }
+}
 //PUT
 suppliersController.putSuppliers = async (req, res) => {
     try {

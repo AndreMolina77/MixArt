@@ -31,6 +31,11 @@ artPiecesController.getArtPieces = async (req, res) => {
     const artPieces = await artPiecesModel.find().populate('categoryId');
     res.json(artPieces);
 };
+//Read (Get)
+artPiecesController.getPublicArtPieces = async (req, res) => {
+    const artPieces = await artPiecesModel.find().populate('categoryId', 'name');
+    res.json(artPieces);
+};
 //Update (Put)
 artPiecesController.putArtPieces = async (req, res) => {
     const { artPieceName, price, description, categoryId, artist, discount } = req.body

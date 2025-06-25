@@ -6,6 +6,7 @@ import suppliersController from "../controllers/suppliersController.js"
 router.route("/")
 .get(suppliersController.getSuppliers)
 .post(suppliersController.postSuppliers)
+router.get("/public", suppliersController.getPublicSuppliers)
 router.route("/:id")
 .get(suppliersController.getSupplier)
 .put(suppliersController.putSuppliers)

@@ -8,6 +8,7 @@ router
   .route("/")
   .get(categoriesController.getcategories)
   .post(categoriesController.postcategories);
+router.get("/public", categoriesController.getPublicCategories)
 router
   .route("/:id")
   .get(categoriesController.getcategory)

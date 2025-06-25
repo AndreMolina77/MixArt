@@ -3,8 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import TextInput from '../components/Inputs/Input.jsx';
 import Button from '../components/Buttons/Button.jsx';
 import cartImage from '../assets/cart-image.jpeg';
+import { useAuth } from '../hooks/useAuth';
 
 const VerifyCode = () => {
+  const { verifyResetCode } = useAuth();
   const navigate = useNavigate();
   const [code, setCode] = useState(['', '', '', '', '', '']);
 
@@ -19,14 +21,16 @@ const VerifyCode = () => {
     }
   };
 
-  const handleVerify = () => {
+  const handleVerify = async () => {
     const fullCode = code.join('');
-    
     // Validación básica
     if (fullCode.length === 6) {
-      // Aquí iría la verificación real con el backend
-      // Por ahora solo redirigimos
-      navigate('/restablecer-contrasena');
+      const result = await verifyResetCode(fullCode);
+      if (result.success) {
+        navigate('/restablecer-contrasena');
+      } else {
+        alert(result.message);
+      }
     } else {
       alert('Por favor ingresa el código completo');
     }

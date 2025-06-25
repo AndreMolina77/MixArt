@@ -1,4 +1,4 @@
-const TextInput = ({text}) => {
+const TextInput = ({text, name, value, onChange, ...Props}) => {
   return (
     <div className="flex flex-col w-full">
       <label className="mb-1 text-sm text-[#7A6E6E] font-[Alexandria]">{text}</label>

@@ -43,28 +43,28 @@ const Contact = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="bg-gray-50 p-5 lg:p-11 lg:rounded-r-2xl rounded-2xl">
-                    <h2 className="text-[#E07A5F] text-4xl font-semibold leading-10 mb-11 font-[Alexandria]">Envíanos un mensaje</h2>
-                    <label className="block text-[#7A6E6E] mb-2 font-[Alexandria]">
-                        Nombre <span className="text-[#E07A5F]">*</span>
-                    </label>
-                    <input required type="text" className="bg-[#EBFEF5] border border-[#81B29A] rounded-md px-3 py-2 outline-none text-[#7A6E6E] font-[Alexandria] w-full mb-6" placeholder="Tu nombre"/>
-                    <label className="block text-[#7A6E6E] mb-2 font-[Alexandria]">
-                        Correo electrónico <span className="text-[#E07A5F]">*</span>
-                    </label>
-                    <input required  type="email" className="bg-[#EBFEF5] border border-[#81B29A] rounded-md px-3 py-2 outline-none text-[#7A6E6E] font-[Alexandria] w-full mb-6" placeholder="ejemplo@correo.com"/>
-                    <label className="block text-[#7A6E6E] mb-2 font-[Alexandria]">
-                        Teléfono <span className="text-[#E07A5F]">*</span>
-                    </label>
-                    <input required type="tel" className="bg-[#EBFEF5] border border-[#81B29A] rounded-md px-3 py-2 outline-none text-[#7A6E6E] font-[Alexandria] w-full mb-6" placeholder="Tu número"/>
-                    <label className="block text-[#7A6E6E] mb-2 font-[Alexandria]">
-                        Mensaje <span className="text-[#E07A5F]">*</span>
-                    </label>
-                    <textarea required className="bg-[#EBFEF5] border border-[#81B29A] rounded-md px-3 py-2 outline-none text-[#7A6E6E] font-[Alexandria] w-full h-32 resize-none mb-10" placeholder="Escribe tu mensaje aquí..."/>
-                    <button className="w-full h-12 bg-[#E07A5F] hover:bg-transparent border-2 border-[#E07A5F] hover:border-[#E07A5F] text-white hover:text-[#E07A5F] text-base font-semibold leading-6 rounded-md transition duration-300 shadow-sm font-[Alexandria] cursor-pointer">
-                        Enviar mensaje
-                    </button>
-                    </div>
+                    <form action="https://formspree.io/f/xrbkoazq" method="POST" className="bg-gray-50 p-5 lg:p-11 lg:rounded-r-2xl rounded-2xl">
+                        <h2 className="text-[#E07A5F] text-4xl font-semibold leading-10 mb-11 font-[Alexandria]">Envíanos un mensaje</h2>
+                        <label htmlFor="name" className="block text-[#7A6E6E] mb-2 font-[Alexandria]">
+                            Nombre <span className="text-[#E07A5F]">*</span>
+                        </label>
+                        <input required type="text" name="name" id="name" className="bg-[#EBFEF5] border border-[#81B29A] rounded-md px-3 py-2 outline-none text-[#7A6E6E] font-[Alexandria] w-full mb-6" placeholder="Tu nombre"/>
+                        <label htmlFor="email" className="block text-[#7A6E6E] mb-2 font-[Alexandria]">
+                            Correo electrónico <span className="text-[#E07A5F]">*</span>
+                        </label>
+                        <input required type="email" name="email" id="email" nsmr className="bg-[#EBFEF5] border border-[#81B29A] rounded-md px-3 py-2 outline-none text-[#7A6E6E] font-[Alexandria] w-full mb-6" placeholder="ejemplo@correo.com"/>
+                        <label htmlFor="phone" className="block text-[#7A6E6E] mb-2 font-[Alexandria]">
+                            Teléfono <span className="text-[#E07A5F]">*</span>
+                        </label>
+                        <input required type="tel" name="phone" id="phone" className="bg-[#EBFEF5] border border-[#81B29A] rounded-md px-3 py-2 outline-none text-[#7A6E6E] font-[Alexandria] w-full mb-6" placeholder="Tu número"/>
+                        <label htmlFor="message" className="block text-[#7A6E6E] mb-2 font-[Alexandria]">
+                            Mensaje <span className="text-[#E07A5F]">*</span>
+                        </label>
+                        <textarea required name="message" id="message" className="bg-[#EBFEF5] border border-[#81B29A] rounded-md px-3 py-2 outline-none text-[#7A6E6E] font-[Alexandria] w-full h-32 resize-none mb-10" placeholder="Escribe tu mensaje aquí..."/>
+                        <button type="submit" className="w-full h-12 bg-[#E07A5F] hover:bg-transparent border-2 border-[#E07A5F] hover:border-[#E07A5F] text-white hover:text-[#E07A5F] text-base font-semibold leading-6 rounded-md transition duration-300 shadow-sm font-[Alexandria] cursor-pointer">
+                            Enviar mensaje
+                        </button>
+                    </form>
                 </div>
             </div>
         </section>

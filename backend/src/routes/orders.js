@@ -9,6 +9,13 @@ router
     .get(ordersController.getOrders)
     .post(ordersController.postOrders);
 router
+    .route("/public")
+    .get(ordersController.getPublicOrders)
+    .post(ordersController.postPublicOrders)
+router
+    .route("/public/:id")
+    .put(ordersController.putPublicOrders)
+router
     .route("/:id")
     .get(ordersController.getOrder)
     .put(ordersController.putOrders)

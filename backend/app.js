@@ -43,6 +43,7 @@ app.use("/api/public/artpieces", artpiecesRoutes);
 app.use("/api/public/reviews", reviewsRoutes);
 app.use("/api/public/suppliers", suppliersRoutes);
 app.use("/api/public/customers", customersRoutes);
+app.use("/api/public/orders", ordersRoutes)
 
 // Ruta especial para validar token (acepta cualquier tipo de usuario válido)
 app.use("/api/validateAuthToken", validateAuthTokenRoutes)

@@ -49,7 +49,7 @@ ordersController.getOrders = async (req, res) => {
 //Read (Get)
 ordersController.getPublicOrders = async (req, res) => {
     try {
-        const orders = await ordersModel.find().populate({path: "items.itemId", select: "name price", }); 
+        const orders = await ordersModel.find().populate({path: "items.itemId", select: "articleName artPieceName price image", }); 
         res.status(200).json(orders);
     } catch (error) {
         res.status(500).json({ message: "Error al obtener ordenes", error: error.message });
@@ -125,6 +125,15 @@ ordersController.getOrder = async (req, res) => {
             return res.status(404).json({ message: "Orden no encontrada" });
         }
         res.status(200).json(order);
+    } catch (error) {
+        res.status(500).json({ message: "Error al obtener ordenes", error: error.message });
+    };
+};
+//Read (Get) pero por su ID
+ordersController.getPublicOrder = async (req, res) => {
+    try {
+        const orders = await ordersModel.find(req.params.id).populate({path: "items.itemId", select: "articleName artPieceName price image", }); 
+        res.status(200).json(orders);
     } catch (error) {
         res.status(500).json({ message: "Error al obtener ordenes", error: error.message });
     };

@@ -33,7 +33,7 @@ const customersSchema = new Schema ({
     },
     issNumber:{
         type: String,
-        require: true
+        require: false
     },
     isVerified:{
         type: Boolean,

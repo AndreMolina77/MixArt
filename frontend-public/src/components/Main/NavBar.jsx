@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { FaHeart, FaShoppingCart, FaUser, FaSearch, FaTimes, FaStar, FaSignOutAlt, FaBars } from 'react-icons/fa'
-import { useCart } from '../hooks/useCart.js'
-import { useWishlist } from '../hooks/useWishlist.js'
+import { useCart } from '../../hooks/useCart.js'
+import { useWishlist } from '../../hooks/useWishlist.js'
 
 const useClickOutside = (handler) => {
   const ref = useRef(null)
@@ -53,6 +53,7 @@ const Navbar = () => {
     if (searchTerm.trim()) {
       navigate(`/buscar?q=${encodeURIComponent(searchTerm)}`);
       setIsSearchOpen(false);
+      setSearchTerm(''); // Limpiar después de buscar
     }
   };
   return (

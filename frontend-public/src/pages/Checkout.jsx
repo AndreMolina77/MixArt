@@ -53,8 +53,8 @@ const Checkout = () => {
     e.preventDefault()
     
     if (!user) {
-      alert('Debes iniciar sesión para realizar una compra')
-      navigate('/login')
+      alert('Debes iniciar sesión o crear una cuenta para realizar una compra')
+      navigate('/signup')
       return
     }
     if (cartItems.length === 0) {

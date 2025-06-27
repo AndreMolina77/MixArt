@@ -1,7 +1,8 @@
 import { useWishlist } from '../hooks/useWishlist.js'
 import { useCart } from '../hooks/useCart.js'
 import ProductCard from '../components/Cards/ProductCard.jsx'
-import TransparentButton from '../components/transparentbutton.jsx'
+import Button from '../components/Buttons/Button.jsx'
+import TransparentButton from '../components/Buttons/TransparentButton.jsx'
 import usePublicDataArticles from '../hooks/useDataArticles.jsx'
 import usePublicDataArtPieces from '../hooks/useDataArtPieces.jsx'
 
@@ -14,10 +15,15 @@ const Wishlist = () => {
 
   // Funcion de transformacion (igual que en las otras paginas)
   const allProducts = [...(articles || []), ...(artPieces || [])]
-  const recommendedProducts = allProducts.slice(0, 4).map((item, index) => {
+  const transformRecommendedProduct = (item, index) => {
+    if (!item || !item._id) {
+      console.log('❌ WishList - Invalid item:', item)
+      return null
+    }
+    
     const isArticle = item.hasOwnProperty('stock')
-    return {
-      id: item._id || index,
+    const transformedProduct = {
+      id: item._id,  // ← USAR DIRECTAMENTE _id
       ProductName: isArticle ? item.articleName : item.artPieceName,
       Price: `$${item.price}`,
       FormerPrice: item.discount > 0 ? `$${(item.price / (1 - item.discount/100)).toFixed(0)}` : null,
@@ -29,9 +35,19 @@ const Wishlist = () => {
       ReviewCount: Math.floor(Math.random() * 50) + 50,
       IsNew: Math.random() > 0.8,
       originalData: item,
-      isArticle
+      isArticle: isArticle
     }
-  })
+    const recommendedProducts = allProducts
+      .slice(0, 4)
+      .map(transformRecommendedProduct)
+      .filter(product => product !== null)
+
+    console.log('🎯 WishList - Recommended products:', recommendedProducts)
+    
+    console.log('✅ WishList - Transformed product:', transformedProduct.id, transformedProduct.ProductName)
+    return transformedProduct
+  }
+
   
   const moveAllToCart = () => {
     wishlistItems.forEach(item => {
@@ -72,8 +88,8 @@ const Wishlist = () => {
                 ImageSrc={product.image}
                 Discount={product.discount > 0 ? `${product.discount}%` : null}
                 ShowTrash={true}
-                originalData={product.originalData}
-                isArticle={product.isArticle}
+                originalData={product.originalData || {}}
+                isArticle={product.isArticle || false}
               />
             </div>
           ))
@@ -98,7 +114,7 @@ const Wishlist = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {recommendedProducts.map(product => (
           <div key={product.id} className="flex justify-center">
-            <ProductCard Discount={product.Discount} ImageSrc={product.ImageSrc} ProductName={product.ProductName} Price={product.Price} FormerPrice={product.FormerPrice} Rating={product.Rating} ReviewCount={product.ReviewCount} IsNew={product.IsNew} ShowView={product.ShowView}/>
+            <ProductCard id={product.id} Discount={product.Discount} ImageSrc={product.ImageSrc} ProductName={product.ProductName} Price={product.Price} FormerPrice={product.FormerPrice} Rating={product.Rating} ReviewCount={product.ReviewCount} IsNew={product.IsNew} ShowView={product.ShowView}/>
           </div>
         ))}
       </div>

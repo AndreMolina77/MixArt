@@ -8,7 +8,7 @@ const usePublicDataCategories = () => {
 
   const fetchPublicCategories = async () => {
     try {
-      const response = await fetch("http://localhost:4000/api/public/categories/"); // Endpoint publico
+      const response = await fetch("http://localhost:4000/api/public/categories"); // Endpoint publico
       if (!response.ok) throw new Error("Error al cargar categorías");
       const data = await response.json();
       setCategories(data);

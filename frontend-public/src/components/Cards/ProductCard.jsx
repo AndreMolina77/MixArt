@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react'
 import { FiTrash2, FiShoppingCart, FiHeart, FiEye } from 'react-icons/fi'
-import { Toaster } from 'react-hot-toast'
+import { toast } from 'react-hot-toast'
 import { FaStar } from 'react-icons/fa'
 import { NavLink } from 'react-router-dom'
-import { useCart } from '../hooks/useCart.js'
-import { useWishlist } from '../hooks/useWishlist.js'
+import { useCart } from '../../hooks/useCart.js'
+import { useWishlist } from '../../hooks/useWishlist.js'
 
 const ProductCard = ({
   id,
@@ -19,7 +19,9 @@ const ProductCard = ({
   ShowWishlist, 
   ShowView, 
   ShowTrash,
-  onQuickView // Nueva prop para manejar la vista rápida
+  onQuickView,
+  originalData,
+  isArticle
 }) => {
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist()
   const inWishlist = isInWishlist(id)
@@ -31,11 +33,11 @@ const ProductCard = ({
       ProductName,
       Price,
       ImageSrc,
-      originalData,
-      isArticle
+      originalData: originalData || {},
+      isArticle: isArticle || false  
     })
     if (success) {
-      Toaster.success('Producto añadido al carrito')
+      toast.success('Producto añadido al carrito')
     }
   }
   // Validacion de stock en el render:
@@ -73,7 +75,7 @@ const ProductCard = ({
       })
       if (added) {
         // Opcional: mostrar toast de confirmación
-        Toaster.success('Producto añadido al carrito')
+        toast.success('Producto añadido al carrito')
       }
     }
   }
@@ -109,7 +111,11 @@ const ProductCard = ({
           )}
         </div>
         <div className="bg-white pt-4 px-0 pb-0 rounded-b-lg shadow-sm flex flex-col items-center">
-          <NavLink to={`/producto/${id}`} className="h-[180px] flex items-center justify-center w-full">
+          <NavLink 
+            to={`/producto/${id || 'undefined'}`} 
+            className="h-[180px] flex items-center justify-center w-full"
+            onClick={() => console.log('🔗 Navigating to product:', id)} // ← AGREGAR DEBUG
+          >
             <img src={ImageSrc} alt={ProductName} className="max-w-[180px] max-h-[180px] object-cover" />
           </NavLink>
           <button onClick={handleAddToCart} disabled={isOutOfStock} className={`w-full h-10 ${isOutOfStock ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#E07A5F] hover:bg-transparent hover:text-[#E07A5F]'} text-white text-sm py-2 rounded-b-lg font-normal flex items-center justify-center gap-2 mt-4 border-2 border-[#E07A5F] transition duration-300`}>

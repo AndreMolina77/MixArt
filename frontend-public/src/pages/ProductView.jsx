@@ -17,16 +17,19 @@ const ProductDetailPage = () => {
   const { articles } = usePublicDataArticles()
   const { artPieces } = usePublicDataArtPieces()
   const { id } = useParams() // Para obtener el ID de la URL
+  console.log('🆔 ProductView - ID from URL:', id)
   const [product, setProduct] = useState(null)
   const [loading, setLoading] = useState(true)
   const [reviews, setReviews] = useState([])
   const { addToCart } = useCart()
 
   // Función de transformación (igual que en las otras páginas)
-  const transformProductData = (item, index) => {
+  const transformRelatedProduct = (item, index) => {
+    if (!item || !item._id) return null
+    
     const isArticle = item.hasOwnProperty('stock')
     return {
-      id: item._id || index,
+      id: item._id,  // ← ASEGURAR QUE ESTÉ EL ID
       ProductName: isArticle ? item.articleName : item.artPieceName,
       Price: `$${item.price}`,
       FormerPrice: item.discount > 0 ? `$${(item.price / (1 - item.discount/100)).toFixed(0)}` : null,
@@ -34,14 +37,19 @@ const ProductDetailPage = () => {
       Discount: item.discount > 0 ? `${item.discount}%` : null,
       ShowView: true,
       ShowWishList: true,
-      ShowTrash: true, // Para wishlist
       Rating: Math.floor(Math.random() * 2) + 4,
       ReviewCount: Math.floor(Math.random() * 50) + 50,
-      originalData: item,
-      isArticle
+      isArticle: isArticle,
+      originalData: item
     }
   }
-  const relatedProducts = [...(articles || []), ...(artPieces || [])].slice(0, 4).map(transformProductData)
+  const relatedProducts = [...(articles || []), ...(artPieces || [])]
+    .slice(0, 4)
+    .map(transformRelatedProduct)
+    .filter(product => product !== null)
+
+  console.log('🔗 ProductView - Related products:', relatedProducts)
+
   const handleWishlistClick = () => {
     setWishlisted(true);
     setTimeout(() => setWishlisted(false), 3000);
@@ -73,37 +81,78 @@ const ProductDetailPage = () => {
     const fetchProduct = async () => {
       try {
         setLoading(true)
-        // Intentar primero como artículo
-        let response = await fetch(`http://localhost:4000/api/public/articles/`)
-        let data = await response.json()
-        let foundProduct = data.find(item => item._id === id)
-        let isArticle = true
+        console.log('🔍 Buscando producto con ID:', id)
         
-        // Si no se encuentra, buscar en artPieces
-        if (!foundProduct) {
-          response = await fetch(`http://localhost:4000/api/public/artpieces/`)
-          data = await response.json()
-          foundProduct = data.find(item => item._id === id)
-          isArticle = false
+        if (!id) {
+          console.log('❌ No hay ID')
+          setProduct(null)
+          setLoading(false)
+          return
         }
+        
+        // PASO 1: Intentar como artículo
+        console.log('📦 Buscando en articles...')
+        let response = await fetch(`http://localhost:4000/api/public/articles`)
+        
+        if (!response.ok) {
+          console.log(`❌ Error articles: ${response.status}`)
+        } else {
+          let data = await response.json()
+          console.log('📦 Articles response:', data)
+          
+          let foundProduct = data.find(item => item._id === id)
+          console.log('📦 Found in articles:', foundProduct)
+          
+          if (foundProduct) {
+            const productData = {
+              ...foundProduct,
+              isArticle: true,
+              name: foundProduct.articleName
+            }
+            console.log('✅ Setting article product:', productData)
+            setProduct(productData)
+            setLoading(false)
+            return
+          }
+        }
+        
+        // PASO 2: Si no se encuentra, buscar en artPieces
+        console.log('🎨 No encontrado en articles, buscando en artpieces...')
+        response = await fetch(`http://localhost:4000/api/public/artpieces`)
+        
+        if (!response.ok) {
+          console.log(`❌ Error artpieces: ${response.status}`)
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+        
+        let data = await response.json()
+        console.log('🎨 ArtPieces response:', data)
+        
+        let foundProduct = data.find(item => item._id === id)
+        console.log('🎨 Found in artpieces:', foundProduct)
         
         if (foundProduct) {
-          setProduct({
+          const productData = {
             ...foundProduct,
-            isArticle,
-            name: isArticle ? foundProduct.articleName : foundProduct.artPieceName
-          })
+            isArticle: false,
+            name: foundProduct.artPieceName
+          }
+          console.log('✅ Setting artpiece product:', productData)
+          setProduct(productData)
+        } else {
+          console.log('❌ Producto no encontrado en ningún lado')
+          setProduct(null)
         }
+        
       } catch (error) {
-        console.error('Error fetching product:', error)
+        console.error('❌ Error completo:', error)
+        setProduct(null)
       } finally {
         setLoading(false)
       }
     }
     
-    if (id) {
-      fetchProduct()
-    }
+    fetchProduct()
   }, [id])
 
   // Cargar reviews del localStorage
@@ -122,6 +171,20 @@ const ProductDetailPage = () => {
       starDistribution[5 - review.rating]++;
     }
   })
+  if (loading) {
+  return (
+      <div className="font-[Alexandria] bg-[#FAF5E9] min-h-screen py-10 px-4 sm:px-8">
+        <Breadcrumbs />
+        <div className="flex justify-center items-center min-h-[400px]">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-[#E07A5F] mx-auto mb-4"></div>
+            <p className="text-[#7A6E6E]">Cargando producto... ID: {id}</p>
+            <p className="text-[#7A6E6E] text-sm mt-2">Check console for details</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
   return (
     <div className="font-[Alexandria] bg-[#FAF5E9] min-h-screen py-10 px-4 sm:px-8">
       <Breadcrumbs />
@@ -258,22 +321,22 @@ const ProductDetailPage = () => {
                       <div className="text-4xl font-bold text-[#7A6E6E]">{averageRating.toFixed(1)}</div>
                       <div className="flex justify-center md:justify-start mt-1">
                         {[1, 2, 3, 4, 5].map(i => (
-                          <span key={i} className={`text-xl ${i <= Math.round(averageRating) ? 'text-[#FFAD33]' : 'text-[#A9A9A9]'}`}>★</span>
+                          <span key={`avg-star-${i}`} className={`text-xl ${i <= Math.round(averageRating) ? 'text-[#FFAD33]' : 'text-[#A9A9A9]'}`}>★</span>
                         ))}
                       </div>
                       <p className="text-[#7A6E6E] mt-1">{reviews.length} reseñas</p>
-                    </div>
+                    </div>  
                     
                     <div className="w-full md:w-2/3">
                       {[5, 4, 3, 2, 1].map((star, index) => (
-                        <div key={star} className="flex items-center mb-2">
+                        <div key={`star-dist-${star}`} className="flex items-center mb-2">
                           <div className="w-10 text-[#7A6E6E]">{star}★</div>
-                          <div className="w-full bg-gray-200 rounded-full h-2.5 mx-2">
-                            <div 
-                              className="bg-[#FFAD33] h-2.5 rounded-full" 
-                              style={{ width: `${(starDistribution[index] / reviews.length) * 100}%` }}
-                            ></div>
-                          </div>
+                            <div className="w-full bg-gray-200 rounded-full h-2.5 mx-2">
+                              <div 
+                                className="bg-[#FFAD33] h-2.5 rounded-full" 
+                                style={{ width: `${(starDistribution[index] / reviews.length) * 100}%` }}
+                              ></div>
+                            </div>
                           <div className="w-10 text-[#7A6E6E] text-right">{starDistribution[index]}</div>
                         </div>
                       ))}
@@ -344,7 +407,7 @@ const ProductDetailPage = () => {
                                 </div>
                                 <div className="flex mt-1 mb-2">
                                   {[1, 2, 3, 4, 5].map(i => (
-                                    <span key={i} className={`${i <= review.rating ? 'text-[#FFAD33]' : 'text-[#A9A9A9]'}`}>
+                                    <span key={`star-${i}`} className={`${i <= review.rating ? 'text-[#FFAD33]' : 'text-[#A9A9A9]'}`}>
                                       <FiStar className={i <= review.rating ? "fill-[#FFAD33]" : ""} />
                                     </span>
                                   ))}
@@ -375,7 +438,7 @@ const ProductDetailPage = () => {
             <div className="flex justify-center">
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full">
                 {relatedProducts.map(product => (
-                  <ProductCard Discount= {product.Discount} ImageSrc={product.ImageSrc} ProductName= {product.ProductName} Price={product.Price} FormerPrice={product.FormerPrice} Rating={product.Rating} ReviewCount={product.ReviewCount} ShowWishlist={product.ShowWishList} ShowView={product.ShowView}/>
+                  <ProductCard key={product.id} id={product.id} Discount={product.Discount} ImageSrc={product.ImageSrc} ProductName= {product.ProductName} Price={product.Price} FormerPrice={product.FormerPrice} Rating={product.Rating} ReviewCount={product.ReviewCount} ShowWishlist={product.ShowWishList} ShowView={product.ShowView}/>
                 ))}
               </div>
             </div>
@@ -383,7 +446,7 @@ const ProductDetailPage = () => {
         </div>
       )}
       {/* Estilos para la barra de desplazamiento personalizada */}
-      <style jsx>{`
+      <style jsx="true">{`
         .custom-scrollbar::-webkit-scrollbar {
           width: 8px;
         }

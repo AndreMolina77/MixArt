@@ -1,13 +1,42 @@
 import { useEffect, useRef } from 'react'
 import { BarChart3, TrendingUp, ShoppingCart, Eye, Star, DollarSign, Package, Users } from 'lucide-react'
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement, LineElement, PointElement } from 'chart.js'
+import { 
+  Chart as ChartJS, 
+  CategoryScale, 
+  LinearScale, 
+  BarElement, 
+  Title, 
+  Tooltip, 
+  Legend, 
+  ArcElement, 
+  LineElement, 
+  PointElement,
+  BarController,
+  DoughnutController,
+  LineController
+} from 'chart.js'
 
-ChartJS.register( CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement, LineElement, PointElement )
+// Register all necessary Chart.js components including controllers
+ChartJS.register(
+  CategoryScale, 
+  LinearScale, 
+  BarElement, 
+  Title, 
+  Tooltip, 
+  Legend, 
+  ArcElement, 
+  LineElement, 
+  PointElement,
+  BarController,
+  DoughnutController,
+  LineController
+)
 
 const Dashboard = () => {
   const barChartRef = useRef(null)
   const pieChartRef = useRef(null)
   const lineChartRef = useRef(null)
+  
   // Datos de ejemplo
   const dashboardStats = [
     {
@@ -43,12 +72,14 @@ const Dashboard = () => {
       color: "bg-gradient-to-br from-orange-500 to-orange-600"
     }
   ]
+  
   const recentSales = [
     { artwork: "Sunset Dreams", artist: "María González", price: "$1,250", status: "Completado" },
     { artwork: "Abstract Mind", artist: "Carlos Ruiz", price: "$890", status: "Pendiente" },
     { artwork: "Ocean Waves", artist: "Ana Silva", price: "$2,100", status: "Completado" },
     { artwork: "City Lights", artist: "Pedro Morales", price: "$750", status: "Procesando" }
   ]
+  
   // Datos para gráficos
   const monthlyData = {
     labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
@@ -64,6 +95,7 @@ const Dashboard = () => {
       }
     ]
   }
+  
   const artistsData = {
     labels: ['María González', 'Carlos Ruiz', 'Ana Silva', 'Pedro Morales', 'Otros'],
     datasets: [
@@ -88,6 +120,7 @@ const Dashboard = () => {
       }
     ]
   }
+  
   const trendData = {
     labels: ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4', 'Sem 5', 'Sem 6'],
     datasets: [
@@ -106,6 +139,7 @@ const Dashboard = () => {
       }
     ]
   }
+  
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -142,6 +176,7 @@ const Dashboard = () => {
       }
     }
   }
+  
   const pieOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -165,6 +200,7 @@ const Dashboard = () => {
       }
     }
   }
+  
   const lineOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -201,6 +237,7 @@ const Dashboard = () => {
       }
     }
   }
+  
   useEffect(() => {
     // Limpiar graficos existentes
     if (barChartRef.current) {
@@ -212,6 +249,7 @@ const Dashboard = () => {
     if (lineChartRef.current) {
       lineChartRef.current.destroy()
     }
+    
     // Crear grafico de barras
     const barCtx = document.getElementById('barChart')
     if (barCtx) {
@@ -221,6 +259,7 @@ const Dashboard = () => {
         options: chartOptions
       })
     }
+    
     // Crear grafico de pie
     const pieCtx = document.getElementById('pieChart')
     if (pieCtx) {
@@ -230,6 +269,7 @@ const Dashboard = () => {
         options: pieOptions
       })
     }
+    
     // Crear grafico de línea
     const lineCtx = document.getElementById('lineChart')
     if (lineCtx) {
@@ -239,6 +279,7 @@ const Dashboard = () => {
         options: lineOptions
       })
     }
+    
     // Cleanup function
     return () => {
       if (barChartRef.current) {
@@ -252,14 +293,16 @@ const Dashboard = () => {
       }
     }
   }, [])
+  
   return (
-    <div className="p-6 bg-white min-h-screen font-[Alexandria]">
+    <div className="p-6 bg-white min-h-screen font-sans">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-800 mb-2">Dashboard</h1>
           <p className="text-gray-600">Resumen de tu tienda de arte</p>
         </div>
+        
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {dashboardStats.map((stat, index) => {
@@ -285,6 +328,7 @@ const Dashboard = () => {
             );
           })}
         </div>
+        
         {/* Graficos */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           {/* Grafico de Ventas Mensuales */}
@@ -299,6 +343,7 @@ const Dashboard = () => {
               <canvas id="barChart"></canvas>
             </div>
           </div>
+          
           {/* Grafico de Artistas */}
           <div className="bg-gradient-to-br from-white to-gray-50 border border-gray-200 rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300">
             <div className="flex items-center justify-between mb-6">
@@ -312,6 +357,7 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
+        
         {/* Segunda fila de graficos */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           {/* Tendencia Semanal */}
@@ -326,6 +372,7 @@ const Dashboard = () => {
               <canvas id="lineChart"></canvas>
             </div>
           </div>
+          
           {/* Metricas Rapidas */}
           <div className="bg-gradient-to-br from-white to-gray-50 border border-gray-200 rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300">
             <div className="flex items-center justify-between mb-6">
@@ -354,6 +401,7 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
+        
         {/* Tabla de Ventas Recientes */}
         <div className="bg-gradient-to-br from-white to-gray-50 border border-gray-200 rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300">
           <div className="flex items-center justify-between mb-6">
@@ -406,4 +454,5 @@ const Dashboard = () => {
     </div>
   )
 }
+
 export default Dashboard

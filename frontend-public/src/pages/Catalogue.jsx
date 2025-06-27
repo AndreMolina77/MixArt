@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { FaArrowLeft, FaArrowRight, FaFilter, FaSort } from 'react-icons/fa';
 import usePublicDataArticles from '../hooks/useDataArticles.jsx'
 import usePublicDataArtPieces from '../hooks/useDataArtPieces.jsx'
@@ -20,15 +20,25 @@ const CatalogPage = () => {
   const allProducts = [...(articles || []), ...(artPieces || [])]
   const isLoading = articlesLoading || artPiecesLoading
   
-  const filters = ['Todos', ...(categories?.map(cat => cat.categoryName) || [])]
+  const filters = useMemo(() => {
+    if (!categories || categories.length === 0) {
+      return ['Todos']
+    }
+    return ['Todos', ...categories.map(cat => cat.categoryName)]
+  }, [categories])
   const sortOptions = ['Relevancia', 'Más vendidos', 'Precio: menor a mayor', 'Precio: mayor a menor', 'Más recientes'];
   const totalPages = Math.ceil(filteredProducts.length / 12)
 
   // Función de transformación
   const transformProductData = (item, index) => {
+    if (!item || !item._id) {
+      console.log('❌ WishList - Invalid item:', item)
+      return null
+    }
+
     const isArticle = item.hasOwnProperty('stock')
     return {
-      id: item._id || index,
+      id: item._id,
       ProductName: isArticle ? item.articleName : item.artPieceName,
       Price: `$${item.price}`,
       FormerPrice: item.discount > 0 ? `$${(item.price / (1 - item.discount/100)).toFixed(0)}` : null,
@@ -39,8 +49,8 @@ const CatalogPage = () => {
       Rating: Math.floor(Math.random() * 2) + 4,
       ReviewCount: Math.floor(Math.random() * 50) + 50,
       IsNew: Math.random() > 0.8,
-      originalData: item,
-      isArticle
+      isArticle: isArticle,
+      originalData: item
     }
   }
 
@@ -48,6 +58,8 @@ const CatalogPage = () => {
   const handleQuickView = (product) => setQuickViewProduct(product)
   const closeQuickView = () => setQuickViewProduct(null)
   useEffect(() => {
+    if (!articles && !artPieces) return // Evitar ejecutar sin datos
+    
     let filtered = allProducts.map(transformProductData)
     
     // Aplicar filtro de categoría
@@ -72,8 +84,9 @@ const CatalogPage = () => {
       default:
         break
     }
+    
     setFilteredProducts(filtered)
-  }, [allProducts, activeFilter, sortOption])
+  }, [articles, artPieces, activeFilter, sortOption])
   return (
     <div className="flex flex-col bg-[#F4F1DE] min-h-screen">
       {/* Encabezado de la página */}
@@ -151,6 +164,7 @@ const CatalogPage = () => {
               {filteredProducts.slice((currentPage - 1) * 12, currentPage * 12).map(product => (
                 <ProductCard 
                   key={product.id}
+                  id={product.id}
                   {...product}
                   onQuickView={handleQuickView}
                 />

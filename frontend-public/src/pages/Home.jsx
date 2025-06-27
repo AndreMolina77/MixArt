@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import Button from '../components/Buttons/Button.jsx'
 import { useNavigate } from 'react-router-dom'
 import ImageCarousel1 from '../assets/imagencarrusel1.png'
 import { ChevronRight } from 'lucide-react'
@@ -8,6 +9,8 @@ import usePublicDataArtPieces from '../hooks/useDataArtPieces.jsx'
 import usePublicDataArticles from '../hooks/useDataArticles.jsx'
 import FeaturedProductsGrid from '../components/Main/FeaturedProductsGrid.jsx'
 import QuickViewModal from '../components/Modals/QuickViewModal.jsx';
+import Hero from '../assets/herosectionimage.png'
+import ProductCard from '../components/Cards/ProductCard.jsx'
 
 
 const Home = () => {
@@ -23,6 +26,9 @@ const Home = () => {
 
   // Combinar productos para las diferentes secciones
   const allProducts = [...(articles || []), ...(artPieces || [])]
+  console.log('🏠 HOME - All products:', allProducts) // ← AGREGAR ESTO
+  console.log('🏠 HOME - Sample product:', allProducts[0]) // ← Y ESTO
+
   const isLoadingProducts = articlesLoading || artPiecesLoading
 
   
@@ -63,9 +69,24 @@ const Home = () => {
   };
   // Función para transformar datos del backend al formato del ProductCard
   const transformProductData = (item, index) => {
+    console.log('🔄 HOME - Transforming item:', item) 
+    
+    if (!item) {
+      console.log('❌ HOME - Item is null/undefined')
+      return null
+    }
+    
     const isArticle = item.hasOwnProperty('stock')
-    return {
-      id: item._id || index,
+    const productId = item._id
+    
+    console.log('🆔 HOME - Product ID:', productId, 'isArticle:', isArticle)   
+    
+    if (!productId) {
+      console.log('❌ HOME - No _id found in item:', item)
+      return null
+    }
+    const transformedProduct = {
+      id: productId,
       ProductName: isArticle ? item.articleName : item.artPieceName,
       Price: `$${item.price}`,
       FormerPrice: item.discount > 0 ? `$${(item.price / (1 - item.discount/100)).toFixed(0)}` : null,
@@ -77,15 +98,18 @@ const Home = () => {
       ReviewCount: Math.floor(Math.random() * 50) + 50, // 50-99 (temporal)
       IsNew: Math.random() > 0.8, // 20% chance de ser nuevo (temporal)
       // Mantener datos originales para otras funcionalidades
-      originalData: item,
-      isArticle
+      isArticle: isArticle,
+      originalData: item
     }
+    console.log('✅ HOME - Transformed product:', transformedProduct) // ← DEBUG
+    return transformedProduct
   }
-
   // Dividir productos en secciones
-  const flashSaleProducts = allProducts.slice(0, 8).map(transformProductData)
-  const bestProducts = allProducts.slice(8, 12).map(transformProductData) 
-  const exploreProducts = allProducts.slice(4, 12).map(transformProductData)
+  const flashSaleProducts = allProducts.map(transformProductData).filter(product => product !== null).slice(0, 8)
+  const bestProducts = allProducts.map(transformProductData) .filter(product => product !== null).slice(8, 12)
+  const exploreProducts = allProducts.map(transformProductData).filter(product => product !== null).slice(4, 12)
+  console.log('🏠 HOME - Flash sale products:', flashSaleProducts)
+  console.log('🏠 HOME - First flash sale product ID:', flashSaleProducts[0]?.id)
   return (
     <div className="flex flex-col bg-[#F4F1DE]">
       <div className="flex">
@@ -155,10 +179,10 @@ const Home = () => {
                 </div>
               </div>
               <div className="flex space-x-2">
-                <button onClick={prevProducts} className="w-10 h-10 rounded-full bg-[#F5F5F5] flex items-center justify-center cursor-pointer" disabled={currentProductIndex === 0}>
+                <button onClick={prevProducts} className="w-10 h-10 rounded-full bg-[#F5F5F5] flex items-center justify-center cursor-pointer" disabled={currentProductIndex >= flashSaleProducts.length - 4}>
                   <FaArrowLeft size={20} className="text-[#7A6E6E]" />
                 </button>
-                <button onClick={nextProducts} className="w-10 h-10 rounded-full bg-[#F5F5F5] flex items-center justify-center cursor-pointer" disabled={currentProductIndex >= products.length - 4}>
+                <button onClick={nextProducts} className="w-10 h-10 rounded-full bg-[#F5F5F5] flex items-center justify-center cursor-pointer" disabled={currentProductIndex >= flashSaleProducts.length - 4}>
                   <FaArrowRight size={20} className="text-[#7A6E6E]" />
                 </button>
               </div>
@@ -179,7 +203,7 @@ const Home = () => {
               ))
             ) : (
               flashSaleProducts.slice(currentProductIndex, currentProductIndex + 4).map(product => (
-                <ProductCard key={product.id} Discount={product.Discount} ImageSrc={product.ImageSrc} ProductName={product.ProductName} Price={product.Price} FormerPrice={product.FormerPrice} ShowView={product.ShowView} ShowWishlist={product.ShowWishList} Rating={product.Rating} ReviewCount={product.ReviewCount} onQuickView={handleQuickView}/>
+                <ProductCard  key={product.id}  {...product} onQuickView={handleQuickView}/> 
               ))
             )}
           </div>

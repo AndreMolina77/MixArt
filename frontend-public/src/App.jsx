@@ -7,7 +7,6 @@ import Footer from './components/Main/Footer.jsx'
 import AnnouncementBar from './components/Main/AnnouncementBar.jsx'
 import Loader from './components/Misc/Loader.jsx'
 import { AccountProvider } from './context/AccountContext.jsx'
-// NUEVO: Importar AuthProvider y ProtectedRoute
 import { AuthProvider } from './context/AuthContext.jsx'
 import ProtectedRoute from './components/Auth/ProtectedRoute.jsx'
 
@@ -19,10 +18,11 @@ const FAQ = lazy(() => import('./pages/FAQ.jsx'));
 const Signup = lazy(() => import('./pages/SignUp.jsx'));
 const Login = lazy(() => import('./pages/Login.jsx'));
 const Contact = lazy(() => import('./pages/Contact.jsx'));
+const SearchPage = lazy(() => import('./pages/SearchPage.jsx'));
 const About = lazy(() => import('./pages/About.jsx'));
 const MyAccount = lazy(() => import('./pages/MyAccount.jsx'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage.jsx'));
-const ProductDetailPage = lazy(() => import('./pages/productview.jsx'));
+const ProductDetailPage = lazy(() => import('./pages/ProductView.jsx'));
 const Cart = lazy(() => import('./pages/Cart.jsx'));
 const Checkout = lazy(() => import('./pages/Checkout.jsx'));
 const Wishlist = lazy(() => import('./pages/WishList.jsx'));
@@ -82,6 +82,7 @@ const App = () => {
                 <Route path="/login" element={<Login/>}/>
                 <Route path="/contactanos" element={<Contact/>}/>
                 <Route path="/acerca-de" element={<About/>}/>
+                <Route path="/buscar" element={<SearchPage/>}/>
                 {/* MyAccount protegido */}
                 <Route path="/mi-cuenta" element={
                   <ProtectedRoute>
@@ -99,7 +100,7 @@ const App = () => {
                   </ProtectedRoute>
                 }/>
                 {/* Rutas mejoradas para productos */}
-                <Route path="/producto/:productId" element={<ProductDetailPage/>}/>
+                <Route path="/producto/:id" element={<ProductDetailPage/>}/>
                 {/* Nuevas rutas para recuperación de contraseña */}
                 <Route path="/recuperar-contrasena" element={<ForgotPassword />} />
                 <Route path="/verificar-codigo" element={<VerifyCode />} />

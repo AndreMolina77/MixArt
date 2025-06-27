@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
-import { useAuth } from '../../hooks/useAuth.js'
+import  useAuth  from '../../hooks/useAuth.js'
 import { toast } from 'react-hot-toast'
 import Loader from '../Misc/Loader'
 
@@ -29,9 +29,9 @@ const ProtectedRoute = ({ children, requireAuth = true }) => {
     )
   }
 
-  // Si requiere autenticación y no está autenticado, redirigir al login
+  // Si requiere autenticación y no está autenticado, redirigir al registro
   if (requireAuth && !isAuthenticated) {
-    return <Navigate to="/login" state={{ from: location }} replace />
+    return <Navigate to="/signup" state={{ from: location }} replace />
   }
 
   // Si está autenticado o no requiere autenticación, mostrar el contenido

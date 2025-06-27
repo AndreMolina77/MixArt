@@ -1,9 +1,11 @@
-// src/pages/SearchPage.jsx
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { FaSearch, FaTimes, FaFilter, FaStar, FaShoppingCart, FaHeart } from 'react-icons/fa';
 import ProductCard from '../components/Cards/ProductCard.jsx';
 import Button from '../components/Buttons/Button.jsx';
+import usePublicDataArticles from '../hooks/useDataArticles.jsx'
+import usePublicDataArtPieces from '../hooks/useDataArtPieces.jsx'
+import usePublicDataCategories from '../hooks/useDataCategories.jsx'
 
 const SearchPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -19,30 +21,19 @@ const SearchPage = () => {
   });
   const [showFilters, setShowFilters] = useState(false);
   
-  // Simulación de datos de productos (será reemplazado por API)
-  const sampleProducts = [
-    { id: 1, ProductName: "Paisaje Montañoso", Price: "$370", FormerPrice: "$420", Discount: "30%", ShowView: true, ShowWishList: true, Rating: 5, ReviewCount: 99 },
-    { id: 2, ProductName: "Lluvia Matutina", Price: "$500", FormerPrice: "$600", Discount: "25%", ShowView: true, ShowWishList: true, Rating: 4.5, ReviewCount: 99 },
-    { id: 3, ProductName: "En la Lluvia II", Price: "$5,000", FormerPrice: "$5,990", Discount: "40%", ShowView: true, ShowWishList: true, Rating: 5, ReviewCount: 88 },
-    { id: 4, ProductName: "Flores de Verano", Price: "$1,560", FormerPrice: "$1,800", Discount: "25%", ShowView: true, ShowWishList: true, Rating: 4.8, ReviewCount: 75 },
-    { id: 5, ProductName: "Charlotte Pintando", Price: "$3,600", FormerPrice: "$4,075", Discount: "35%", ShowView: true, ShowWishList: true, Rating: 5, ReviewCount: 75 },
-    { id: 6, ProductName: "Océano (edición limitada)", Price: "$5,010", FormerPrice: "$5,300", ShowView: true, ShowWishList: true, Rating: 4.6, ReviewCount: 65 },
-    { id: 7, ProductName: "Sol LeWitt", Price: "$53,000", FormerPrice: "$63,600", ShowView: true, ShowWishList: true, Rating: 5, ReviewCount: 65 },
-    { id: 8, ProductName: "Tommy Simpson", Price: "$1,960", FormerPrice: "$2,500", ShowView: true, ShowWishList: true, Rating: 5, ReviewCount: 65 }
-  ];
-  
+  const { articles } = usePublicDataArticles()
+  const { artPieces } = usePublicDataArtPieces()
+  const { categories } = usePublicDataCategories()
   const [searchResults, setSearchResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Combinar productos
+  const allProducts = [...(articles || []), ...(artPieces || [])]
   
-  // Categorías para los filtros
-  const categories = [
+  // Categorias para los filtros
+  const filterCategories = [
     { value: '', label: 'Todas las categorías' },
-    { value: 'pinturas', label: 'Pinturas' },
-    { value: 'esculturas', label: 'Esculturas' },
-    { value: 'fotografia', label: 'Fotografía' },
-    { value: 'dibujos', label: 'Dibujos' },
-    { value: 'impresos', label: 'Impresos' },
-    { value: 'decoraciones', label: 'Decoraciones' }
+    ...(categories?.map(cat => ({ value: cat.categoryName, label: cat.categoryName })) || [])
   ];
   
   // Precios para los filtros
@@ -71,36 +62,96 @@ const SearchPage = () => {
     { value: 'rating', label: 'Mejor calificados' },
     { value: 'newest', label: 'Más recientes' }
   ];
-
-  // Manejar la búsqueda cuando cambian los parámetros
+  // Funcion de transformación (igual que en las otras páginas)
+  const transformProductData = (item, index) => {
+    const isArticle = item.hasOwnProperty('stock')
+    return {
+      id: item._id || index,
+      ProductName: isArticle ? item.articleName : item.artPieceName,
+      Price: `$${item.price}`,
+      FormerPrice: item.discount > 0 ? `$${(item.price / (1 - item.discount/100)).toFixed(0)}` : null,
+      ImageSrc: item.image || '/placeholder-image.jpg',
+      Discount: item.discount > 0 ? `${item.discount}%` : null,
+      ShowView: true,
+      ShowWishList: true,
+      ShowTrash: true, // Para wishlist
+      Rating: Math.floor(Math.random() * 2) + 4,
+      ReviewCount: Math.floor(Math.random() * 50) + 50,
+      originalData: item,
+      isArticle
+    }
+  }
+  // Manejar la busqueda cuando cambian los parametros
   useEffect(() => {
     const term = searchParams.get('q') || '';
     setSearchTerm(term);
     
-    // Aquí se conectaría con la API en producción
     const performSearch = () => {
       setIsLoading(true);
       
-      // Simular carga de API
       setTimeout(() => {
+        let results = allProducts.map(transformProductData)
+        
+        // Filtrar por término de búsqueda
         if (term) {
-          // Filtrar productos que coincidan con el término de búsqueda
-          const results = sampleProducts.filter(product => 
-            product.ProductName.toLowerCase().includes(term.toLowerCase())
-          );
-          setSearchResults(results);
-        } else {
-          // Si no hay término, mostrar todos los productos
-          setSearchResults(sampleProducts);
+          results = results.filter(product => 
+            product.ProductName.toLowerCase().includes(term.toLowerCase()) ||
+            product.categoryName.toLowerCase().includes(term.toLowerCase())
+          )
         }
+        
+        // Aplicar filtros adicionales
+        if (filters.category) {
+          results = results.filter(product => 
+            product.categoryName === filters.category
+          )
+        }
+        
+        if (filters.priceRange) {
+          const [min, max] = filters.priceRange.split('-').map(Number)
+          results = results.filter(product => {
+            const price = product.originalData.price
+            if (filters.priceRange === '10000+') return price >= 10000
+            return price >= min && price <= max
+          })
+        }
+        
+        if (filters.rating) {
+          const minRating = parseInt(filters.rating)
+          results = results.filter(product => product.Rating >= minRating)
+        }
+        
+        // Aplicar ordenamiento
+        switch (filters.sort) {
+          case 'price-asc':
+            results.sort((a, b) => a.originalData.price - b.originalData.price)
+            break
+          case 'price-desc':
+            results.sort((a, b) => b.originalData.price - a.originalData.price)
+            break
+          case 'rating':
+            results.sort((a, b) => b.Rating - a.Rating)
+            break
+          case 'newest':
+            results.sort((a, b) => new Date(b.originalData.createdAt) - new Date(a.originalData.createdAt))
+            break
+        }
+        
+        // Filtrar por disponibilidad
+        if (filters.availability === 'in-stock') {
+          results = results.filter(product => 
+            !product.isArticle || product.originalData.stock > 0
+          )
+        }
+        
+        setSearchResults(results);
         setIsLoading(false);
       }, 800);
     };
-    
     performSearch();
   }, [searchParams]);
 
-  // Manejar el envío del formulario de búsqueda
+  // Manejar el envio del formulario de busqueda
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     if (searchTerm.trim()) {
@@ -112,7 +163,7 @@ const SearchPage = () => {
 
   // Aplicar filtros
   const applyFilters = () => {
-    // Aquí se enviarían los filtros a la API
+    // Aquí se enviarian los filtros a la API
     setSearchParams({ 
       q: searchTerm,
       ...filters 
@@ -218,7 +269,7 @@ const SearchPage = () => {
                   onChange={(e) => setFilters({...filters, category: e.target.value})}
                   className="w-full bg-white border border-[#7A6E6E]/30 rounded-lg px-4 py-2 text-[#7A6E6E] font-[Alexandria]"
                 >
-                  {categories.map(category => (
+                  {filterCategories.map(category => (
                     <option key={category.value} value={category.value}>{category.label}</option>
                   ))}
                 </select>

@@ -1,32 +1,76 @@
+import { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import Button from '../components/Buttons/Button.jsx';
 import Breadcrumbs from '../components/Handlers/BreadCrumbs.jsx';
-import InTheRain from '../assets/itrii.png';
-import SmallLifeForms from '../assets/slfiii.png';
 import { FaCheckCircle, FaTruck, FaEnvelope } from 'react-icons/fa';
 
 const OrderConfirmation = () => {
-  const orderDetails = {
-    orderId: "ORD-735829",
-    date: "25 de junio, 2025",
-    total: "$5,860",
-    paymentMethod: "Contra reembolso",
-    shippingMethod: "Envío estándar (3-5 días hábiles)",
-    items: [
-      { id: 1, name: "In the rain II", price: "$5,000", image: InTheRain, quantity: 1 },
-      { id: 2, name: "Small life forms III", price: "$370", image: SmallLifeForms, quantity: 2 }
-    ],
-    shippingAddress: {
-      name: "María García",
-      company: "Arte Moderno S.A.",
-      address: "Calle del Arte, 123",
-      apartment: "Piso 4, Puerta B",
-      city: "Barcelona",
-      phone: "+34 600 123 456",
-      email: "maria.garcia@example.com"
-    }
-  };
+  const [orderDetails, setOrderDetails] = useState(null)
+  const [loading, setLoading] = useState(true)
 
+  useEffect(() => {
+    // Obtener datos de la última orden del localStorage
+    const lastOrderData = localStorage.getItem('lastOrder')
+    
+    if (lastOrderData) {
+      const orderData = JSON.parse(lastOrderData)
+      setOrderDetails({
+        orderId: orderData.orderId,
+        date: new Date().toLocaleDateString('es-ES', { 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric' 
+        }),
+        total: `$${orderData.total.toFixed(2)}`,
+        paymentMethod: orderData.paymentMethod === 'cash' ? 'Contra reembolso' : 'Tarjeta de crédito/débito',
+        shippingMethod: orderData.total >= 140 ? "Envío gratis (3-5 días hábiles)" : "Envío estándar (3-5 días hábiles)",
+        items: orderData.orderData.items.map(item => ({
+          id: item.itemId,
+          name: item.name || 'Producto',
+          price: `$${item.subtotal.toFixed(2)}`,
+          image: item.image || '/placeholder-image.jpg',
+          quantity: item.quantity
+        })),
+        shippingAddress: {
+          name: `${orderData.billingInfo.firstName}`,
+          company: orderData.billingInfo.company || '',
+          address: orderData.billingInfo.address,
+          apartment: orderData.billingInfo.apartment || '',
+          city: orderData.billingInfo.city,
+          phone: orderData.billingInfo.phone,
+          email: orderData.billingInfo.email
+        }
+      })
+      // Limpiar datos de localStorage después de usar
+      localStorage.removeItem('lastOrder')
+    } else {
+      // Si no hay datos, redirigir al home
+      navigate('/')
+    }
+    
+    setLoading(false)
+  }, [navigate])
+
+  if (loading) {
+    return (
+      <div className="bg-[#F4F1DE] min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-[#E07A5F] mx-auto mb-4"></div>
+          <p className="text-[#7A6E6E] font-[Alexandria]">Cargando confirmación...</p>
+        </div>
+      </div>
+    )
+  }
+  if (!orderDetails) {
+    return (
+      <div className="bg-[#F4F1DE] min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl text-[#7A6E6E] mb-4">No se encontró información de la orden</h2>
+          <Button Text="Volver al inicio" to="/" />
+        </div>
+      </div>
+    )
+  }
   return (
     <div className="bg-[#F4F1DE] min-h-screen px-4 sm:px-10 py-8 font-[Alexandria]">
       <div className="max-w-4xl mx-auto">

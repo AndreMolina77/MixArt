@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import PasswordInput from '../components/Inputs/PasswordInput.jsx';
 import Button from '../components/Buttons/Button.jsx';
 import cartImage from '../assets/cart-image.jpeg';
-import { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 
 const ResetPassword = () => {

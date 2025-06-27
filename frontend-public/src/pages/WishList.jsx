@@ -1,49 +1,98 @@
+import { useWishlist } from '../hooks/useWishlist.js'
+import { useCart } from '../hooks/useCart.js'
 import ProductCard from '../components/Cards/ProductCard.jsx'
 import TransparentButton from '../components/transparentbutton.jsx'
-import SmallLifeForms from '../assets/slfiii.png'
-import MorningRain from '../assets/mriii.png'
-import AfterRain from '../assets/ariii.png'
-import Larkspur from '../assets/larkspur.png'
-import Charlotte from '../assets/charlotte.png'
-import BlackBird from '../assets/blackbird.png'
-import Ocean from '../assets/ocean.png'
-import Mudflat from '../assets/mudflat.png'
+import usePublicDataArticles from '../hooks/useDataArticles.jsx'
+import usePublicDataArtPieces from '../hooks/useDataArtPieces.jsx'
+
 
 const Wishlist = () => {
-  const wishlistProducts = [
-    { id: 1, ProductName: "Small Life forms III", Price: "$370", FormerPrice: "$420", ImageSrc: SmallLifeForms, Discount: "30%", ShowTrash: true },
-    { id: 2, ProductName: "Morning Rain III", Price: "$500", ImageSrc: MorningRain, ShowTrash: true },
-    { id: 3, ProductName: "After Rain III", Price: "$1,120", ImageSrc: AfterRain,  ShowTrash: true },
-    { id: 4, ProductName: "Larkspur", Price: "$1,560", ImageSrc: Larkspur,  ShowTrash: true }
-  ]
-  const recommendedProducts = [
-    { id: 5, ProductName: "Charlotte Sometimes Hums as She Paints Painting", Price: "$3,600", FormerPrice: "$4,075", ImageSrc: Charlotte, Discount: "35%", ShowView: true, Rating: 5, ReviewCount: 65 },
-    { id: 6, ProductName: "Black Bird #2", Price: "$5,010", ImageSrc: BlackBird, ShowView: true, Rating: 5, ReviewCount: 65 },
-    { id: 7, ProductName: "Ocean (limited edition)", Price: "$4,300", ImageSrc: Ocean, Discount: "40%", IsNew: true, ShowView: true, Rating: 4.5, ReviewCount: 65 },
-    { id: 8, ProductName: "Pintura Mudflat", Price: "$490", ImageSrc: Mudflat, ShowView: true, Rating: 5, ReviewCount: 65 }
-  ]
+  const { wishlistItems, clearWishlist } = useWishlist()
+  const { addToCart } = useCart()
+  const { articles } = usePublicDataArticles()
+  const { artPieces } = usePublicDataArtPieces()
+
+  // Funcion de transformacion (igual que en las otras paginas)
+  const allProducts = [...(articles || []), ...(artPieces || [])]
+  const recommendedProducts = allProducts.slice(0, 4).map((item, index) => {
+    const isArticle = item.hasOwnProperty('stock')
+    return {
+      id: item._id || index,
+      ProductName: isArticle ? item.articleName : item.artPieceName,
+      Price: `$${item.price}`,
+      FormerPrice: item.discount > 0 ? `$${(item.price / (1 - item.discount/100)).toFixed(0)}` : null,
+      ImageSrc: item.image || '/placeholder-image.jpg',
+      Discount: item.discount > 0 ? `${item.discount}%` : null,
+      ShowView: true,
+      ShowWishList: true,
+      Rating: Math.floor(Math.random() * 2) + 4,
+      ReviewCount: Math.floor(Math.random() * 50) + 50,
+      IsNew: Math.random() > 0.8,
+      originalData: item,
+      isArticle
+    }
+  })
+  
+  const moveAllToCart = () => {
+    wishlistItems.forEach(item => {
+      addToCart({
+        id: item.id,
+        ProductName: item.name,
+        Price: `$${item.price}`,
+        ImageSrc: item.image,
+        originalData: item.originalData,
+        isArticle: item.isArticle
+      })
+    })
+    clearWishlist()
+    alert('Todos los productos han sido movidos al carrito')
+  }
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl font-[Alexandria]">
       <div className="flex justify-between items-center mb-8">
-        <h2 className="text-lg font-normal text-[#7A6E6E]">Lista de deseos (4)</h2>
+        <h2 className="text-lg font-normal text-[#7A6E6E]">Lista de deseos ({wishlistItems.length})</h2>
         <div className="w-64">
-          <TransparentButton Text="Mover todo al carrito" />
+          {wishlistItems.length > 0 ? (
+            <Button Text="Mover todo al carrito" onClick={moveAllToCart} />
+          ) : (
+            <TransparentButton Text="Lista vacía" />
+          )}
         </div>
       </div>
+      {/* Productos en wishlist */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-        {wishlistProducts.map(product => (
-          <div key={product.id} className="flex justify-center">
-            <ProductCard Discount={product.Discount} ImageSrc={product.ImageSrc} ProductName={product.ProductName} Price={product.Price} FormerPrice={product.FormerPrice} ShowTrash={product.ShowTrash}/>
+        {wishlistItems.length > 0 ? (
+          wishlistItems.map(product => (
+            <div key={product.id} className="flex justify-center">
+              <ProductCard 
+                id={product.id}
+                ProductName={product.name}
+                Price={`$${product.price}`}
+                FormerPrice={product.discount > 0 ? `$${(product.price / (1 - product.discount/100)).toFixed(0)}` : null}
+                ImageSrc={product.image}
+                Discount={product.discount > 0 ? `${product.discount}%` : null}
+                ShowTrash={true}
+                originalData={product.originalData}
+                isArticle={product.isArticle}
+              />
+            </div>
+          ))
+        ) : (
+          <div className="col-span-4 text-center py-12">
+            <h3 className="text-xl text-[#7A6E6E] mb-4">Tu lista de deseos está vacía</h3>
+            <p className="text-[#7A6E6E] mb-6">Explora nuestros productos y agrega tus favoritos</p>
+            <Button Text="Explorar productos" to="/" />
           </div>
-        ))}
+        )}
       </div>
+      {/* Productos recomendados */}
       <div className="flex justify-between items-center mb-8">
         <div className="flex items-center">
           <div className="bg-[#E07A5F] w-6 h-12 rounded-lg mr-2"></div>
           <h2 className="text-lg font-normal text-[#7A6E6E]">Sólo para ti</h2>
         </div>
         <div className="w-64">
-          <TransparentButton Text="Ver todo" />
+          <TransparentButton Text="Ver todo" to="/catalogo" />
         </div>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

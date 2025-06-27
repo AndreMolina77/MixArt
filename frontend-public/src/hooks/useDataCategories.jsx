@@ -24,7 +24,7 @@ const usePublicDataCategories = () => {
     fetchPublicCategories();
   }, []);
 
-  return { articles, loading, error, refetch: fetchPublicArticles };
+  return { categories, loading, error, refetch: fetchPublicCategories };
 };
 
 export default usePublicDataCategories;

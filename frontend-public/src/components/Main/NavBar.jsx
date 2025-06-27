@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { FaHeart, FaShoppingCart, FaUser, FaSearch, FaTimes, FaStar, FaSignOutAlt, FaBars } from 'react-icons/fa'
+import { useCart } from '../hooks/useCart.js'
+import { useWishlist } from '../hooks/useWishlist.js'
 
 const useClickOutside = (handler) => {
   const ref = useRef(null)
@@ -24,6 +26,10 @@ const Navbar = () => {
   const dropdownRef = useClickOutside(() => setActiveDropdown(null))
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
+  const { getCartItemsCount } = useCart()
+  const { wishlistItems } = useWishlist()
+  const cartCount = getCartItemsCount()
+  const wishlistCount = wishlistItems.length
 
   const navItems = [
     { label: 'Inicio', path: '/' },
@@ -83,7 +89,7 @@ const Navbar = () => {
                 <div className="absolute right-0 top-full mt-2 w-48 bg-[#F4F1DE] shadow-xl rounded-lg py-2 z-50 font-[Alexandria]">
                   <NavLink  to="/lista-deseos" className="flex items-center px-4 py-2 hover:bg-[#CEC79D] cursor-pointer" onClick={() => setActiveDropdown(null)}>
                     <FaHeart className="mr-2 text-[#E07A5F]"/>
-                    <span className="text-sm">Lista de deseos</span>
+                    <span className="text-sm">Lista de deseos ({wishlistCount})</span>
                   </NavLink>
                 </div>
               )}
@@ -94,7 +100,7 @@ const Navbar = () => {
                 <div className="absolute right-0 top-full mt-2 w-48 bg-[#F4F1DE] shadow-xl rounded-lg py-2 z-50 font-[Alexandria]">
                   <NavLink to="/carrito" className="flex items-center px-4 py-2 hover:bg-[#CEC79D] cursor-pointer" onClick={() => setActiveDropdown(null)}>
                     <FaShoppingCart className="mr-2 text-[#E07A5F]"/>
-                    <span className="text-sm">Carrito (0)</span>
+                    <span className="text-sm">Carrito ({cartCount})</span>
                   </NavLink>
                 </div>
               )}
@@ -129,7 +135,7 @@ const Navbar = () => {
                 <div className="absolute left-0 mt-2 w-48 bg-[#F4F1DE] shadow-xl rounded-lg py-2 z-50 font-[Alexandria]">
                   <NavLink to="/lista-deseos" className="flex items-center px-4 py-2 hover:bg-[#CEC79D] cursor-pointer" onClick={() => setActiveDropdown(null)}>
                     <FaHeart className="mr-2 text-[#E07A5F]"/>
-                    <span className="text-sm">Lista de deseos</span>
+                    <span className="text-sm">Lista de deseos ({wishlistCount})</span>
                   </NavLink>
                 </div>
               )}
@@ -140,7 +146,7 @@ const Navbar = () => {
                 <div className="absolute left-0 mt-2 w-48 bg-[#F4F1DE] shadow-xl rounded-lg py-2 z-50 font-[Alexandria]">
                   <NavLink to="/carrito" className="flex items-center px-4 py-2 hover:bg-[#CEC79D] cursor-pointer" onClick={() => setActiveDropdown(null)}>
                     <FaShoppingCart className="mr-2 text-[#E07A5F]"/>
-                    <span className="text-sm">Carrito (0)</span>
+                    <span className="text-sm">Carrito ({cartCount})</span>
                   </NavLink>
                 </div>
               )}

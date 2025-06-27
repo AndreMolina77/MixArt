@@ -39,3 +39,4 @@ const QuantityInput = ({ value = 1, onChange, min = 1, max = 99 }) => {
   )
 }
 export default QuantityInput
+ 

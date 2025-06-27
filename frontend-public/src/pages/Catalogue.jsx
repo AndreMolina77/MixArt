@@ -1,17 +1,79 @@
-// src/pages/CatalogPage.jsx
 import { useState } from 'react';
 import { FaArrowLeft, FaArrowRight, FaFilter, FaSort } from 'react-icons/fa';
-import Button from '../components/Buttons/Button.jsx';
+import usePublicDataArticles from '../hooks/useDataArticles.jsx'
+import usePublicDataArtPieces from '../hooks/useDataArtPieces.jsx'
+import usePublicDataCategories from '../hooks/useDataCategories.jsx'
+import ProductCard from '../components/Cards/ProductCard.jsx'
+import QuickViewModal from '../components/Modals/QuickViewModal.jsx'
 
 const CatalogPage = () => {
   const [activeFilter, setActiveFilter] = useState('Todos');
   const [sortOption, setSortOption] = useState('Relevancia');
   const [currentPage, setCurrentPage] = useState(1);
+  const { articles, loading: articlesLoading } = usePublicDataArticles()
+  const { artPieces, loading: artPiecesLoading } = usePublicDataArtPieces()
+  const { categories } = usePublicDataCategories()
+  // Estados para modal y filtros
+  const [quickViewProduct, setQuickViewProduct] = useState(null)
+  const [filteredProducts, setFilteredProducts] = useState([])
+  // Combinar todos los productos
+  const allProducts = [...(articles || []), ...(artPieces || [])]
+  const isLoading = articlesLoading || artPiecesLoading
   
-  const filters = ['Todos', 'Pinturas', 'Esculturas', 'Fotografía', 'Dibujos', 'Impresos'];
+  const filters = ['Todos', ...(categories?.map(cat => cat.categoryName) || [])]
   const sortOptions = ['Relevancia', 'Más vendidos', 'Precio: menor a mayor', 'Precio: mayor a menor', 'Más recientes'];
-  const totalPages = 5;
+  const totalPages = Math.ceil(filteredProducts.length / 12)
 
+  // Función de transformación
+  const transformProductData = (item, index) => {
+    const isArticle = item.hasOwnProperty('stock')
+    return {
+      id: item._id || index,
+      ProductName: isArticle ? item.articleName : item.artPieceName,
+      Price: `$${item.price}`,
+      FormerPrice: item.discount > 0 ? `$${(item.price / (1 - item.discount/100)).toFixed(0)}` : null,
+      ImageSrc: item.image || '/placeholder-image.jpg',
+      Discount: item.discount > 0 ? `${item.discount}%` : null,
+      ShowView: true,
+      ShowWishList: true,
+      Rating: Math.floor(Math.random() * 2) + 4,
+      ReviewCount: Math.floor(Math.random() * 50) + 50,
+      IsNew: Math.random() > 0.8,
+      originalData: item,
+      isArticle
+    }
+  }
+
+  // Handlers
+  const handleQuickView = (product) => setQuickViewProduct(product)
+  const closeQuickView = () => setQuickViewProduct(null)
+  useEffect(() => {
+    let filtered = allProducts.map(transformProductData)
+    
+    // Aplicar filtro de categoría
+    if (activeFilter !== 'Todos') {
+      filtered = filtered.filter(product => {
+        const categoryName = product.originalData.categoryId?.categoryName || product.originalData.categoryId?.name
+        return categoryName === activeFilter
+      })
+    }
+    
+    // Aplicar ordenamiento
+    switch (sortOption) {
+      case 'Precio: menor a mayor':
+        filtered.sort((a, b) => a.originalData.price - b.originalData.price)
+        break
+      case 'Precio: mayor a menor':
+        filtered.sort((a, b) => b.originalData.price - a.originalData.price)
+        break
+      case 'Más recientes':
+        filtered.sort((a, b) => new Date(b.originalData.createdAt) - new Date(a.originalData.createdAt))
+        break
+      default:
+        break
+    }
+    setFilteredProducts(filtered)
+  }, [allProducts, activeFilter, sortOption])
   return (
     <div className="flex flex-col bg-[#F4F1DE] min-h-screen">
       {/* Encabezado de la página */}
@@ -71,26 +133,44 @@ const CatalogPage = () => {
       {/* Área de productos */}
       <div className="w-full px-16 pb-12">
         <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            {/* Espacio reservado para productos */}
+          {isLoading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+              {Array.from({ length: 12 }).map((_, index) => (
+                <div key={index} className="bg-white rounded-lg shadow-sm animate-pulse">
+                  <div className="h-[180px] bg-gray-200 rounded-t-lg"></div>
+                  <div className="p-4">
+                    <div className="h-4 bg-gray-200 rounded mb-2"></div>
+                    <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                    <div className="h-6 bg-gray-200 rounded w-1/2"></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : filteredProducts.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+              {filteredProducts.slice((currentPage - 1) * 12, currentPage * 12).map(product => (
+                <ProductCard 
+                  key={product.id}
+                  {...product}
+                  onQuickView={handleQuickView}
+                />
+              ))}
+            </div>
+          ) : (
             <div className="col-span-full py-20 flex flex-col items-center justify-center bg-white rounded-xl shadow-sm">
               <div className="text-center max-w-md">
                 <div className="w-16 h-16 bg-[#F4F1DE] border-2 border-dashed border-[#7A6E6E] rounded-full flex items-center justify-center mx-auto mb-6">
                   <FaFilter className="text-[#7A6E6E] text-xl" />
                 </div>
                 <h3 className="text-2xl font-medium text-[#7A6E6E] font-[Alexandria] mb-4">
-                  Tus productos aparecerán aquí
+                  No se encontraron productos
                 </h3>
                 <p className="text-[#7A6E6E] font-[Alexandria] mb-6">
-                  Cuando tengas productos en tu catálogo, se mostrarán en esta sección. 
-                  Puedes usar los filtros arriba para organizar tu colección.
+                  Intenta ajustar los filtros para encontrar más productos.
                 </p>
-                <div className="max-w-xs">
-                  <Button Text="Añadir productos" customClass="bg-[#81B29A] border-[#81B29A] hover:text-[#81B29A]" />
-                </div>
               </div>
             </div>
-          </div>
+          )}
           
           {/* Paginación */}
           <div className="flex justify-center items-center mt-12 gap-4">
@@ -134,6 +214,14 @@ const CatalogPage = () => {
           </div>
         </div>
       </div>
+      {/* Modal */}
+      {quickViewProduct && (
+        <QuickViewModal 
+          product={quickViewProduct} 
+          onClose={closeQuickView} 
+          onAddToWishlist={(product) => console.log('Added to wishlist:', product)}
+        />
+      )}
     </div>
   );
 };

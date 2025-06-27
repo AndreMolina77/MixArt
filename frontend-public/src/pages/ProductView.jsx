@@ -1,66 +1,47 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useParams } from 'react-router-dom'
 import { FiHeart, FiMinus, FiPlus, FiTruck, FiRefreshCw, FiCheck, FiStar, FiUser } from 'react-icons/fi'
 import Breadcrumbs from '../components/Handlers/BreadCrumbs.jsx'
 import Button from '../components/Buttons/Button.jsx'
-import SmallLifeForms from '../assets/slfiii.png'
-import Ocean from '../assets/ocean.png'
-import IntheRain from '../assets/itrii.png'
-import Charlotte from '../assets/charlotte.png'
-import Image1 from '../assets/missing-part-1.png'
-import Image2 from '../assets/missing-part-2.png'
 import ProductCard from '../components/Cards/ProductCard.jsx'
+import usePublicDataArticles from '../hooks/useDataArticles.jsx'
+import usePublicDataArtPieces from '../hooks/useDataArtPieces.jsx'
+import { useCart } from '../hooks/useCart.js'
 
 const ProductDetailPage = () => {
   const [quantity, setQuantity] = useState(2)
   const [wishlisted, setWishlisted] = useState(false)
-  const [selectedImage, setSelectedImage] = useState(Image1)
   const [activeTab, setActiveTab] = useState('description');
   const [rating, setRating] = useState(0);
   const [reviewText, setReviewText] = useState('');
-  const [reviews, setReviews] = useState([
-    {
-      id: 1,
-      name: "Ana Pérez",
-      rating: 4,
-      comment: "Me encanta la calidad de la impresión. El envío fue rápido y el embalaje muy seguro.",
-      date: "2024-05-10"
-    },
-    {
-      id: 2,
-      name: "Carlos Ruiz",
-      rating: 5,
-      comment: "Increíble obra de arte, vale cada centavo. La atención al detalle es asombrosa.",
-      date: "2024-04-22"
-    },
-    {
-      id: 3,
-      name: "Marta López",
-      rating: 5,
-      comment: "Compré esta pieza como regalo y quedaron encantados. La calidad es excelente.",
-      date: "2024-04-15"
-    },
-    {
-      id: 4,
-      name: "Javier González",
-      rating: 3,
-      comment: "Buena calidad, pero el tiempo de entrega fue un poco largo. En general estoy satisfecho.",
-      date: "2024-03-28"
-    },
-    {
-      id: 5,
-      name: "Lucía Fernández",
-      rating: 5,
-      comment: "La fotografía llegó perfectamente embalada y en el tiempo estimado. La calidad superó mis expectativas. Definitivamente recomendaría esta tienda a otros coleccionistas de arte.",
-      date: "2024-03-15"
-    },
-    {
-      id: 6,
-      name: "Roberto Jiménez",
-      rating: 4,
-      comment: "La impresión tiene una calidad excepcional y los colores son muy vibrantes. Me hubiera gustado que el certificado de autenticidad viniera con más detalles sobre el proceso de creación.",
-      date: "2024-02-20"
+  const { articles } = usePublicDataArticles()
+  const { artPieces } = usePublicDataArtPieces()
+  const { id } = useParams() // Para obtener el ID de la URL
+  const [product, setProduct] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [reviews, setReviews] = useState([])
+  const { addToCart } = useCart()
+
+  // Función de transformación (igual que en las otras páginas)
+  const transformProductData = (item, index) => {
+    const isArticle = item.hasOwnProperty('stock')
+    return {
+      id: item._id || index,
+      ProductName: isArticle ? item.articleName : item.artPieceName,
+      Price: `$${item.price}`,
+      FormerPrice: item.discount > 0 ? `$${(item.price / (1 - item.discount/100)).toFixed(0)}` : null,
+      ImageSrc: item.image || '/placeholder-image.jpg',
+      Discount: item.discount > 0 ? `${item.discount}%` : null,
+      ShowView: true,
+      ShowWishList: true,
+      ShowTrash: true, // Para wishlist
+      Rating: Math.floor(Math.random() * 2) + 4,
+      ReviewCount: Math.floor(Math.random() * 50) + 50,
+      originalData: item,
+      isArticle
     }
-  ]);
+  }
+  const relatedProducts = [...(articles || []), ...(artPieces || [])].slice(0, 4).map(transformProductData)
   const handleWishlistClick = () => {
     setWishlisted(true);
     setTimeout(() => setWishlisted(false), 3000);
@@ -73,17 +54,65 @@ const ProductDetailPage = () => {
     if (rating === 0 || !reviewText.trim()) return;
     
     const newReview = {
-      id: reviews.length + 1,
+      id: Date.now(), // Usar timestamp como ID único
       name: "Tú",
       rating,
       comment: reviewText,
       date: new Date().toISOString().split('T')[0]
     };
+    const updatedReviews = [newReview, ...reviews];
+    setReviews(updatedReviews);
+    // Guardar en localStorage específico para este producto
+    localStorage.setItem(`reviews_${id}`, JSON.stringify(updatedReviews));
     
-    setReviews([newReview, ...reviews]);
     setRating(0);
     setReviewText('');
   };
+  // Cargar producto por ID
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        setLoading(true)
+        // Intentar primero como artículo
+        let response = await fetch(`http://localhost:4000/api/public/articles/`)
+        let data = await response.json()
+        let foundProduct = data.find(item => item._id === id)
+        let isArticle = true
+        
+        // Si no se encuentra, buscar en artPieces
+        if (!foundProduct) {
+          response = await fetch(`http://localhost:4000/api/public/artpieces/`)
+          data = await response.json()
+          foundProduct = data.find(item => item._id === id)
+          isArticle = false
+        }
+        
+        if (foundProduct) {
+          setProduct({
+            ...foundProduct,
+            isArticle,
+            name: isArticle ? foundProduct.articleName : foundProduct.artPieceName
+          })
+        }
+      } catch (error) {
+        console.error('Error fetching product:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    
+    if (id) {
+      fetchProduct()
+    }
+  }, [id])
+
+  // Cargar reviews del localStorage
+  useEffect(() => {
+    if (product) {
+      const savedReviews = JSON.parse(localStorage.getItem(`reviews_${id}`) || '[]')
+      setReviews(savedReviews)
+    }
+  }, [product, id])
   // Calcular promedio de calificaciones
   const averageRating = reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length;
   // Calcular distribución de estrellas
@@ -100,18 +129,24 @@ const ProductDetailPage = () => {
         <div className="flex flex-col md:flex-row justify-center gap-8 md:gap-12 mt-6 max-w-6xl w-full">
           {/* Columna izquierda - Imágenes */}
           <div className="flex flex-col md:flex-row items-start justify-center gap-4 md:gap-6">
-            <div className="flex md:flex-col gap-3 md:gap-4 order-1 md:order-none">
-              <img src={Image1} alt="Thumb 1" className="w-[70px] h-[70px] md:w-[80px] md:h-[80px] object-cover rounded-lg shadow cursor-pointer border-2 border-transparent hover:border-[#7A6E6E]" onClick={() => setSelectedImage(Image1)}/>
-              <img src={Image2} alt="Thumb 2" className="w-[70px] h-[70px] md:w-[80px] md:h-[80px] object-cover rounded-lg shadow cursor-pointer border-2 border-transparent hover:border-[#7A6E6E]" onClick={() => setSelectedImage(Image2)}/>
-            </div>
-            <div className="flex justify-center items-start">
-              <img src={selectedImage} alt="Main Product" className="w-full max-w-[400px] sm:max-w-[450px] h-auto rounded-xl shadow-md" />
-            </div>
+            {loading ? (
+              <div className="flex justify-center items-center">
+                <div className="w-full max-w-[450px] h-[450px] bg-gray-200 rounded-xl animate-pulse"></div>
+              </div>
+            ) : (
+              <div className="flex justify-center items-start">
+                <img 
+                  src={product?.image || '/placeholder-image.jpg'} 
+                  alt={product?.name || 'Product'} 
+                  className="w-full max-w-[400px] sm:max-w-[450px] h-auto rounded-xl shadow-md" 
+                />
+              </div>
+            )}
           </div>
 
           {/* Columna derecha - Detalles y reseñas */}
           <div className="max-w-md mx-auto mt-6 md:mt-0 w-full">
-            <h2 className="text-[#7A6E6E] text-xl font-semibold text-center md:text-left">Missing part - Limited Edition of 5 Photograph</h2>
+            <h2 className="text-[#7A6E6E] text-xl font-semibold text-center md:text-left">{loading ? 'Cargando...' : product?.name || 'Producto no encontrado'}</h2>
             <div className="flex items-center gap-2 mt-2 justify-center md:justify-start">
               {[1, 2, 3, 4, 5].map(i => (
                 <span key={i} className={`text-xl ${i <= Math.round(averageRating) ? 'text-[#FFAD33]' : 'text-[#A9A9A9]'}`}>★</span>
@@ -119,7 +154,14 @@ const ProductDetailPage = () => {
               <span className="text-[#A9A9A9] text-sm">({reviews.length} Reseñas)</span>
               <span className="text-[#00FF66] text-sm font-medium ml-2">In Stock</span>
             </div>   
-            <p className="text-[#7A6E6E] text-2xl font-semibold mt-4 text-center md:text-left">$3,490.00</p>   
+            <p className="text-[#7A6E6E] text-2xl font-semibold mt-4 text-center md:text-left">
+              {loading ? '$0.00' : `$${product?.price || 0}`}
+              {product?.discount > 0 && (
+                <span className="ml-3 text-lg text-gray-400 line-through">
+                  ${((product.price / (1 - product.discount/100)).toFixed(0))}
+                </span>
+              )}
+            </p>   
             
             {/* Pestañas */}
             <div className="flex border-b border-[#A9A9A9] mt-6">
@@ -140,7 +182,19 @@ const ProductDetailPage = () => {
             {activeTab === 'description' ? (
               <div>
                 <p className="text-[#7A6E6E] text-sm mt-4 text-center md:text-left">
-                  Cada fotografía existe en un máximo de cinco piezas numeradas y firmadas a mano. Impresiones de inyección de tinta pigmentada de la más alta calidad sobre lienzo.
+                  {loading ? 'Cargando descripción...' : (
+                    product?.description || 'Descripción no disponible'
+                  )}
+                  {product?.isArticle && (
+                    <span className="block mt-2 text-xs text-green-600">
+                      En stock: {product.stock} unidades disponibles
+                    </span>
+                  )}
+                  {!product?.isArticle && (
+                    <span className="block mt-2 text-xs text-blue-600">
+                      Obra de arte por: {product?.artist}
+                    </span>
+                  )}
                 </p>
                 <div className="flex flex-col items-center md:items-start gap-4 mt-6">
                   <div className="flex items-center gap-4">
@@ -150,7 +204,23 @@ const ProductDetailPage = () => {
                     <button onClick={increaseQty} className="w-11 h-11 bg-[#E07A5F] text-white text-m flex items-center justify-center"><FiPlus/></button>
                   </div>
                     <div className="min-w-[180px]">
-                      <Button Text="Comprar" className="w-full"/>
+                      <Button 
+                        Text="Añadir al carrito" 
+                        onClick={() => {
+                          const success = addToCart({
+                            id: product._id,
+                            ProductName: product.name,
+                            Price: `$${product.price}`,
+                            ImageSrc: product.image,
+                            originalData: product,
+                            isArticle: product.isArticle
+                          }, quantity)
+                          if (success) {
+                            alert(`${quantity} producto(s) agregado(s) al carrito`)
+                          }
+                        }}
+                        className="w-full"
+                      />
                     </div>
                     <button onClick={handleWishlistClick} className={`p-2 border border-[#A9A9A9] rounded-full ${wishlisted ? 'bg-[#E0FFE5]' : 'bg-white'}`}>
                       <FiHeart className={`w-5 h-5 ${wishlisted ? 'text-[#00C36D]' : 'text-[#7A6E6E]'}`} />
@@ -304,16 +374,14 @@ const ProductDetailPage = () => {
             </div>
             <div className="flex justify-center">
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full">
-                <ProductCard Discount="-40%" ImageSrc={IntheRain} ProductName="In the rain II" Price="$5000" FormerPrice="$5990" Rating={5} ReviewCount={88} ShowWishlist={true} ShowView={true}/>
-                <ProductCard Discount="-35%" ImageSrc={Ocean} ProductName="Ocean (limited edition)" Price="$4300" FormerPrice="$4700" Rating={4} ReviewCount={75} ShowWishlist={true} ShowView={true}/>
-                <ProductCard Discount="-30%" ImageSrc={SmallLifeForms} ProductName="Small life forms III" Price="$370" FormerPrice="$420" Rating={5} ReviewCount={99} ShowView={true}/>
-                <ProductCard ImageSrc={Charlotte} ProductName="Charlotte Sometimes Hums as She Paints Painting" Price="$3,600" FormerPrice="$4,075" Rating={4.5} ReviewCount={65} ShowWishlist={true} ShowView={true}/>
+                {relatedProducts.map(product => (
+                  <ProductCard Discount= {product.Discount} ImageSrc={product.ImageSrc} ProductName= {product.ProductName} Price={product.Price} FormerPrice={product.FormerPrice} Rating={product.Rating} ReviewCount={product.ReviewCount} ShowWishlist={product.ShowWishList} ShowView={product.ShowView}/>
+                ))}
               </div>
             </div>
           </div>
         </div>
       )}
-      
       {/* Estilos para la barra de desplazamiento personalizada */}
       <style jsx>{`
         .custom-scrollbar::-webkit-scrollbar {

@@ -8,12 +8,18 @@ import crypto from 'crypto'
 import { config } from "../utils/config.js"
 //Post (CREATE)
 signupCustomerController.registerCustomer = async (req, res) => {
-  const { name, lastName, username, email, password, phoneNumber, issNumber } = req.body;
+  console.log("Datos recibidos:", req.body);
   
   try {
     // Validar campos obligatorios
     const requiredFields = ['name', 'lastName', 'username', 'email', 'password', 'phoneNumber'];
-    const missingFields = requiredFields.filter(field => !req.body[field]);
+    const missingFields = [];
+    
+    requiredFields.forEach(field => {
+      if (!req.body[field] || req.body[field].trim() === "") {
+        missingFields.push(field);
+      }
+    });
     
     if (missingFields.length > 0) {
       return res.status(400).json({
@@ -21,37 +27,40 @@ signupCustomerController.registerCustomer = async (req, res) => {
       });
     }
 
-    // Verificar si el usuario ya existe
-    const customerExist = await customersModel.findOne({ $or: [{ email }, { username }] });
+    // Verificar duplicados
+    const existingCustomer = await customersModel.findOne({ 
+      $or: [{ email: req.body.email }, { username: req.body.username }] 
+    });
     
-    if (customerExist) {
+    if (existingCustomer) {
       return res.status(409).json({ 
         message: "El email o nombre de usuario ya está registrado" 
       });
     }
 
     // Encriptar contraseña
-    const hashedPassword = await bcryptjs.hash(password, 10);
+    const hashedPassword = await bcryptjs.hash(req.body.password, 10);
     
-    // Crear nuevo cliente
+    // Crear cliente
     const newCustomer = new customersModel({
-      name,
-      lastName,
-      username,
-      email,
+      name: req.body.name,
+      lastName: req.body.lastName,
+      username: req.body.username,
+      email: req.body.email,
       password: hashedPassword,
-      phoneNumber,
-      issNumber: issNumber || null,
+      phoneNumber: req.body.phoneNumber,
+      issNumber: req.body.issNumber || null,
       isVerified: false
     });
 
     await newCustomer.save();
     
-    // Generar código de verificación
+    // Generar y enviar código de verificación
     const verCode = crypto.randomBytes(3).toString('hex');
-    const token = jsonwebtoken.sign({ email, verCode }, config.JWT.secret, { expiresIn: "2h" });
+    const token = jsonwebtoken.sign({ email: req.body.email, verCode }, config.JWT.secret, { 
+      expiresIn: "2h" 
+    });
     
-    // Configurar cookie
     res.cookie("verificationToken", token, { 
       maxAge: 2 * 60 * 60 * 1000,
       httpOnly: true,
@@ -59,47 +68,35 @@ signupCustomerController.registerCustomer = async (req, res) => {
       sameSite: 'strict'
     });
 
-    // Enviar email de verificación
+    // Configurar y enviar email
     const transporter = nodemailer.createTransport({
       service: 'gmail',
-      auth: {
-        user: config.APPUSER.USER,
-        pass: config.APPUSER.PASS
-      }
+      auth: { user: config.APPUSER.USER, pass: config.APPUSER.PASS }
     });
     
     const mailOptions = {
       from: config.APPUSER.USER,
-      to: email,
+      to: req.body.email,
       subject: 'Verificación de cuenta',
-      html: `
-        <h1>Verificación de cuenta</h1>
-        <p>Por favor, ingrese el siguiente código para verificar su cuenta:</p>
-        <h2>${verCode}</h2>
-        <p>El código expira en 2 horas.</p>
-      `
+      html: `<p>Tu código de verificación es: <strong>${verCode}</strong></p>`
     };
 
-    // Enviar email
-    transporter.sendMail(mailOptions, (error, info) => {
+    transporter.sendMail(mailOptions, (error) => {
       if (error) {
-        console.error("Error al enviar correo:", error);
+        console.error("Error enviando email:", error);
         return res.status(500).json({ 
-          message: "Error al enviar el correo electrónico",
-          error: error.message 
+          message: "Error al enviar el código de verificación" 
         });
       }
-      console.log("Correo electrónico enviado:", info.response);
       res.json({ 
-        message: "Cliente registrado. Por favor verifica tu correo",
-        emailSent: true
+        success: true,
+        message: "Registro exitoso. Por favor verifica tu email." 
       });
     });
   } catch (error) {
     console.error("Error en registro:", error);
     res.status(500).json({ 
-      message: "Error al registrar el cliente",
-      error: error.message 
+      message: "Error interno del servidor" 
     });
   }
 };

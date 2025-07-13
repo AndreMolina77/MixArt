@@ -37,17 +37,18 @@ const Wishlist = () => {
       originalData: item,
       isArticle: isArticle
     }
-    const recommendedProducts = allProducts
+    
+    console.log('✅ WishList - Transformed product:', transformedProduct.id, transformedProduct.ProductName)
+    return transformedProduct
+  }
+
+  const recommendedProducts = allProducts
       .slice(0, 4)
       .map(transformRecommendedProduct)
       .filter(product => product !== null)
 
     console.log('🎯 WishList - Recommended products:', recommendedProducts)
     
-    console.log('✅ WishList - Transformed product:', transformedProduct.id, transformedProduct.ProductName)
-    return transformedProduct
-  }
-
   
   const moveAllToCart = () => {
     wishlistItems.forEach(item => {

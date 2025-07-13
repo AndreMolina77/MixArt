@@ -18,33 +18,30 @@ const useSignUp = (navigate) => {
   const [error, setError] = useState(null);
 
   const handleChange = (e) => {
+   
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
+    console.log('En la función')
     e.preventDefault();
     setLoading(true);
     setError(null);
 
-    // Validar solo campos realmente obligatorios
-    const requiredFields = ['name', 'lastName', 'username', 'email', 'password', 'phoneNumber'];
-    const missingFields = requiredFields.filter(field => !formData[field]?.trim());
+ 
 
-    if (missingFields.length > 0) {
-      setError('Por favor completa todos los campos obligatorios');
-      setLoading(false);
-      return;
-    }
-
-    try {
-      // Preparar datos para el backend
-      const customerData = {
+     try {
+      // Depurar antes de enviar
+      console.log('Datos enviados:', {
         ...formData,
         isVerified: false
-      };
-
-      const result = await register(customerData);
+      });
+      
+      const result = await register({
+        ...formData,
+        isVerified: false
+      });
       
       if (result.success) {
         navigate('/verificar-codigo');

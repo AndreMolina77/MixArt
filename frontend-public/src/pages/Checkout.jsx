@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import Button from '../components/Buttons/Button.jsx'
 import Breadcrumbs from '../components/Handlers/BreadCrumbs.jsx'
 import { useCart } from '../hooks/useCart.js'
-import { useAuth } from '../hooks/useAuth.js'
+import useAuth from '../hooks/useAuth.js'
 import '../css/checkout.css'
 
 const Checkout = () => {

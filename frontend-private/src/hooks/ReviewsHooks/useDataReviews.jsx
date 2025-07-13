@@ -2,14 +2,7 @@ import { useEffect, useState } from "react"
 import { toast } from "react-hot-toast"
 
 const useDataReviews = () => {
-  const [activeTab, setActiveTab] = useState("list")
   const API = "http://localhost:4000/api/reviews"
-  const [id, setId] = useState("")
-  const [rating, setRating] = useState("")
-  const [comment, setComment] = useState("")
-  const [itemType, setItemType] = useState("")
-  const [itemId, setItemId] = useState("")
-  const [customerId, setCustomerId] = useState("")
   const [reviews, setReviews] = useState([])
   const [customers, setCustomers] = useState([])
   const [articles, setArticles] = useState([])
@@ -91,44 +84,49 @@ const useDataReviews = () => {
     fetchArticles()
     fetchArtPieces()
   }, [])
-
-  const saveReview = async (e) => {
-    e.preventDefault()
-    
-    if (!rating || !comment || !itemType || !itemId || !customerId) {
-      toast.error("Los campos marcados con * son requeridos")
-      return
-    }
-    try {
-      const newReview = {
-        rating: parseInt(rating),
-        comment,
-        itemType,
-        itemId,
-        customerId
+  const createHandlers = (API) => ({
+    data: reviews,
+    loading,
+    onAdd: async (data) => {
+      try {
+        const response = await fetch(`${API}/reviews`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify(data)
+        })
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.message || "Error al registrar reseña")
+        }
+        toast.success('Reseña registrada exitosamente')
+        fetchReviews()
+      } catch (error) {
+        console.error("Error:", error)
+        toast.error(error.message || "Error al registrar reseña")
+        throw error
       }
-      const response = await fetch(API, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        credentials: "include",
-        body: JSON.stringify(newReview)
-      })
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.message || "Hubo un error al registrar la reseña")
+    }, onEdit: async (id, data) => {
+      try {
+        const response = await fetch(`${API}/reviews/${id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify(data)
+        })
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.message || "Error al actualizar reseña")
+        }
+        toast.success('Reseña actualizada exitosamente')
+        fetchReviews()
+      } catch (error) {
+        console.error("Error:", error)
+        toast.error(error.message || "Error al actualizar reseña")
+        throw error
       }
-      toast.success('Reseña registrada exitosamente')
-      fetchReviews()
-      clearForm()
-      setActiveTab("list")
-    } catch (error) {
-      console.error("Error al guardar reseña:", error)
-      toast.error(error.message || "Error al registrar reseña")
-    }
-  }
-
+    }, onDelete: deleteReview
+  })
   const deleteReview = async (id) => {
     try {
       const response = await fetch(`${API}/${id}`, {
@@ -148,88 +146,18 @@ const useDataReviews = () => {
       toast.error("Error al eliminar reseña")
     }
   }
-  const updateReview = async (dataReview) => {
-    setId(dataReview._id)
-    setRating(dataReview.rating)
-    setComment(dataReview.comment)
-    setItemType(dataReview.itemType)
-    setItemId(dataReview.itemId?._id || dataReview.itemId)
-    setCustomerId(dataReview.customerId?._id || dataReview.customerId)
-    setActiveTab("form")
-  }
-
-  const handleEdit = async (e) => {
-    e.preventDefault()
-
-    if (!rating || !comment || !itemType || !itemId || !customerId) {
-      toast.error("Los campos marcados con * son requeridos")
-      return
-    }
-    try {
-      const editReview = {
-        rating: parseInt(rating),
-        comment,
-        itemType,
-        itemId,
-        customerId
-      }
-      const response = await fetch(`${API}/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        credentials: "include",
-        body: JSON.stringify(editReview)
-      })
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.message || "Error al actualizar la reseña")
-      }
-      toast.success('Reseña actualizada exitosamente')
-      clearForm()
-      setActiveTab("list")
-      fetchReviews()
-    } catch (error) {
-      console.error("Error al editar reseña:", error)
-      toast.error(error.message || "Error al actualizar reseña")
-    }
-  }
-  const clearForm = () => {
-    setId("")
-    setRating("")
-    setComment("")
-    setItemType("")
-    setItemId("")
-    setCustomerId("")
-  }
   return {
-    activeTab,
-    setActiveTab,
-    id,
-    rating,
-    setRating,
-    comment,
-    setComment,
-    itemType,
-    setItemType,
-    itemId,
-    setItemId,
-    customerId,
-    setCustomerId,
     reviews,
     customers,
     articles,
     artPieces,
     loading,
-    saveReview,
     deleteReview,
-    updateReview,
-    handleEdit,
-    clearForm,
     fetchReviews,
     fetchCustomers,
     fetchArticles,
-    fetchArtPieces
+    fetchArtPieces,
+    createHandlers
   }
 }
 export default useDataReviews

@@ -39,7 +39,7 @@ const Signup = () => {
             text="Nombre" 
             name="name"
             value={formData.name}
-            onChange={handleChange}
+            onChange={(e)=>handleChange(e)}
             required
           />
           
@@ -47,7 +47,7 @@ const Signup = () => {
             text="Apellido" 
             name="lastName"
             value={formData.lastName}
-            onChange={handleChange}
+                 onChange={(e)=>handleChange(e)}
             required
           />
           
@@ -55,7 +55,7 @@ const Signup = () => {
             text="Nombre de usuario" 
             name="username"
             value={formData.username}
-            onChange={handleChange}
+                 onChange={(e)=>handleChange(e)}
             required
           />
           
@@ -63,16 +63,16 @@ const Signup = () => {
             text="Correo electrónico" 
             name="email"
             value={formData.email}
-            onChange={handleChange}
+                 onChange={(e)=>handleChange(e)}
             required
             type="email"
           />
-          
+          <p>{formData.name}</p>
           <PasswordInput 
             text="Contraseña" 
             name="password"
             value={formData.password}
-            onChange={handleChange}
+                 onChange={(e)=>handleChange(e)}
             required
           />
           
@@ -80,16 +80,16 @@ const Signup = () => {
             text="Número de teléfono" 
             name="phoneNumber"
             value={formData.phoneNumber}
-            onChange={handleChange}
+                 onChange={(e)=>handleChange(e)}
             required
             type="tel"
           />
           
           <TextInput 
             text="Número de ISS (opcional)" 
-            name="issNumber"  // Corregido: minúsculas
+            name="issNumber"
             value={formData.issNumber}
-            onChange={handleChange}
+                 onChange={(e)=>handleChange(e)}
             type="text"
           />
           

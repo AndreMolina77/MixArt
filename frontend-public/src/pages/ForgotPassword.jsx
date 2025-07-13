@@ -3,7 +3,7 @@ import Button from '../components/Buttons/Button.jsx';
 import cartImage from '../assets/cart-image.jpeg';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
-import { useAuth } from '../hooks/useAuth';
+import useAuth from '../hooks/useAuth';
 
 const ForgotPassword = () => {
   const { requestPasswordReset } = useAuth();

@@ -15,7 +15,6 @@ import {
   DoughnutController,
   LineController
 } from 'chart.js'
-
 // Register all necessary Chart.js components including controllers
 ChartJS.register(
   CategoryScale, 
@@ -295,7 +294,7 @@ const Dashboard = () => {
   }, [])
   
   return (
-    <div className="p-6 bg-white min-h-screen font-sans">
+    <div className="p-6 bg-white min-h-screen font-[Alexandria]">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">

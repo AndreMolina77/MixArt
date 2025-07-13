@@ -34,7 +34,7 @@ const useAuth = () => {
   };
 
   return {
-    register: registerCustomer, // Sobreescribir register con la nueva función
+    register: registerCustomer, // Sobreescribir register con la nueva funcion
     login,
     logout,
     user

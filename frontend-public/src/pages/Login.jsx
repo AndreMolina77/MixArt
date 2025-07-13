@@ -5,7 +5,7 @@ import PasswordInput from '../components/Inputs/PasswordInput.jsx'
 import GoogleButton from '../components/Buttons/GoogleButton.jsx'
 import cartImage from '../assets/cart-image.jpeg'
 import Button from '../components/Buttons/Button.jsx'
-import { useAuth } from '../hooks/useAuth';
+import useAuth from '../hooks/useAuth';
 
 const Login = () => {
   const { login } = useAuth();

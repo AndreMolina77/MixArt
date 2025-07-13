@@ -37,7 +37,7 @@ const customersSchema = new Schema ({
     },
     isVerified:{
         type: Boolean,
-        require: true
+        require: false
     },
     appwriteUserId: {
         type: String,

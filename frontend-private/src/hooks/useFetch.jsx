@@ -1,7 +1,3 @@
-// No se por que no se usan useEffect ni useState en el hook, pero se usan en el componente Login.jsx
-import { useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
-
 const useFetch =()=> {
     const SERVER_URL = 'http://localhost:4000/api/'
 

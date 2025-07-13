@@ -79,7 +79,6 @@ export const AuthProvider = ({ children }) => {
       return { success: false, message: error.message }
     }
   }
-
   // Register function
   const register = async (customerData) => {
     try {
@@ -104,7 +103,6 @@ export const AuthProvider = ({ children }) => {
       return { success: false, message: error.message }
     }
   }
-
   // Verify email code
   const verifyEmail = async (verCode) => {
     try {

@@ -1,4 +1,3 @@
-// components/Search/GlobalSearch.jsx
 import { useState, useEffect, useMemo } from 'react'
 import { Search, Filter, X, Package, Palette, Users, ShoppingCart, Star, TrendingUp, Grid3X3, Truck } from 'lucide-react'
 import { useConditionalData } from '../../hooks/MainHook/useConditionalData'
